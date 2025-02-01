@@ -1,0 +1,17 @@
+# Remember global gitignore cant use relatively the other files. It needs to used with absolute path or
+# path extended from home.
+[core]
+  # editor = /usr/bin/vim
+  editor = $EDITOR
+
+[init]
+	defaultBranch = main
+
+[credential]
+# If you want to cache the credentials for some time (default 15 minutes)
+	# helper = cache 
+# if you want to store the credentials for ever (considered unsafe)
+	helper = store
+[user]
+	email = asultan.here@gmail.com
+	name = aamir-sultan
