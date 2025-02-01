@@ -1,16 +1,18 @@
 #!/bin/bash
 
 # Path to your dotfiles directory
-# DOTS="$HOME/dotfiles"
+DOTS="${DOTS:-$(cd "$(dirname "${BASH_SOURCE[0]}")"/.. && pwd)}"
 
 # List of paths to include (relative to the dotfiles directory)
 SSH_INC=(
-  "git/gitaliases"
+  "git/.gitconfig"
+  # "git/.gitaliases"
 )
 
 LOCAL_INC=(
-  "git/gitaliases"
-  "git/gitaliases.local"
+  "git/.gitconfig"
+  # "git/.gitaliases"
+  "git/.gitaliases.local"
 )
 
 # Function to add multiple include paths
@@ -24,16 +26,14 @@ add_include_paths() {
     # This is not an SSH session
     echo "Local session detected. Configuring Git for local use..."
     PATHS=("${LOCAL_INC[@]}")
-    
   fi
 
   for path in "${PATHS[@]}"; do
     full_path="$DOTS/$path"
     if [ -f "$full_path" ]; then
       echo "Adding Git include path: $full_path"
-      # First remove any previous copies from multiple installation and then add a new one
-      # If the --unset step is not done the same paths are added multiple times
-      # git config --global --unset-all include.path "$full_path" 
+      # First remove any previous copies from multiple installations and then add a new one
+      git config --global --unset-all include.path "$full_path" 2>/dev/null
       git config --global --add include.path "$full_path"
     else
       echo "Warning: File not found - $full_path"
@@ -43,9 +43,6 @@ add_include_paths() {
 
 # Function to remove all include paths
 remove_include_paths() {
-  # echo "Removing all Git include paths..."
-  # git config --global --unset-all include.path
-
   # Check if the current session is an SSH session
   if [ -n "$SSH_CONNECTION" ]; then
     # This is an SSH session
@@ -55,23 +52,24 @@ remove_include_paths() {
     # This is not an SSH session
     echo "Local session detected. Removing included paths for local use..."
     PATHS=("${LOCAL_INC[@]}")
-    
   fi
 
   for path in "${PATHS[@]}"; do
     full_path="$DOTS/$path"
-    if [ -f "$full_path" ]; then
-      echo "Adding Git include path: $full_path"
-      git config --global --unset-all include.path "$full_path"
-    else
-      echo "Warning: File not found - $full_path"
-    fi
+    echo "Removing Git include path: $full_path"
+    git config --global --unset-all include.path "$full_path" 2>/dev/null
   done
+}
+
+# Function to ensure ~/.gitconfig exists
+touch_gitconfig() {
+  touch ~/.gitconfig
 }
 
 # Main script logic
 case "$1" in
   install)
+    touch_gitconfig
     add_include_paths
     ;;
   remove)

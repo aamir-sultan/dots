@@ -12,6 +12,6 @@
 	# helper = cache 
 # if you want to store the credentials for ever (considered unsafe)
 	helper = store
-[user]
-	email = asultan.here@gmail.com
-	name = aamir-sultan
+
+[core]
+  excludesfile = /home/asultan/.des/dotfiles/git/gitignore.global
