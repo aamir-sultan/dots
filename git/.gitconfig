@@ -14,4 +14,4 @@
 	helper = store
 
 [core]
-  excludesfile = /home/asultan/.des/dotfiles/git/gitignore.global
+  excludesfile = .gitignore.global

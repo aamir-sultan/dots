@@ -1,0 +1,184 @@
+#!/usr/bin/env bash
+
+# Easier navigation: .., ..., ...., ....., ~ and -
+alias ..="cd .."
+alias ...="cd ../.."
+alias ....="cd ../../.."
+alias .....="cd ../../../.."
+alias ......="cd ../../../../.."
+alias ~="cd ~" # `cd` is probably faster to type though
+alias -- -="cd -"
+
+# Shortcuts
+#alias d="cd ~/Documents/Dropbox"
+alias cdd="cd $DOTS"
+alias dl="cd ~/Downloads"
+alias dt="cd ~/Desktop"
+alias p="cd ~/projects"
+alias g="git"
+alias cpr='cp -vr'
+alias cpf='cp -rvf'
+
+alias mkdir="mkdir -p"
+# alias vi="vim"
+# alias e="$EDITOR"
+# alias v="$VISUAL"
+
+# Likewise this, plus I'm always mistyping it...
+alias findy='find . -name'
+alias sb='current_path=$(pwd); source ~/.bashrc; cd $current_path'
+alias vb='vim ~/.bashrc'
+alias vd='vim $DOTS'
+
+# Aliases for tmux - could be moved to separate file
+# alias ta="tmux attach -t"
+alias ta='tmux a'
+alias tas='tmux a; tmux source-file ~/.tmux.conf'
+alias td="tmux detach"
+alias tk='tmux kill-session -t '
+alias tls='tmux ls'
+alias tn="tmux new -s"
+alias tst='tmux source-file ~/.tmux.conf'
+alias tsa='tmux a -t '
+
+# Vim/NeoVim aliases
+alias nv='nvim'
+alias nvb='nvim ~/.bashrc'
+alias nvd='nvim $DOTS'
+
+# save last command from history to a file
+# tip, add a comment to end of command before saving, ex: ls --color=auto # colored ls output
+alias sl='fc -ln -1 | sed "s/^\s*//" >> ~/.saved_commands.txt'
+# short-cut to grep that file
+alias slg='< ~/.saved_commands.txt grep'
+
+# FZF search and edit with nvim
+alias fv='nvim $(fz)'
+alias fz='rg --files --hidden --follow --ignore-vcs -g "!{node_modules,.git}" | fzf'
+
+# Prints a directory tree
+if [ ! -x "$(which tree 2>/dev/null)" ]; then
+  alias tree="find . -print | sed -e 's;[^/]*/;|__;g;s;__|; |;g'"
+fi
+
+# This dup finder saves time by comparing size first, then md5sum, it doesn't delete anything, just lists them.
+alias fdups='find -not -empty -type f -printf "%s\n" | sort -rn | uniq -d | xargs -I{} -n1 find -type f -size {}c -print0 | xargs -0 md5sum | sort | uniq -w32 --all-repeated=separate'
+
+# Alias to list all functions loaded into bash (that don't start with _). Also shows file it's defined in.
+alias functions='shopt -s extdebug;declare -F | grep -v "declare -f _" | declare -F $(awk "{print $3}") | column -t;shopt -u extdebug'
+
+#User Specific alias
+#alias cdw='cd /proj/work/${USER}'
+#alias pdw='pushd /proj/work/${USER}'
+#alias topmem='ps aux | head -1; ps aux | sort -rnk 4 | head -5'
+
+# confirmation #
+# alias mv='mv -i'
+# alias cp='cp -i'
+# alias ln='ln -i'
+
+source $DOTS/bin/.ls_color
+if command -v vivid &>/dev/null; then
+  #  User lsth function for listing themes
+  # export _LS_COLORS="$(vivid generate lava)"
+  # export _LS_COLORS="$(vivid generate snazzy)"
+  # export _LS_COLORS="$(vivid generate ayu)"
+  # _LS_COLORS="$(vivid generate nord)"
+  # _LS_COLORS="$(vivid generate jellybeans)"
+  # _LS_COLORS="$(vivid generate solarized-light)"
+  _LS_COLORS=$SOLARIZED_LIGHT # Same as the vivid theme but not using vivid.
+  unset SOLARIZED_LIGHT
+# else
+#   _LS_COLORS='no=00:fi=00:di=01;31:ln=01;36:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arj=01;31:*.taz=01;31:*.lzh=01;31:*.zip=01;31:*.z=01;31:*.Z=01;31:*.gz=01;31:*.bz2=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.jpg=01;35:*.jpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.avi=01;35:*.fli=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.ogg=01;35:*.mp3=01;35:*.wav=01;35:tw=00;33:ow=01;33:'
+fi
+# Detect which `ls` flavor is in use -- to be kept at top to so that colorflag is available
+if ls --color >/dev/null 2>&1; then # GNU `ls`
+  colorflag="--color"
+  export LS_COLORS="$_LS_COLORS"
+  unset _LS_COLORS
+else # macOS `ls`
+  colorflag="-G"
+  export LS_COLORS='BxBxhxDxfxhxhxhxhxcxcx'
+fi
+
+# List all files colorized in long format
+alias l="ls -lF ${colorflag}"
+
+# List all files colorized in long format, excluding . and ..
+alias la="ls -lAF ${colorflag}"
+
+# List only directories
+alias lsd="ls -lF ${colorflag} | grep --color=never '^d'"
+
+# List the directories and files. Displays the size of each item, and then sorts it by size, in a single column, with a notation to indicate the kind of file.
+alias lt='ls --human-readable --size -1 -S --classify'
+
+# Always use color output for `ls`
+alias ls="command ls ${colorflag}"
+
+# Always enable colored `grep` output
+# Note: `GREP_OPTIONS="--color=auto"` is deprecated, hence the alias usage.
+alias grep='grep --color=auto'
+alias fgrep='fgrep --color=auto'
+alias egrep='egrep --color=auto'
+
+# Find a command in your grep history
+alias gh='history|grep'
+
+# Add a copy progress bar
+alias cpv='rsync -ah --info=progress2'
+
+# Protect yourself from file removal accidents. This alias provides a way to toss files into the Trash bin from your terminal
+TRASH=~/.local/share/Trash
+alias tcn='$(if [ ! -d "$TRASH" ] ; then mkdir $TRASH; echo echo -e "Trash Dir Created -> Deleted files will be available in: $TRASH"; else echo echo -e "Trash Dir Exists -> Deleted files will be available in: $TRASH"; fi); mv --force -t $TRASH '
+# alias tcn='mv --force -t ~/.local/share/Trash '
+
+# Enable aliases to be sudo’ed
+alias sudo='sudo '
+
+# Get week number
+alias week='date +%V'
+
+# IP addresses
+alias ips="ifconfig -a | grep -o 'inet6\? \(addr:\)\?\s\?\(\(\([0-9]\+\.\)\{3\}[0-9]\+\)\|[a-fA-F0-9:]\+\)' | awk '{ sub(/inet6? (addr:)? ?/, \"\"); print }'"
+
+# Show active network interfaces
+alias ifactive="ifconfig | pcregrep -M -o '^[^\t:]+:([^\n]|\n\t)*status: active'"
+
+# Canonical hex dump; some systems have this symlinked
+command -v hd >/dev/null || alias hd="hexdump -C"
+
+# macOS has no `md5sum`, so use `md5` as a fallback
+command -v md5sum >/dev/null || alias md5sum="md5"
+
+# macOS has no `sha1sum`, so use `shasum` as a fallback
+command -v sha1sum >/dev/null || alias sha1sum="shasum"
+
+# URL-encode strings
+alias urlencode='python -c "import sys, urllib as ul; print ul.quote_plus(sys.argv[1]);"'
+
+# Intuitive map function
+# For example, to list all directories that contain a certain file:
+# find . -name .gitattributes | map dirname
+alias map="xargs -n1"
+
+# One of @janmoesen’s ProTip™s
+for method in GET HEAD POST PUT DELETE TRACE OPTIONS; do
+  alias "${method}"="lwp-request -m '${method}'"
+done
+
+# Kill all the tabs in Chrome to free up memory
+# [C] explained: http://www.commandlinefu.com/commands/view/402/exclude-grep-from-your-grepped-output-of-ps-alias-included-in-description
+alias chromekill="ps ux | grep '[C]hrome Helper --type=renderer' | grep -v extension-process | tr -s ' ' | cut -d ' ' -f2 | xargs kill"
+
+# News from the around the world
+alias news='curl us.getnews.tech'
+
+# Moon information
+alias moon='curl wttr.in/Moon'
+
+# Reload the shell (i.e. invoke as a login shell)
+alias reload="exec ${SHELL} -l"
+
+# Print each PATH entry on a separate line
+alias path='echo -e ${PATH//:/\\n}'

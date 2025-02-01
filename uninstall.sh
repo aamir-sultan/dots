@@ -12,14 +12,20 @@ fi
 
 source "$CONF_FILE"
 
-remove_gitconfig_configuration() {
-    echo "Configuring gitconfig..."
+uninstall_tmux_plugins() {
+    echo "Removing tmux plugins and configuration..."
+    rm -rf $TMUX_PLUGINS_PATH
+    unlink $TMUXCONF_PATH 2>/dev/null
+}
+
+uninstall_gitconfig() {
+    echo "Removing gitconfig configuration..."
     $BIN_PATH/configure-gitconfig.sh remove
 }
 
 # Install plugins
-# install_tmux_plugins
+uninstall_tmux_plugins
 # install_vim_plugins
-remove_gitconfig_configuration
+uninstall_gitconfig
 
-echo "Dots setup complete!"
+echo "Dots unistall complete!"
