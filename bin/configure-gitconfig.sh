@@ -59,6 +59,7 @@ remove_include_paths() {
     echo "Removing Git include path: $full_path"
     git config --global --unset-all include.path "$full_path" 2>/dev/null
   done
+  exit 0
 }
 
 # Function to ensure ~/.gitconfig exists
@@ -68,17 +69,17 @@ touch_gitconfig() {
 
 # Main script logic
 case "$1" in
-  install)
+  --install)
     touch_gitconfig
     add_include_paths
     ;;
-  remove)
+  --remove)
     remove_include_paths
     ;;
   *)
-    echo "Usage: $0 {install|remove}"
-    echo "  install: Add multiple include paths to Git config"
-    echo "  remove:  Remove all include paths from Git config"
+    echo "Usage: $0 --{install|remove}"
+    echo "  --install: Add multiple include paths to Git config"
+    echo "  --remove:  Remove all include paths from Git config"
     exit 1
     ;;
 esac

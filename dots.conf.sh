@@ -23,3 +23,5 @@ VIM_DEP_FILE="$DOTS/system/vim_plugs.list"
 
 # Binary path
 BIN_PATH="$DOTS/bin"
+
+TOOLS="$DOTS/tools"

@@ -49,8 +49,31 @@ e_banner() {
 	e_color "green" "###############################################################################"
 }
 
-# Ask for confirmation before proceeding
+e_pwd() {
+# echo_sep
+echo "Back to `pwd`"
+# echo_sep
+}
+
+# Logging function
+log() {
+  echo -e "\n[$(date +"%Y-%m-%d %H:%M:%S")] $1"
+}
+
 ask() {
+  while true; do
+    read -p "$1 ([y]/n) " -r
+    REPLY=${REPLY:-"y"}
+    if [[ $REPLY =~ ^[Yy]$ ]]; then
+      return 1
+    elif [[ $REPLY =~ ^[Nn]$ ]]; then
+      return 0
+    fi
+  done
+}
+
+# Ask for confirmation before proceeding
+continue() {
     printf "\n"
     e_warning "$@"
     read -p "Continue? (y/n) " -n 1
@@ -91,4 +114,32 @@ link() {
 
     echo "Creating symlink: $target -> $source"
     ln -sf "$source" "$target"
+}
+
+chkout_branch(){
+  repo_name=$1
+  branch_name=$2
+
+# e_separator
+  # Check if the source directory exists
+if [[ ! -d "$repo_name" ]]; then
+  echo "The $repo_name directory/repo does not exist in `pwd`"
+  exit 1
+else
+  cd $repo_name && git checkout $branch_name && cd -
+  echo "Updating $branch_name branch for $repo_name..."
+  git pull
+fi  
+# e_separator
+}
+
+chdir_to_base(){
+  echo "Changing path to $DOTS"
+  cd $DOTS
+}
+
+get_br_name(){
+  branch_name=$(git symbolic-ref -q HEAD)
+  branch_name=${branch_name##refs/heads/}
+  branch_name=${branch_name:-HEAD}
 }

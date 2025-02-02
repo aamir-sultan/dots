@@ -1,9 +1,12 @@
-unset DOTS
-# Check if the DOTS is not set
-if [ -z "$DOTS" ]; then
-    # Set the DOTS path to the this script and one step beyond.
-    DOTS="$(dirname -- "${BASH_SOURCE[0]}")/../"
+# More robust way to handle DOTS (check if it's set and a directory)
+if [[ -z "$DOTS" ]]; then
+  echo "Error: DOTS variable is not set."
+  exit 1
+elif [[ ! -d "$DOTS" ]]; then
+  echo "Error: DOTS is not a directory: $DOTS"
+  exit 1
 fi
+
 [ -n "$PS1" ] && source $DOTS/bash/.bash_profile
 
 

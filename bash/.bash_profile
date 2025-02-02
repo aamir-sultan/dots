@@ -1,14 +1,8 @@
 #!/usr/bin/env bash
 
-# Add `~/bin` to the `$PATH`
-export PATH="$HOME/bin:$PATH"
-
-# Load the shell dotfiles, and then some:
-# * ~/.path can be used to extend `$PATH`.
-# * ~/.extra can be used for other settings you don’t want to commit.
-for file in $DOTS/*/.{path,bash_prompt,exports,aliases,functions,extra,keybindings}; do
-    [ -r "$file" ] && [ -f "$file" ] && source "$file"
-    # [ -r "$file" ] && [ -f "$file" ] && source "$file" && echo $file;
+for file in $DOTS/*/.{path,env,bash_prompt,exports,aliases,functions,keybindings}; do
+    # [ -r "$file" ] && [ -f "$file" ] && source "$file"
+    [ -r "$file" ] && [ -f "$file" ] && source "$file" || echo "Error sourcing: $file" # Check source success/failure;
 done
 unset file
 

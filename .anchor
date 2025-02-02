@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+
+unset DOTS
+export DOTS="${DOTS:-$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)}"
+
+source $DOTS/bash/.bashrc

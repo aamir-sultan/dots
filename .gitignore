@@ -1,0 +1,8 @@
+# bin
+extras
+nvim/lazyvim/lazy-lock.json
+nvim/lazyvim/lazyvim.json 
+.bookmarks
+*.bak
+tools/
+fonts/

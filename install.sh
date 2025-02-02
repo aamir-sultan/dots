@@ -4,10 +4,10 @@
 set -e
 
 # Dotfiles root directory (automatically set if not provided)
-export DOTS="${DOTS:-$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)}"
+DOTS="${DOTS:-$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)}"
 
 # Load configuration
-source "$DOTS/dots.conf"
+source "$DOTS/dots.conf.sh"
 source "$DOTS/bin/utils.sh"
 
 # Validate NVIM_CONFIG
@@ -17,16 +17,6 @@ if [[ ! " ${valid_configs[*]} " =~ " ${NVIM_CONFIG} " ]]; then
     exit 1
 fi
 
-echo "NVIM_CONFIG: $NVIM_CONFIG"
-echo "VIMRC_PATH: $VIMRC_PATH"
-echo "BASHRC_PATH: $BASHRC_PATH"
-echo "TMUXCONF_PATH: $TMUXCONF_PATH"
-echo "GITCONFIG_PATH: $GITCONFIG_PATH"
-echo "TMUX_DEP_FILE: $TMUX_DEP_FILE"
-echo "VIM_DEP_FILE: $VIM_DEP_FILE"
-echo "VIM_AUTOLOAD_PATH: $VIM_AUTOLOAD_PATH"
-echo "TMUX_PLUGINS_PATH: $TMUX_PLUGINS_PATH"
-echo "TMUX_TPM_PATH: $TMUX_TPM_PATH"
 
 # Function to install Tmux plugins
 install_tmux_plugins() {
@@ -55,27 +45,109 @@ install_vim_plugins() {
 
 install_gitconfig() {
     echo "Configuring gitconfig..."
-    $BIN_PATH/configure-gitconfig.sh install
+    $BIN_PATH/configure-gitconfig.sh --install
     e_separator
 }
 
 install_bashrc() {
     echo "Configuring bashrc..."
     #Set the path of the bashrc in the ~/.bashrc if already not exists otherwise print the information
-    if grep -q "[ -f $DOTS/bash/.bashrc ] && source $DOTS/bash/.bashrc" ~/.bashrc; then
+    if grep -q "[ -f $DOTS/.anchor ] && source $DOTS/.anchor" ~/.bashrc; then
         echo Path already set in $HOME/.bashrc
     else
-        echo Setting the DOTS .bashrc path into ~/.bashrc
-        echo "[ -f $DOTS/bash/.bashrc ] && source $DOTS/bash/.bashrc" >>~/.bashrc
+        echo Setting the DOTS .anchor path into ~/.bashrc
+        echo "[ -f $DOTS/.anchor ] && source $DOTS/.anchor" >>~/.bashrc
     fi
+    # if grep -q "[ -f $DOTS/bash/.bashrc ] && source $DOTS/bash/.bashrc" ~/.bashrc; then
+    #     echo Path already set in $HOME/.bashrc
+    # else
+    #     echo Setting the DOTS .bashrc path into ~/.bashrc
+    #     echo "[ -f $DOTS/bash/.bashrc ] && source $DOTS/bash/.bashrc" >>~/.bashrc
+    # fi
     e_separator
 }
 
+mirror_dotfiles() {
+    echo "Mirroring dotfiles..."
+    # Create symlinks for dots
+    link "$DOTS/vim/.vimrc"         "$VIMRC_PATH"
+    link "$DOTS/bash/.inputrc"      "$INPUTRC_PATH"
+    link "$DOTS/tmux/.tmux.conf"    "$TMUXCONF_PATH"
+    e_separator
+}
+
+install_tools() {
+    if [ $tools ]; then
+        echo "Installing tools..."
+        $BIN_PATH/install-tools.sh --all
+        e_separator
+    fi
+}
+
+
+
+
+
+
+
+help() {
+  cat << EOF
+usage: $0 [OPTIONS]
+
+    --help               Show this message
+    --all                Download and Install everything that is supported
+    --[no-]fonts         Enable/disable fonts cloning and installation
+    --[no-]dotfiles      Enable/disable dotfiles cloning and installation
+    --[no-]tools         Enable/disable tools cloning and installation
+    --lazyvim            Use LazyVim for NeoVim Configuration
+    --kickstart          Use KickStart for NeoVim Configuration. This is the basic config.
+    --lazylite           Use Selfdeveloped LazyLite for NeoVim Configuration.
+EOF
+exit 0
+}
+
+# Test for known flags
+for opt in $@
+do
+    case $opt in
+        --help) help ;;
+        --all) 
+                tools=true 
+                sync=true
+                backup=true 
+                ;;
+        # --backup) backup=true ;;
+        --sync) sync=true ;;
+        --fonts) fonts=true ;;
+        --no-fonts) fonts=false ;;
+        --tools) tools=true ;;
+        --no-tools) tools=false ;;
+        --lazyvim) nvconfig="LazyVim" ;;
+        --kickstart) nvconfig="KickStart" ;;
+        --lazylite) nvconfig="LazyLite" ;;
+        # --xdg)
+        #     prefix='"${XDG_CONFIG_HOME:-$HOME/.config}"/.des'
+        #     prefix_expand=${XDG_CONFIG_HOME:-$HOME/.config}/.des
+        #     mkdir -p "${XDG_CONFIG_HOME:-$HOME/.config}/.des"
+        -*|--*) e_warning "Warning: invalid option $opt"; help ;;
+    esac
+done
+
 e_separator
-# Create symlinks for dots
-link "$DOTS/vim/.vimrc"         "$VIMRC_PATH"
-link "$DOTS/bash/.inputrc"      "$INPUTRC_PATH"
-link "$DOTS/tmux/.tmux.conf"    "$TMUXCONF_PATH"
+echo "NVIM_CONFIG: $NVIM_CONFIG"
+echo "VIMRC_PATH: $VIMRC_PATH"
+echo "BASHRC_PATH: $BASHRC_PATH"
+echo "TMUXCONF_PATH: $TMUXCONF_PATH"
+echo "GITCONFIG_PATH: $GITCONFIG_PATH"
+echo "TMUX_DEP_FILE: $TMUX_DEP_FILE"
+echo "VIM_DEP_FILE: $VIM_DEP_FILE"
+echo "VIM_AUTOLOAD_PATH: $VIM_AUTOLOAD_PATH"
+echo "TMUX_PLUGINS_PATH: $TMUX_PLUGINS_PATH"
+echo "TMUX_TPM_PATH: $TMUX_TPM_PATH"
+e_separator
+
+install_tools
+mirror_dotfiles
 
 # Install plugins
 install_bashrc
