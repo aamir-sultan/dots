@@ -103,12 +103,24 @@ type_exists() {
 }
 
 # Function to create symlinks
+# link() {
+#     local source="$1"
+#     local target="$2"
+
+#     if [ -e "$target" ]; then
+#         echo "Backing up $target to $target.$(date +%s).bak"
+#         mv "$target" "$target.bak"
+#     fi
+
+#     echo "Creating symlink: $target -> $source"
+#     ln -sf "$source" "$target"
+# }
 link() {
     local source="$1"
     local target="$2"
 
     if [ -e "$target" ]; then
-        echo "Backing up $target to $target.$(date +%s).bak"
+        echo "Backing up $target to $target.bak"
         mv "$target" "$target.bak"
     fi
 

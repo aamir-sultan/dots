@@ -16,6 +16,7 @@ GITCONFIG_PATH="$HOME/.gitconfig"
 TMUX_PLUGINS_PATH="$HOME/.tmux/plugins"
 TMUX_TPM_PATH="$TMUX_PLUGINS_PATH/tpm"
 VIM_AUTOLOAD_PATH="$HOME/.vim/autoload"
+VIM_PLUGINS_PATH="$HOME/.vim/dotplugged"
 
 # Define dependency files
 TMUX_DEP_FILE="$DOTS/system/tmux_plugs.list"

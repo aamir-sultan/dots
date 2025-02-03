@@ -15,6 +15,13 @@ uninstall_tmux_plugins() {
     [ -f "$TMUXCONF_PATH" ] && unlink $TMUXCONF_PATH || echo "Skipping $TMUXCONF_PATH... Nothing to be done" 
 }
 
+uninstall_vim_plugins() {
+    echo "Removing vim plugins and configuration..."
+    rm -rf $VIM_AUTOLOAD_PATH
+    rm -rf $VIM_PLUGINS_PATH
+    [ -f "$VIMRC_PATH" ] && unlink $VIMRC_PATH || echo "Skipping $VIMRC_PATH... Nothing to be done" 
+}
+
 uninstall_gitconfig() {
     echo "Removing gitconfig configuration..."
     $BIN_PATH/configure-gitconfig.sh --remove
@@ -49,6 +56,7 @@ uninstall_tools() {
 
 # Install plugins
 uninstall_tmux_plugins
+uninstall_vim_plugins
 # uninstall_vim_plugins
 uninstall_gitconfig
 uninstall_fzf

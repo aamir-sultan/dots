@@ -40,7 +40,44 @@ install_vim_plugins() {
 
     echo "Installing Vim plugins..."
     # Add logic to install plugins from $VIM_DEP_FILE
+    if [ ! "$(which vim)" = "" ]; then
+        vimplug_path="$VIM_AUTOLOAD_PATH/plug.vim"
+        url="https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim"
+        vimrc_path="$VIMRC_PATH"
+
+        if [ ! -f "$vimplug_path" ]; then
+            if [ ! "$(which curl)" = "" ]; then
+            # c_echo "yellow" "-------------------------------------------------------------------------------"
+            curl -fLo "$vimplug_path" \
+                --create-dirs \
+                "$url" &
+            wait $!
+
+            # c_echo "yellow" "-------------------------------------------------------------------------------"
+            [ -f "$vimrc_path" ] && echo 'Installing VIM Plugins...' && vim -es -u $VIMRC_PATH -i NONE -c "PlugInstall" -c "qa"
+            # c_echo "yellow" "-------------------------------------------------------------------------------"
+            [ -f "$vimrc_path" ] && echo 'Updating VIM Plugins...' && vim -es -u $VIMRC_PATH -i NONE -c "PlugUpdate" -c "qa"
+            # c_echo "yellow" "-------------------------------------------------------------------------------"
+            else
+            echo "[ ERROR ] missing curl. Cant't install plug.vim"
+            fi
+        else
+            # c_echo "yellow" "-------------------------------------------------------------------------------"
+            echo Installing VIM Plugins...
+            vim -es -u $VIMRC_PATH -i NONE -c "PlugInstall" -c "qa"
+            # vim -e -u $VIMRC_PATH -i NONE -c "PlugInstall" -c "qa"
+            # c_echo "yellow" "-------------------------------------------------------------------------------"
+            echo Updating VIM Plugins...
+            vim -es -u $VIMRC_PATH -i NONE -c "PlugUpdate" -c "qa"
+            # vim -e -u $VIMRC_PATH -i NONE -c "PlugUpdate" -c "qa"
+            # c_echo "yellow" "-------------------------------------------------------------------------------"
+        fi
+
+        unset vimplug_path url vimrc_path
+    fi
     e_separator
+
+    e_color red $?
 }
 
 install_gitconfig() {
@@ -146,14 +183,14 @@ echo "TMUX_PLUGINS_PATH: $TMUX_PLUGINS_PATH"
 echo "TMUX_TPM_PATH: $TMUX_TPM_PATH"
 e_separator
 
-install_tools
+install_bashrc
+install_gitconfig
 mirror_dotfiles
 
 # Install plugins
-install_bashrc
+install_tools
 install_tmux_plugins
-# install_vim_plugins
-install_gitconfig
+install_vim_plugins
 
 # echo "Dots setup complete!"
 e_banner "Dots setup complete!"
