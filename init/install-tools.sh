@@ -130,13 +130,17 @@ create_tool_symlink() {
 install_all_tools() {
   mkdir -p "$TOOLS"
   for tool_name in "${tools[@]}"; do
-  declare -n tool="$tool_name"  # Crucial: Create a name reference
-  local tool_type="${tool[type]}"
+    # Declare an empty associative array
+    declare -A tool
+    # Populate tool array by copying from the original
+    eval "$(declare -p "$tool_name" | sed "s/declare -A $tool_name/declare -A tool/")"
+
+    local tool_type="${tool[type]}"
     if [[ "$tool_type" == "repo" ]]; then
       install_tool_repo "$tool"
       create_tool_symlink "$tool"
     elif [[ "$tool_type" == "bin" ]]; then
-      install_tool_binary "$tool_name"
+      install_tool_binary "$tool"
       create_tool_symlink "$tool"
     fi
   done
