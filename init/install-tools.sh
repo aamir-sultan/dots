@@ -3,10 +3,14 @@
 # Exit on error
 set -e
 
-# Dotfiles root directory (automatically set if not provided)
-DOTS="${DOTS:-$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)}"
-
-
+# More robust way to handle DOTS (check if it's set and a directory)
+if [[ -z "$DOTS" ]]; then
+  echo "Error: DOTS variable is not set."
+  exit 1
+elif [[ ! -d "$DOTS" ]]; then
+  echo "Error: DOTS is not a directory: $DOTS"
+  exit 1
+fi
 
 # Source the configuration files
 source "$DOTS/init/dots.conf"

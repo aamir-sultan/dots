@@ -4,7 +4,7 @@
 set -e
 
 # Dotfiles root directory (automatically set if not provided)
-DOTS="${DOTS:-$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)}"
+export DOTS="${DOTS:-$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)}"
 
 # Load configuration
 source "$DOTS/init/dots.conf"
@@ -54,7 +54,7 @@ install_vim_plugins() {
             wait $!
 
             [ -f "$vimrc_path" ] && echo 'Installing VIM Plugins...' && vim +'PlugInstall --sync' +qa
-            [ -f "$vimrc_path" ] && echo 'Updating VIM Plugins...' && vim +'PlugUpdate --sync' +qa
+            # [ -f "$vimrc_path" ] && echo 'Updating VIM Plugins...' && vim +'PlugUpdate --sync' +qa
             # [ -f "$vimrc_path" ] && echo 'Installing VIM Plugins...' && vim -es -u $VIMRC_PATH -i NONE -c "PlugInstall" -c "qa"
             # [ -f "$vimrc_path" ] && echo 'Updating VIM Plugins...' && vim -es -u $VIMRC_PATH -i NONE -c "PlugUpdate" -c "qa"
             else
@@ -207,5 +207,6 @@ install_tmux_plugins
 install_vim_plugins
 configure_nvim
 
+unset DOTS
 # echo "Dots setup complete!"
 e_banner "Dots setup complete!"
