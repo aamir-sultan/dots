@@ -1,6 +1,14 @@
 #!/usr/bin/env bash
 
+# Anchor file for the dot files. $DOTS variable is set from here and used
+# in different files for clean execution.
+
 unset DOTS
 export DOTS="${DOTS:-$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)}"
 
 source $DOTS/bash/.bashrc
+
+# If fzf is available source the fzf related setting from $DOTS/fzf/.fzfrc
+if command -v fzf &>/dev/null; then
+  [ -f "$DOTS/fzf/.fzfrc" ] && source $DOTS/fzf/.fzfrc
+fi

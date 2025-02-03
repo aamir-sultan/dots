@@ -1,0 +1,51 @@
+#!/usr/bin/env bash
+
+if [ -z "$FZF_PATH" ]; then
+    FZF_PATH="$DOTS/fzf"
+fi
+
+# Add support for switching between fd, find, bat and cat 
+# when they are not available.
+
+# Fuzzy File Finder setup and activation
+#---------------------------------------
+# [ -f $FZF_PATH/.fzf.bash ] && source $FZF_PATH/.fzf.bash
+
+if command -v bat &>/dev/null; then
+  export FZF_DEFAULT_OPTS="--extended --height=40% --layout=reverse --info=inline --preview '[[ -f {} ]] && bat --style=numbers --color=always --line-range :500 {} || ls -la {}'"
+else
+  export FZF_DEFAULT_OPTS="--extended --height=40% --layout=reverse --info=inline --preview '[[ -f {} ]] && cat {} || ls -la {}'"
+fi
+
+if command -v fd &>/dev/null; then
+  export FZF_DEFAULT_COMMAND="fd -H -E .git"
+  export FZF_CTRL_T_COMMAND="fd -H -E .git"
+else
+  export FZF_DEFAULT_COMMAND="find . -path '*/\.*' -type d -prune -o -type f -print -o -type l -print 2> /dev/null | sed s/^..//"
+  export FZF_CTRL_T_COMMAND="find . -path '*/\.*' -type d -prune -o -type f -print -o -type l -print 2> /dev/null | sed s/^..//"
+fi
+
+if command -v bat &>/dev/null; then
+  export FZF_CTRL_R_OPTS="
+    --preview 'echo {} | bat --style=plain --color=always --line-range :500' --preview-window wrap
+    --bind 'ctrl-/:toggle-preview'
+    --bind 'ctrl-y:execute-silent(echo -n {2..} | pbcopy)+abort'
+    --color header:italic
+    --header 'Press CTRL-/ to toggle the command preview'"
+else
+  export FZF_CTRL_R_OPTS="
+    --preview 'echo {} | head -n 500' --preview-window wrap
+    --bind 'ctrl-/:toggle-preview'
+    --bind 'ctrl-y:execute-silent(echo -n {2..} | pbcopy)+abort'
+    --color header:italic
+    --header 'Press CTRL-/ to toggle the command preview'
+"
+fi
+
+export FZF_DEFAULT_OPTS="${FZF_DEFAULT_OPTS} ${FZF_THEME}"
+
+if command -v bat &>/dev/null; then
+  alias fzp='fzf --height=60% --extended --layout=reverse --info=inline --preview "bat --color=always --style=numbers --line-range=:500 {}"'
+else
+  alias fzp='fzf --height=60% --extended --layout=reverse --info=inline --preview "echo {} | head -n 500"'
+fi
