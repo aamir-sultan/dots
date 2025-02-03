@@ -5,8 +5,8 @@
 
 ### Minimal Installation (for everyone)
 ```
-git clone https://github.com/aamir-sultan/dots.git
-cd dots
+git clone https://github.com/aamir-sultan/dots.git ~/.dots
+cd .dots
 ./install
 ```
 ### Full Installation (Install different tools binaries)
@@ -23,8 +23,8 @@ Full installation should be proceeded with caution. It install different binarie
 | NeoVim                    | nvim    |
 
 ```
-git clone https://github.com/aamir-sultan/dots.git
-cd dots
+git clone https://github.com/aamir-sultan/dots.git ~/.dots
+cd .dots
 ./install --all
 ```
 
@@ -33,7 +33,7 @@ cd dots
 
 Change directory area where dots are cloned.
 ```
-cd dots
+cd path/to/.dots
 ./uninstall
 ```  
 
@@ -41,7 +41,7 @@ cd dots
 
 Invoke help command to check other options which can different results based on different options provided. [WIP]
 ```
-cd dots
+cd path/to/.dots
 ./install --help
 ```
 
