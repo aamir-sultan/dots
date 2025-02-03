@@ -144,7 +144,6 @@ usage: $0 [OPTIONS]
 
     --help               Show this message
     --all                Download and Install everything that is supported
-    --[no-]dotfiles      Enable/disable dotfiles cloning and installation
     --[no-]tools         Enable/disable tools cloning and installation
     --[no-]tmux-plugs    Enable/disable tmux plugins cloning and installation
     --lazyvim            Use LazyVim for NeoVim Configuration
