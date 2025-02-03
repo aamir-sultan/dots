@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-if [ -z "$FZF_PATH" ]; then
-    FZF_PATH="$DOTS/fzf"
+if [ -z "$FZFRC_PATH" ]; then
+    FZFRC_PATH="$DOTS/fzf/.fzfrc"
 fi
 
 # Add support for switching between fd, find, bat and cat 
@@ -9,7 +9,14 @@ fi
 
 # Fuzzy File Finder setup and activation
 #---------------------------------------
-# [ -f $FZF_PATH/.fzf.bash ] && source $FZF_PATH/.fzf.bash
+# Setup fzf
+# ---------
+if [[ ! "$PATH" == *$DOTS/tools/fzf/bin* ]]; then
+  PATH="${PATH:+${PATH}:}$DOTS/tools/fzf/bin"
+fi
+
+eval "$(fzf --bash)"
+
 
 if command -v bat &>/dev/null; then
   export FZF_DEFAULT_OPTS="--extended --height=40% --layout=reverse --info=inline --preview '[[ -f {} ]] && bat --style=numbers --color=always --line-range :500 {} || ls -la {}'"
