@@ -95,20 +95,38 @@ tools=("${tools[@]}" "vivid") # Append vivid to older values
 declare -A fzf
 
 fzf["name"]="fzf"
-fzf["type"]="repo"
-fzf["url"]="https://github.com/junegunn/fzf.git"
-fzf["ssh_url"]="https://github.com/junegunn/fzf.git"
+fzf["type"]="bin"
+fzf["url"]="https://github.com/junegunn/fzf/releases/download/v0.59.0/fzf-0.59.0-linux_amd64.tar.gz"
+fzf["ssh_url"]="https://github.com/junegunn/fzf/releases/download/v0.59.0/fzf-0.59.0-linux_amd64.tar.gz"
 fzf["dpath"]="$TOOLS/fzf"
-fzf["dtool"]="git"
-fzf["version_or_branch"]="master"
-fzf["switches"]="--depth 1"
+fzf["dtool"]="wget"
+fzf["version_or_branch"]="v0.59.0"
+fzf["switches"]="--directory-prefix=$TOOLS"
 # fzf["post_proc_command"]="$TOOLS/fzf/install --key-bindings --completion --update-rc"
-fzf["post_proc_command"]="$TOOLS/fzf/install --key-bindings --completion --no-update-rc"
+fzf["post_proc_command"]="tar xzf fzf-0.59.0-linux_amd64.tar.gz -C $TOOLS" # .bashrc setting are already done in $DOTS/fzf/.fzfrc that why --on-update-rc.
 fzf["src_path"]="$TOOLS/fzf/bin/fzf"
 # fzf["sym_path"]="$DOTS/bin/fzf"
 fzf["sym_path"]="$TOOLS/bin/fzf"
 
 tools=("${tools[@]}" "fzf") # Append fzf to older values
+
+# declare -A fzf
+
+# fzf["name"]="fzf"
+# fzf["type"]="repo"
+# fzf["url"]="https://github.com/junegunn/fzf.git"
+# fzf["ssh_url"]="https://github.com/junegunn/fzf.git"
+# fzf["dpath"]="$TOOLS/fzf"
+# fzf["dtool"]="git"
+# fzf["version_or_branch"]="master"
+# fzf["switches"]="--depth 1"
+# # fzf["post_proc_command"]="$TOOLS/fzf/install --key-bindings --completion --update-rc"
+# fzf["post_proc_command"]="$TOOLS/fzf/install --key-bindings --completion --no-update-rc" # .bashrc setting are already done in $DOTS/fzf/.fzfrc that why --on-update-rc.
+# fzf["src_path"]="$TOOLS/fzf/bin/fzf"
+# # fzf["sym_path"]="$DOTS/bin/fzf"
+# fzf["sym_path"]="$TOOLS/bin/fzf"
+
+# tools=("${tools[@]}" "fzf") # Append fzf to older values
 
 declare -A tmux
 
