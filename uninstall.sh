@@ -7,7 +7,7 @@ set -e
 DOTS="${DOTS:-$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)}"
 
 # Load configuration
-source "$DOTS/dots.conf.sh"
+source "$DOTS/init/dots.conf"
 
 uninstall_tmux_plugins() {
     echo "Removing tmux plugins and configuration..."
@@ -24,8 +24,7 @@ uninstall_vim_plugins() {
 
 uninstall_gitconfig() {
     echo "Removing gitconfig configuration..."
-    $BIN_PATH/configure-gitconfig.sh --remove
-    # exit 0
+    $INIT_PATH/configure-gitconfig.sh --remove
 }
 
 uninstall_fzf() {
@@ -34,16 +33,17 @@ uninstall_fzf() {
     then
         source $TOOLS/fzf/uninstall
     fi
-    # exit 0
+
+    rm -rf $HOME/.fzf
+    rm -rf $HOME/.fzf.bash
 }
 
 uninstall_bashrc() {
     echo "Removing bashrc configuration..."
-    pattern=$(echo "[ -f $DOTS/.anchor ] && source $DOTS/.anchor")
+    pattern=$(echo "$ANCHOR_LINE")
     echo $pattern
     esc_pattern=$(printf '%s\n' "$pattern" | sed -e 's/[\/&]/\\&/g')
     sed -i "/$esc_pattern/d" $BASHRC_PATH
-    exit 0
 }
 
 uninstall_tools() {
@@ -54,12 +54,22 @@ uninstall_tools() {
     fi
 }
 
+uninstall_nvim_plugins() {
+    echo "Removing nvim setting and plugins..."
+    [ -f "$XDG_CONFIG_HOME/nvim" ] && unlink "$XDG_CONFIG_HOME/nvim" || echo "Skipping $VIMRC_PATH... Nothing to be done" 
+    [ -f "$XDG_CONFIG_HOME/nvim.bak" ] && unlink "$XDG_CONFIG_HOME/nvim.bak" || echo "Skipping $VIMRC_PATH... Nothing to be done" 
+    rm -rf "$HOME/.local/share/nvim"
+    rm -rf "$HOME/.local/state/nvim"
+    rm -rf $XDG_CONFIG_HOME/nvim* # Dont enclose in "", will not work
+}
+
 # Install plugins
 uninstall_tmux_plugins
 uninstall_vim_plugins
-# uninstall_vim_plugins
+uninstall_nvim_plugins
 uninstall_gitconfig
 uninstall_fzf
 uninstall_tools
 uninstall_bashrc
-echo "Dots unistall complete!"
+
+e_banner "Dots uninstallation complete!"

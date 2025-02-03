@@ -4,12 +4,13 @@
 set -e
 
 # Dotfiles root directory (automatically set if not provided)
-# export DOTS="${DOTS:-$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)}"
-DOTS="$HOME/dots"
-TOOLS="$DOTS/tools"
-source "$DOTS/bin/utils.sh"
-# Source the tools configuration file
-source "$DOTS/tools.conf.sh"
+DOTS="${DOTS:-$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)}"
+
+
+
+# Source the configuration files
+source "$DOTS/init/dots.conf"
+source "$DOTS/init/tools.conf"
 
 # Function to handle Git repository installation
 install_tool_repo() {

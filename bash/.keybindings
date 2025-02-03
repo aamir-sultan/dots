@@ -1,26 +1,19 @@
 #!/usr/bin/env bash
 
-# # Use case-insensitive TAB autocompletion
-# set completion-ignore-case on
+# Custom function to edit the current command without executing it
+edit-command() {
+  local tmpfile
+  tmpfile=$(mktemp)
+  printf '%s' "$READLINE_LINE" >"$tmpfile"
+  ${EDITOR:-nano} "$tmpfile"
+  READLINE_LINE=$(<"$tmpfile")
+  READLINE_POINT=${#READLINE_LINE}
+  rm "$tmpfile"
+}
 
-# # Auto list tab completions (use instead of TAB-cycling)
-# set show-all-if-ambiguous on
+# Bind the function to a key sequence (e.g., Ctrl+x e)
+bind -x '"\C-x\C-v": edit-command'
 
-# # # Make TAB cycle through possible completions
-# # "\t": menu-complete
-# # # Make SHIFT-TAB reverse cycle through possible completions
-# # "\e[Z": "\e-1\C-i"
-
-# # Use the string that has already been typed as the prefix for searching
-# # through commands (i.e. more intelligent Up/Down-arrow behavior)
-# "\e[B": history-search-forward
-# "\e[A": history-search-backward
-
-# # Fix Ctrl + Left/Right Arrow (Word Navigation)
-# # "\eOC": forward-word
-# # "\eOD": backward-word
-# "\e[1;5C": forward-word
-# "\e[1;5D": backward-word
 
 # bind '"\C-H":backward-kill-word' # It is such a common binding that almost every program supports it but the
 # emulator has issues with this. This backspace a complete word with ctrl+backspace.

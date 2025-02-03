@@ -19,8 +19,8 @@ if !has("nvim")
 " execute 'source' s:rcdir/ . '/vim.vim'
 " execute 'source' fnamemodify(s:rcfile, ':h') . '/vim.vim'
 " execute 'source' fnamemodify(s:rcfile, ':h')
-execute 'source' s:rcdir . '/vim.vim'
-execute 'source' s:rcdir . '/keybindings.vim'
+execute 'source' s:rcdir . '/' . 'vim.vim'
+execute 'source' s:rcdir . '/' . 'keybindings.vim'
 endif " End of the Only VIM Related Settings
 
 
@@ -31,7 +31,7 @@ endif " End of the Only VIM Related Settings
 if has("nvim")
   " source <sfile>:h/nvim.vim
   " source nvim.vim
-  execute 'source' s:rcdir . '/nvim.vim'
+  execute 'source' s:rcdir . '/' . 'nvim.vim'
 endif
 
 
@@ -43,10 +43,10 @@ endif
   " source <sfile>:h/mappings.vim
   " source <sfile>:h/options.vim
   " source <sfile>:h/autocommands.vim
-execute 'source' s:rcdir . '/common.vim'
-execute 'source' s:rcdir . '/mappings.vim'
-execute 'source' s:rcdir . '/options.vim'
-execute 'source' s:rcdir . '/autocommands.vim'
+execute 'source' s:rcdir . '/' . 'common.vim'
+execute 'source' s:rcdir . '/' . 'mappings.vim'
+execute 'source' s:rcdir . '/' . 'options.vim'
+execute 'source' s:rcdir . '/' . 'autocommands.vim'
 
 
 

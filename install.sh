@@ -7,8 +7,7 @@ set -e
 DOTS="${DOTS:-$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)}"
 
 # Load configuration
-source "$DOTS/dots.conf.sh"
-source "$DOTS/bin/utils.sh"
+source "$DOTS/init/dots.conf"
 
 # Validate NVIM_CONFIG
 valid_configs=("LazyVim" "KickStart" "NvChad")
@@ -20,14 +19,16 @@ fi
 
 # Function to install Tmux plugins
 install_tmux_plugins() {
-    if [ ! -d "$TMUX_TPM_PATH" ]; then
-        echo "Installing Tmux Plugin Manager (TPM)..."
-        git clone https://github.com/tmux-plugins/tpm "$TMUX_TPM_PATH" --depth 1
-    fi
+    if [ $tmux_plugs ]; then
+        if [ ! -d "$TMUX_TPM_PATH" ]; then
+            echo "Installing Tmux Plugin Manager (TPM)..."
+            git clone https://github.com/tmux-plugins/tpm "$TMUX_TPM_PATH" --depth 1
+        fi
 
-    if command -v tmux &>/dev/null; then
-        echo "Installing Tmux plugins..."
-        "$TMUX_TPM_PATH/bin/install_plugins"
+        if command -v tmux &>/dev/null; then
+            echo "Installing Tmux plugins..."
+            "$TMUX_TPM_PATH/bin/install_plugins"
+        fi
     fi
     e_separator
 }
@@ -47,60 +48,49 @@ install_vim_plugins() {
 
         if [ ! -f "$vimplug_path" ]; then
             if [ ! "$(which curl)" = "" ]; then
-            # c_echo "yellow" "-------------------------------------------------------------------------------"
             curl -fLo "$vimplug_path" \
                 --create-dirs \
                 "$url" &
             wait $!
 
-            # c_echo "yellow" "-------------------------------------------------------------------------------"
-            [ -f "$vimrc_path" ] && echo 'Installing VIM Plugins...' && vim -es -u $VIMRC_PATH -i NONE -c "PlugInstall" -c "qa"
-            # c_echo "yellow" "-------------------------------------------------------------------------------"
-            [ -f "$vimrc_path" ] && echo 'Updating VIM Plugins...' && vim -es -u $VIMRC_PATH -i NONE -c "PlugUpdate" -c "qa"
-            # c_echo "yellow" "-------------------------------------------------------------------------------"
+            [ -f "$vimrc_path" ] && echo 'Installing VIM Plugins...' && vim +'PlugInstall --sync' +qa
+            [ -f "$vimrc_path" ] && echo 'Updating VIM Plugins...' && vim +'PlugUpdate --sync' +qa
+            # [ -f "$vimrc_path" ] && echo 'Installing VIM Plugins...' && vim -es -u $VIMRC_PATH -i NONE -c "PlugInstall" -c "qa"
+            # [ -f "$vimrc_path" ] && echo 'Updating VIM Plugins...' && vim -es -u $VIMRC_PATH -i NONE -c "PlugUpdate" -c "qa"
             else
             echo "[ ERROR ] missing curl. Cant't install plug.vim"
             fi
         else
-            # c_echo "yellow" "-------------------------------------------------------------------------------"
             echo Installing VIM Plugins...
-            vim -es -u $VIMRC_PATH -i NONE -c "PlugInstall" -c "qa"
-            # vim -e -u $VIMRC_PATH -i NONE -c "PlugInstall" -c "qa"
-            # c_echo "yellow" "-------------------------------------------------------------------------------"
+            # vim -es -u $VIMRC_PATH -i NONE -c "PlugInstall" -c "qa"
+            vim +'PlugInstall --sync' +qa
             echo Updating VIM Plugins...
-            vim -es -u $VIMRC_PATH -i NONE -c "PlugUpdate" -c "qa"
-            # vim -e -u $VIMRC_PATH -i NONE -c "PlugUpdate" -c "qa"
-            # c_echo "yellow" "-------------------------------------------------------------------------------"
+            # vim -es -u $VIMRC_PATH -i NONE -c "PlugUpdate" -c "qa"
+            vim +'PlugUpdate --sync' +qa
         fi
 
         unset vimplug_path url vimrc_path
+        echo Vim Plugins installation Completed
     fi
     e_separator
-
-    e_color red $?
 }
 
 install_gitconfig() {
     echo "Configuring gitconfig..."
-    $BIN_PATH/configure-gitconfig.sh --install
+    $INIT_PATH/configure-gitconfig.sh --install
     e_separator
 }
 
 install_bashrc() {
     echo "Configuring bashrc..."
     #Set the path of the bashrc in the ~/.bashrc if already not exists otherwise print the information
-    if grep -q "[ -f $DOTS/.anchor ] && source $DOTS/.anchor" ~/.bashrc; then
+    # if grep -q "[ -f $DOTS/.anchor ] && source $DOTS/.anchor" ~/.bashrc; then
+    if grep -q "$ANCHOR_LINE" ~/.bashrc; then
         echo Path already set in $HOME/.bashrc
     else
         echo Setting the DOTS .anchor path into ~/.bashrc
         echo "[ -f $DOTS/.anchor ] && source $DOTS/.anchor" >>~/.bashrc
     fi
-    # if grep -q "[ -f $DOTS/bash/.bashrc ] && source $DOTS/bash/.bashrc" ~/.bashrc; then
-    #     echo Path already set in $HOME/.bashrc
-    # else
-    #     echo Setting the DOTS .bashrc path into ~/.bashrc
-    #     echo "[ -f $DOTS/bash/.bashrc ] && source $DOTS/bash/.bashrc" >>~/.bashrc
-    # fi
     e_separator
 }
 
@@ -116,7 +106,28 @@ mirror_dotfiles() {
 install_tools() {
     if [ $tools ]; then
         echo "Installing tools..."
-        $BIN_PATH/install-tools.sh --all
+        $INIT_PATH/install-tools.sh --all
+        e_separator
+    fi
+}
+
+configure_nvim() {
+    if [ $nvconfig ]; then
+        echo "Configuring nvim..."
+        if [ "$nvconfig" == "LazyLite" ]; then
+            mkdir -p $NVIMCONFIG_PATH
+            link "$DOTS/nvim/LazyLite" "$XDG_CONFIG_HOME/nvim"
+        fi
+
+        if [ "$nvconfig" == "KickStart" ]; then
+            mkdir -p $NVIMCONFIG_PATH
+            link "$DOTS/nvim/KickStart" "$XDG_CONFIG_HOME/nvim"
+        fi
+
+        if [ "$nvconfig" == "LazyVim" ]; then
+            mkdir -p $NVIMCONFIG_PATH
+            link "$DOTS/nvim/LazyVim" "$XDG_CONFIG_HOME/nvim"
+        fi
         e_separator
     fi
 }
@@ -133,9 +144,9 @@ usage: $0 [OPTIONS]
 
     --help               Show this message
     --all                Download and Install everything that is supported
-    --[no-]fonts         Enable/disable fonts cloning and installation
     --[no-]dotfiles      Enable/disable dotfiles cloning and installation
     --[no-]tools         Enable/disable tools cloning and installation
+    --[no-]tmux-plugs    Enable/disable tmux plugins cloning and installation
     --lazyvim            Use LazyVim for NeoVim Configuration
     --kickstart          Use KickStart for NeoVim Configuration. This is the basic config.
     --lazylite           Use Selfdeveloped LazyLite for NeoVim Configuration.
@@ -149,19 +160,23 @@ do
     case $opt in
         --help) help ;;
         --all) 
+                nvconfig="LazyLite"
+                tmux_plugs=true 
                 tools=true 
-                sync=true
-                backup=true 
+                # sync=true
+                # backup=true 
                 ;;
         # --backup) backup=true ;;
-        --sync) sync=true ;;
-        --fonts) fonts=true ;;
-        --no-fonts) fonts=false ;;
+        # --sync) sync=true ;;
+        # --fonts) fonts=true ;;
+        # --no-fonts) fonts=false ;;
         --tools) tools=true ;;
         --no-tools) tools=false ;;
+        --lazylite) nvconfig="LazyLite" ;;
         --lazyvim) nvconfig="LazyVim" ;;
         --kickstart) nvconfig="KickStart" ;;
-        --lazylite) nvconfig="LazyLite" ;;
+        --tmux-plugs) tmux_plugs=true ;;
+        --no-tmux-plugs) tmux_plugs=false ;;
         # --xdg)
         #     prefix='"${XDG_CONFIG_HOME:-$HOME/.config}"/.des'
         #     prefix_expand=${XDG_CONFIG_HOME:-$HOME/.config}/.des
@@ -191,6 +206,7 @@ mirror_dotfiles
 install_tools
 install_tmux_plugins
 install_vim_plugins
+configure_nvim
 
 # echo "Dots setup complete!"
 e_banner "Dots setup complete!"
