@@ -5,7 +5,7 @@ edit-command() {
   local tmpfile
   tmpfile=$(mktemp)
   printf '%s' "$READLINE_LINE" >"$tmpfile"
-  ${EDITOR:-nano} "$tmpfile"
+  ${EDITOR:-vi} "$tmpfile"
   READLINE_LINE=$(<"$tmpfile")
   READLINE_POINT=${#READLINE_LINE}
   rm "$tmpfile"
@@ -14,7 +14,30 @@ edit-command() {
 # Bind the function to a key sequence (e.g., Ctrl+x e)
 bind -x '"\C-x\C-v": edit-command'
 
-
 # bind '"\C-H":backward-kill-word' # It is such a common binding that almost every program supports it but the
 # emulator has issues with this. This backspace a complete word with ctrl+backspace.
 bind '"\C-H":"\C-w"' # This is a better alternative to above binding. It deletes a complete word till space.
+
+# Use case-insensitive TAB autocompletion
+bind "set completion-ignore-case on"
+
+# Auto list tab completions (use instead of TAB-cycling)
+bind "set show-all-if-ambiguous on"
+
+# # Make TAB cycle through possible completions
+bind '"\t": menu-complete'
+
+# # Make SHIFT-TAB reverse cycle through possible completions
+bind '"\e[Z": "\e-1\C-i"'
+
+# Use the string that has already been typed as the prefix for searching
+# through commands (i.e. more intelligent Up/Down-arrow behavior)
+bind '"\e[B": history-search-forward'
+bind '"\e[A": history-search-backward'
+
+# Fix Ctrl + Left/Right Arrow (Word Navigation)
+# bind '"\eOC": forward-word'
+# bind '"\eOD": backward-word'
+bind '"\e[1;5C": forward-word'
+bind '"\e[1;5D": backward-word'
+
