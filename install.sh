@@ -90,7 +90,7 @@ mirror_dotfiles() {
   echo "Mirroring dotfiles..."
   # Create symlinks for dots
   link "$DOTS/vim/.vimrc" "$VIMRC_PATH"
-  link "$DOTS/system/.inputrc" "$INPUTRC_PATH"
+  # link "$DOTS/system/.inputrc" "$INPUTRC_PATH" # All of the function of the inputrc is moved to bashi/.keybinding
   link "$DOTS/tmux/.tmux.conf" "$TMUXCONF_PATH"
   e_separator
 }
