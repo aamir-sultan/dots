@@ -5,19 +5,17 @@ export HISTCONTROL=ignoredups
 
 # Increase the maximum number of lines contained in the history file
 # (default is 500)
-export HISTFILESIZE=1000000000
-
+export HISTFILESIZE=1000000
 
 # Increase the maximum number of commands to remember
 # (default is 500)
 export HISTSIZE=1000000
 
-
-# Store timestamps alongside each command in the history file (~/.bash_history), 
+# Store timestamps alongside each command in the history file (~/.bash_history),
 # allowing you to see when each command was executed.
 export HISTTIMEFORMAT='%F %T '
-
 
 # Make new shells get the history lines from all previous
 # shells instead of the default "last window closed" history
 export PROMPT_COMMAND="history -a; $PROMPT_COMMAND"
+
