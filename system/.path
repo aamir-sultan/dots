@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 
-export PATH=$PATH:$DOTS/bin
-export PATH=$PATH:$HOME/bin
-export PATH=$PATH:$DOTS/tools/bin
+# This method do not create multiple entries in the path variable.
+[ "${PATH#*:$DOTS/bin}" != "$PATH" ] || export PATH=$PATH:$DOTS/bin
+[ "${PATH#*:$HOME/bin}" != "$PATH" ] || export PATH=$PATH:$HOME/bin
+[ "${PATH#*:$DOTS/tools/bin}" != "$PATH" ] || export PATH=$PATH:$DOTS/tools/bin
