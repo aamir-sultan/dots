@@ -14,8 +14,6 @@ elif infocmp xterm-256color >/dev/null 2>&1; then
   fi
 fi
 
-source $DOTS/bin/.colors
-
 # ----------------------------------------------------------------------------------------
 # Color setting of the different parts of the prompt based on the available terminal
 # capabilities

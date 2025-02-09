@@ -7,8 +7,10 @@ elif [[ ! -d "$DOTS" ]]; then
   exit 1
 fi
 
-[ -n "$PS1" ] && source $DOTS/bash/.bash_profile
+[ -n "$PS1" ] && source $DOTS/config/bash/.bash_profile
 
+# [ -r "$DOTS/config/bin/.colors" ] && [ -f "$DOTS/config/bin/.colors" ] && source $DOTS/config/bin/.colors
+# [ -r "$DOTS/config/bin/.ls_color" ] && [ -f ""$DOTS/config/bin/.ls_color ] && source $DOTS/config/bin/.ls_color
 
 # Custom setting on top these dotfiles can be added in the *.local files.
 [ -f ~/.bash_profile.local ] && source ~/.bash_profile.local

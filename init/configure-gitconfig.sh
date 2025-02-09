@@ -11,14 +11,14 @@ fi
 
 # List of paths to include (relative to the dotfiles directory)
 SSH_INC=(
-  "git/.gitconfig"
-  # "git/.gitaliases"
+  "config/git/.gitconfig"
+  # "config/git/.gitaliases"
 )
 
 LOCAL_INC=(
-  "git/.gitconfig"
-  # "git/.gitaliases"
-  "git/.gitaliases.local"
+  "config/git/.gitconfig"
+  # "config/git/.gitaliases"
+  "config/git/.gitaliases.local"
 )
 
 # Function to add multiple include paths

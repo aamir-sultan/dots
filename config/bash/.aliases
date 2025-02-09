@@ -77,7 +77,6 @@ alias functions='shopt -s extdebug;declare -F | grep -v "declare -f _" | declare
 # alias cp='cp -i'
 # alias ln='ln -i'
 
-source $DOTS/bin/.ls_color
 if command -v vivid &>/dev/null; then
   #  User lsth function for listing themes
   # export _LS_COLORS="$(vivid generate lava)"

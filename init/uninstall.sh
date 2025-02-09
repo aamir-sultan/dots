@@ -79,7 +79,7 @@ uninstall_nvim_plugins
 uninstall_gitconfig
 uninstall_fzf
 uninstall_tools
-uninstall_inputrc
+# uninstall_inputrc
 uninstall_bashrc
 
 unset DOTS

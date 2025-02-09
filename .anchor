@@ -6,9 +6,9 @@
 unset DOTS
 export DOTS="${DOTS:-$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)}"
 
-source $DOTS/bash/.bashrc
+source $DOTS/config/bash/.bashrc
 
 # If fzf is available source the fzf related setting from $DOTS/fzf/.fzfrc
 if command -v fzf &>/dev/null; then
-  [ -f "$DOTS/fzf/.fzfrc" ] && source $DOTS/fzf/.fzfrc
+  [ -f "$DOTS/config/fzf/.fzfrc" ] && source $DOTS/config/fzf/.fzfrc
 fi

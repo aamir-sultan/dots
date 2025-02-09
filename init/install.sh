@@ -46,18 +46,13 @@ install_vim_plugins() {
         wait $!
 
         [ -f "$vimrc_path" ] && echo 'Installing VIM Plugins...' && vim +'PlugInstall --sync' +qa
-      # [ -f "$vimrc_path" ] && echo 'Updating VIM Plugins...' && vim +'PlugUpdate --sync' +qa
-      # [ -f "$vimrc_path" ] && echo 'Installing VIM Plugins...' && vim -es -u $VIMRC_PATH -i NONE -c "PlugInstall" -c "qa"
-      # [ -f "$vimrc_path" ] && echo 'Updating VIM Plugins...' && vim -es -u $VIMRC_PATH -i NONE -c "PlugUpdate" -c "qa"
       else
         echo "[ ERROR ] missing curl. Cant't install plug.vim"
       fi
     else
       echo Installing Vim Plugins...
-      # vim -es -u $VIMRC_PATH -i NONE -c "PlugInstall" -c "qa"
       vim +'PlugInstall --sync' +qa
       echo Updating VIM Plugins...
-      # vim -es -u $VIMRC_PATH -i NONE -c "PlugUpdate" -c "qa"
       vim +'PlugUpdate --sync' +qa
     fi
 
@@ -76,7 +71,6 @@ install_gitconfig() {
 install_bashrc() {
   echo "Configuring bashrc..."
   #Set the path of the bashrc in the ~/.bashrc if already not exists otherwise print the information
-  # if grep -q "[ -f $DOTS/.anchor ] && source $DOTS/.anchor" ~/.bashrc; then
   if grep -q "$ANCHOR_LINE" ~/.bashrc; then
     echo Path already set in $HOME/.bashrc
   else
@@ -89,9 +83,9 @@ install_bashrc() {
 mirror_dotfiles() {
   echo "Mirroring dotfiles..."
   # Create symlinks for dots
-  link "$DOTS/vim/.vimrc" "$VIMRC_PATH"
-  # link "$DOTS/system/.inputrc" "$INPUTRC_PATH" # All of the function of the inputrc is moved to bashi/.keybinding
-  link "$DOTS/tmux/.tmux.conf" "$TMUXCONF_PATH"
+  link "$CONFIG_PATH/vim/.vimrc" "$VIMRC_PATH"
+  # link "$CONFIG_PATH/system/.inputrc" "$INPUTRC_PATH" # All of the function of the inputrc is moved to bashi/.keybinding
+  link "$CONFIG_PATH/tmux/.tmux.conf" "$TMUXCONF_PATH"
   e_separator
 }
 
@@ -108,17 +102,17 @@ configure_nvim() {
     echo "Configuring nvim..."
     if [ "$nvconfig" == "LazyLite" ]; then
       mkdir -p $NVIMCONFIG_PATH
-      link "$DOTS/nvim/LazyLite" "$XDG_CONFIG_HOME/nvim"
+      link "$CONFIG_PATH/nvim/LazyLite" "$XDG_CONFIG_HOME/nvim"
     fi
 
     if [ "$nvconfig" == "KickStart" ]; then
       mkdir -p $NVIMCONFIG_PATH
-      link "$DOTS/nvim/KickStart" "$XDG_CONFIG_HOME/nvim"
+      link "$CONFIG_PATH/nvim/KickStart" "$XDG_CONFIG_HOME/nvim"
     fi
 
     if [ "$nvconfig" == "LazyVim" ]; then
       mkdir -p $NVIMCONFIG_PATH
-      link "$DOTS/nvim/LazyVim" "$XDG_CONFIG_HOME/nvim"
+      link "$CONFIG_PATH/nvim/LazyVim" "$XDG_CONFIG_HOME/nvim"
     fi
     e_separator
   fi
