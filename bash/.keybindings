@@ -11,12 +11,12 @@ edit-command() {
   rm "$tmpfile"
 }
 
-# Bind the function to a key sequence (e.g., Ctrl+x e)
+# Bind the function to a key sequence (e.g., Ctrl+x v)
 bind -x '"\C-x\C-v": edit-command'
 
-# bind '"\C-H":backward-kill-word' # It is such a common binding that almost every program supports it but the
+bind '"\C-H":backward-kill-word' # It is such a common binding that almost every program supports it but the
 # emulator has issues with this. This backspace a complete word with ctrl+backspace.
-bind '"\C-H":"\C-w"' # This is a better alternative to above binding. It deletes a complete word till space.
+# bind '"\C-H":"\C-w"' # This is a alternative to above binding. It deletes a complete word till space.
 
 # Use case-insensitive TAB autocompletion
 bind "set completion-ignore-case on"
@@ -24,11 +24,14 @@ bind "set completion-ignore-case on"
 # Auto list tab completions (use instead of TAB-cycling)
 bind "set show-all-if-ambiguous on"
 
-# # Make TAB cycle through possible completions
-bind '"\t": menu-complete'
+# Bind SHIFT-TAB key for match and TAB for suggestions
+bind '"\e[Z": menu-complete' # With SHIFT-TAB complete the next match
+
+# First Tab shows menu -- Create slowness on the first tab as it waits for the next tab if we do two tabs.
+# bind '"\t": menu-complete'
 
 # # Make SHIFT-TAB reverse cycle through possible completions
-bind '"\e[Z": "\e-1\C-i"'
+# bind '"\e[Z": menu-complete-backward'
 
 # Use the string that has already been typed as the prefix for searching
 # through commands (i.e. more intelligent Up/Down-arrow behavior)
@@ -40,4 +43,3 @@ bind '"\e[A": history-search-backward'
 # bind '"\eOD": backward-word'
 bind '"\e[1;5C": forward-word'
 bind '"\e[1;5D": backward-word'
-
