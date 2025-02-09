@@ -14,9 +14,9 @@ edit-command() {
 # Bind the function to a key sequence (e.g., Ctrl+x e)
 bind -x '"\C-x\C-v": edit-command'
 
-# bind '"\C-H":backward-kill-word' # It is such a common binding that almost every program supports it but the
+bind '"\C-H":backward-kill-word' # It is such a common binding that almost every program supports it but the
 # emulator has issues with this. This backspace a complete word with ctrl+backspace.
-bind '"\C-H":"\C-w"' # This is a better alternative to above binding. It deletes a complete word till space.
+# bind '"\C-H":"\C-w"' # This is a better alternative to above binding. It deletes a complete word till space.
 
 # Use case-insensitive TAB autocompletion
 bind "set completion-ignore-case on"
@@ -25,10 +25,11 @@ bind "set completion-ignore-case on"
 bind "set show-all-if-ambiguous on"
 
 # # Make TAB cycle through possible completions
-bind '"\t": menu-complete'
+# bind '"\t": menu-complete'
+bind '"\e[Z": menu-complete'
 
 # # Make SHIFT-TAB reverse cycle through possible completions
-bind '"\e[Z": "\e-1\C-i"'
+# bind '"\e[Z": "\e-1\C-i"'
 
 # Use the string that has already been typed as the prefix for searching
 # through commands (i.e. more intelligent Up/Down-arrow behavior)
@@ -40,4 +41,3 @@ bind '"\e[A": history-search-backward'
 # bind '"\eOD": backward-word'
 bind '"\e[1;5C": forward-word'
 bind '"\e[1;5D": backward-word'
-
