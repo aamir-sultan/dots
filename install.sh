@@ -31,9 +31,9 @@ install_vim_plugins() {
     mkdir -p "$VIM_AUTOLOAD_PATH"
   fi
 
-  echo "Installing Vim plugins..."
   # Add logic to install plugins from $VIM_DEP_FILE
-  if [ ! "$(which vim)" = "" ]; then
+  if command -v vim &>/dev/null; then
+  echo "Installing Vim plugins..."
     vimplug_path="$VIM_AUTOLOAD_PATH/plug.vim"
     url="https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim"
     vimrc_path="$VIMRC_PATH"
@@ -53,7 +53,7 @@ install_vim_plugins() {
         echo "[ ERROR ] missing curl. Cant't install plug.vim"
       fi
     else
-      echo Installing VIM Plugins...
+      echo Installing Vim Plugins...
       # vim -es -u $VIMRC_PATH -i NONE -c "PlugInstall" -c "qa"
       vim +'PlugInstall --sync' +qa
       echo Updating VIM Plugins...
