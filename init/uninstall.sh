@@ -72,16 +72,53 @@ uninstall_nvim_plugins() {
     rm -rf $XDG_CONFIG_HOME/nvim* # Dont enclose in "", will not work
 }
 
-# Install plugins
-uninstall_tmux_plugins
+help() {
+  cat <<EOF
+usage: $0 [OPTIONS]
+
+    --help               Show this message
+    --all                Uninstall everything
+    --tools              Uninstall tools 
+    --config             Uninstall config 
+EOF
+  exit 0
+}
+
+# Test for known flags
+for opt in $@; do
+  case $opt in
+  --help) help ;;
+  --all) all=true;;
+  --tools) tools=true;;
+  --config) config=true;;
+  -* | --*) 
+    e_warning "Warning: invalid option $opt"
+    help
+    exit 1
+    ;;
+  esac
+done
+
+# if [ -z "$1" ]; then
+#   e_warning "Warning: No argument passed"
+#   help
+#   exit 1
+# fi
+
+# Uninstall plugins
+if [ "$all" == "true" ] || [ "$config" == "true" ] || [ -z "$1" ]; then # Either all or config or when no argument is passed.
 uninstall_vim_plugins
-uninstall_nvim_plugins
-uninstall_gitconfig
-uninstall_fzf
-uninstall_tools
 # uninstall_inputrc
-uninstall_bashrc
+uninstall_gitconfig
+fi
+
+if [ "$all" == "true" ] || [ "$tools" == "true" ]; then
+  uninstall_tmux_plugins
+  uninstall_fzf
+  uninstall_nvim_plugins
+  uninstall_tools # Tools should be placed second last.
+  uninstall_bashrc
+fi
 
 unset DOTS
-
 e_banner "Dots uninstallation complete!"
