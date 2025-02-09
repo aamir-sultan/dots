@@ -1,6 +1,5 @@
 #!/bin/bash
 
-
 # Dotfiles root directory (automatically set if not provided)
 export DOTS="${DOTS:-$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)}"
 
@@ -9,54 +8,53 @@ source "$DOTS/init/dots.conf"
 
 # Function to install Tmux plugins
 install() {
-  echo $tools
-  if [ "$tools" == "true" ]; then
-    echo "Installing configs and tools..."
-    $INIT_PATH/install.sh --all
-  else
-    echo "Installing configs..."
-    $INIT_PATH/install.sh
-  fi
-  e_separator
+  echo "Installing..."
+  $INIT_PATH/install.sh $@
 }
 
 # Function to install Tmux plugins
 uninstall() {
-    $INIT_PATH/uninstall.sh
+  $INIT_PATH/uninstall.sh $@
 }
 
-
-help(){
-    echo "usage: $0 {install|uninstall} --{all}"
-    echo "  install:            install config files for configuring the computer."
-    echo "  uninstall:          uninstall all config along with tools"
-    echo "  install --all:      install config files along with the tools"
-    exit 1
+help() {
+  echo "usage: $0 {install|uninstall}"
+  echo "  install:            Install configs files for configuring the computer."
+  echo "  uninstall:          Uninstall all configs along with tools"
+  echo "  install --help:     Prints install related help and additional options."
+  echo "  uninstall --help:   Prints uninstall relate help and additional options"
+  echo "  help:               Prints this help message"
+  exit 0
 }
 
-# Second argument script logic
-case "$2" in
-  --all)
-    tools=true
-    ;;
-  --*)
-    help
-    ;;
-esac
+# # Second argument script logic
+# case "$2" in
+# --all)
+#   tools=true
+#   ;;
+# --*)
+#   help
+#   ;;
+# esac
 
 # Main script logic
 case "$1" in
-  install)
-    install
-    ;;
-  uninstall)
-    uninstall
-    ;;
-  update)
-    update # Note supported right now but coming soon
-    ;;
-  *)
-    help
-    ;;
+install)
+  shift 1
+  install $@
+  ;;
+uninstall)
+  shift 1
+  uninstall $@
+  ;;
+# update)
+#   update # Note supported right now but coming soon
+#   ;;
+help)
+  help
+  ;;
+*)
+  help
+  exit 1
+  ;;
 esac
-
