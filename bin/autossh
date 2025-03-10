@@ -1,0 +1,186 @@
+#!/bin/bash
+# ------------------------------------------------------------------------------
+# Author: Aamir Sultan
+# FILE: autossh
+# DESCRIPTION: SSH proxy with auto-reconnect on disconnect
+# FEATURES:
+#   - Auto-reconnect on disconnect
+#   - Custom SSH port support
+#   - Config file support (~/.autossh.conf)
+#   - Logging for connection attempts and failures
+#   - Log cleanup on script start
+#   - Passes arguments to `ssh` inside `auto_connect`
+#   - Interactive prompt for SSH switches
+#   - Detects deliberate disconnections (Ctrl+D or `exit`)
+# ------------------------------------------------------------------------------
+
+IFS=$'\n'
+ALIVE=0
+HISTFILE="$HOME/.autossh.history"
+CONFIG_FILE="$HOME/.autossh.conf"
+LOG_FILE="$HOME/.autossh.log"
+MAX_LOG_SIZE=1048576 # 1MB in bytes
+
+# Use colors, but only if connected to a terminal, and that terminal supports them.
+if which tput >/dev/null 2>&1; then
+  ncolors=$(tput colors)
+fi
+if [ -t 1 ] && [ -n "$ncolors" ] && [ "$ncolors" -ge 8 ]; then
+  RED="$(tput setaf 1)"
+  GREEN="$(tput setaf 2)"
+  YELLOW="$(tput setaf 3)"
+  BLUE="$(tput setaf 4)"
+  BOLD="$(tput bold)"
+  NORMAL="$(tput sgr0)"
+else
+  RED=""
+  GREEN=""
+  YELLOW=""
+  BLUE=""
+  BOLD=""
+  NORMAL=""
+fi
+
+# Clean up log file
+cleanup_log() {
+  if [ -f "$LOG_FILE" ]; then
+    # Option 1: Restart log file on each script call
+    >"$LOG_FILE" # Clear the log file
+    log "Log file cleaned up at script start."
+
+    # Option 2: Rotate log file if it exceeds MAX_LOG_SIZE
+    log_size=$(stat -c%s "$LOG_FILE")
+    if [ "$log_size" -gt "$MAX_LOG_SIZE" ]; then
+      mv "$LOG_FILE" "${LOG_FILE}.old"
+      log "Log file rotated due to size exceeding $MAX_LOG_SIZE bytes."
+    fi
+  else
+    touch "$LOG_FILE"
+    log "Created new log file."
+  fi
+}
+
+# Log messages to file
+log() {
+  echo "$(date '+%Y-%m-%d %H:%M:%S') - $1" >>"$LOG_FILE"
+}
+
+# Echo in bold
+echo_b() {
+  if [ "$1" = "-e" ]; then
+    echo -e "${BOLD}$2${NORMAL}"
+  else
+    echo "${BOLD}$1${NORMAL}"
+  fi
+}
+
+# Echo in colour
+echo_c() {
+  case "$1" in
+  red | r | -red | -r | --red | --r) echo "${RED}$2${NORMAL}" ;;
+  green | g | -green | -g | --green | --g) echo "${GREEN}$2${NORMAL}" ;;
+  blue | b | -blue | -b | --blue | --b) echo "${BLUE}$2${NORMAL}" ;;
+  yellow | y | -yellow | -y | --yellow | --y) echo "${YELLOW}$2${NORMAL}" ;;
+  *) echo "${BOLD}$2${NORMAL}" ;;
+  esac
+}
+
+# Load config file if it exists
+load_config() {
+  if [ -f "$CONFIG_FILE" ]; then
+    source "$CONFIG_FILE"
+    log "Loaded config from $CONFIG_FILE"
+  else
+    log "No config file found at $CONFIG_FILE"
+  fi
+}
+
+# Get input data and save to history
+save_input() {
+  if [[ -z "$remote_user" ]]; then
+    while read -e -p "${BLUE}SSH Username > ${NORMAL}" remote_user; do
+      if [ -n "$remote_user" ]; then
+        break
+      fi
+    done
+  fi
+  if [[ -z "$remote_ip" ]]; then
+    while read -e -p "${BLUE}SSH Alias/IP-address > ${NORMAL}" remote_ip; do
+      if [ -n "$remote_ip" ]; then
+        break
+      fi
+    done
+  fi
+  if [[ -z "$remote_port" ]]; then
+    read -e -p "${BLUE}SSH Port (default: 22) > ${NORMAL}" remote_port
+    remote_port=${remote_port:-22}
+  fi
+  if [[ -z "$ssh_switches" ]]; then
+    read -e -p "${BLUE}SSH Switches (e.g., -L, -R, -v) > ${NORMAL}" ssh_switches
+  fi
+}
+
+# Infinite loop to keep connecting
+auto_connect() {
+  while true; do
+    remote_ip="${remote_ip%%:*}" # Ensure no ":port"
+
+    if [ $# -gt 0 ]; then
+      ssh_args="$@"
+    else
+      ssh_args="-p $remote_port $ssh_switches $remote_user@$remote_ip"
+    fi
+
+    ssh_command="ssh $ssh_args"
+    echo_c yellow "SSH Command -> ${ssh_command}"
+    log "SSH Command -> ${ssh_command}"
+
+    if pgrep -f 'ssh .*"$ssh_args"' >/dev/null; then
+      if [ $ALIVE -eq 0 ]; then
+        echo_c green "Connected using: ${ssh_command}"
+        log "Connection established using: ${ssh_command}"
+        ALIVE=1
+      fi
+    else
+      if [ $ALIVE -eq 1 ]; then
+        echo_c red "Connection lost. Reconnecting..."
+        log "Connection lost. Reconnecting..."
+      fi
+      ALIVE=0
+      echo_c green "Connecting using: ${ssh_command}..."
+
+      # Execute SSH command and capture exit status
+      eval ${ssh_command}
+      ssh_exit_status=$?
+
+      if [ $ssh_exit_status -eq 0 ]; then
+        # SSH exited with status 0 (deliberate disconnection)
+        echo_c yellow "Deliberate disconnection detected. Exiting..."
+        log "Deliberate disconnection detected. Exiting..."
+        exit 0
+      else
+        # SSH exited with non-zero status (unexpected disconnection)
+        echo_c red "Failed to connect. Retrying in 2 seconds..."
+        log "Failed to connect using: ${ssh_command}"
+        sleep 2
+      fi
+    fi
+    sleep 1
+  done
+}
+
+# Main function
+main() {
+  cleanup_log
+  load_config
+
+  if [ $# -eq 0 ]; then
+    # Fall back to interactive/config mode if no arguments are passed
+    save_input
+  fi
+
+  auto_connect "$@"
+}
+
+# Start the script
+main "$@"
