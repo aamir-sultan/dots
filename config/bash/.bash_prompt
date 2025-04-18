@@ -140,7 +140,8 @@ symbolStyle=$defaultSymbolStyle
 # Prompt Symbol
 # ❯, >, , », ⨔, ⌇, 󰘧, λ, λ:, ⁂, ➲, \$, \>
 # promptSymbol=":>"
-promptSymbol="~>"
+promptSymbol=">"
+# promptSymbol="~>"
 # promptSymbol="]>"
 
 prompt_git() {
