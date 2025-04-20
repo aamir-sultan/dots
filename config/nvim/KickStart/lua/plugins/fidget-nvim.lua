@@ -85,8 +85,8 @@ local options = {
 return {
   "j-hui/fidget.nvim",
 
---   lazy = true,
   -- event = "VimEnter",
---  event = "LazyFile",
+  -- event = "LazyFile",
+  -- event = "VeryLazy",
   opts = options,
 }
