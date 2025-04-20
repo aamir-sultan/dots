@@ -9,9 +9,6 @@
 	//----------------------------------------------------//
 	// Editor settings like fonts and rulers.
 	//----------------------------------------------------//
-
-
-
 	// Tab space for different languages
 	"[python]": {
 		"editor.tabSize": 2
@@ -32,53 +29,43 @@
 	"[rust]": {
 		"editor.tabSize": 2
 	},
-
-
-
 	// Default tabsize
 	"editor.tabSize": 2,
-
-
-  
-	// Insert spaces when pressing Tab
+	// insert spaces when pressing Tab
 	"editor.insertSpaces": true,
-
-
-  
 	"editor.largeFileOptimizations": false,
-
-
 	// By default the starting font will be set or also try wrapping them in single qoutes to set
 	// "editor.fontFamily": "'UbuntuSansMono NF', 'DM Mono', JuliaMono, 'JetBrainsMono Nerd Font', monospace",
-	"editor.fontFamily": "'JetBrainsMono Nerd Font', 'MonoLisa Regular', monospace",
-
-
+	// "editor.fontFamily": "'JetBrainsMono Nerd Font', monospace",
+	// "editor.fontFamily": "'Share Tech Mono', 'md io', 'JetBrainsMono Nerd Font', monospace",
+	// "editor.fontFamily": "'md io', 'JetBrainsMono Nerd Font', monospace",
+	// T
+	// "editor.fontFamily": "'Courier Prime', 'JetBrainsMono Nerd Font', monospace",
+	"editor.fontFamily": "'Rec Mono Duotone', 'JetBrainsMono Nerd Font', monospace",
+	// "editor.fontFamily": "'Rec Mono Casual', 'JetBrainsMono Nerd Font', monospace",
+	// "editor.fontFamily": "'Rec Mono Semicasual', 'JetBrainsMono Nerd Font', monospace",
+	// "editor.fontFamily": "'Rec Mono Linear', 'JetBrainsMono Nerd Font', monospace",
+	// "editor.fontFamily": "'MonoLisa Regular', monospace",
 	// Set font size
 	"editor.fontSize": 10, // Font Size
-
-
 	// Set font boldness with normal or bold or some number
 	// "editor.fontWeight": "bold", // Font Weight
 	// "editor.fontWeight": "400", // Font Weight -- Can use other numbers from 200 to 800
-
-
+	// "editor.fontWeight": "500", // Font Weight -- Can use other numbers from 200 to 800
+	// "editor.fontWeight": "550", // Font Weight -- Can use other numbers from 200 to 800
+	// "editor.fontWeight": "100", // Font Weight -- Can use other numbers from 200 to 800
 	// Set letter spacing
+	// "editor.letterSpacing": 1.3,
 	"editor.letterSpacing": 1.2,
-
-
-  // Line height for the editor Characters.
-	"editor.lineHeight": 1.7, 
-
+	// "editor.letterSpacing": 1,
+	// "editor.lineHeight": 1.5, // Line height for the editor Characters.
+	"editor.lineHeight": 1.7, // Line height for the editor Characters.
 	// Enable/Disable ligatures -- https://github.com/githubnext/monaspace#coding-ligatures
 	// "editor.fontLigatures": true, // Font ligatures
 	// "editor.fontLigatures": "'calt', 'liga', 'dlig', 'ss01', 'ss02', 'ss03', 'ss04', 'ss05', 'ss06', 'ss07', 'ss08'",
-
-
 	// Enable smooth scrolling in the editor
 	"editor.smoothScrolling": true,
 	"editor.foldingMaximumRegions": 65000,
-
-
 	// Add vertical rulers to the texteditor window with colors
 	// "editor.rulers": [
 	// 	{
@@ -90,9 +77,6 @@
 	// 		"color": "#ff4081"
 	// 	} // extra right rule
 	// ],
-
-
-
 	// Customization for Kewords, comments itallic style. VScode do not support automatic itallic.
 	// Further information can be found at below link.
 	// https://thomasventurini.com/articles/setup-firacodeiscript-for-italic-fonts-in-vscode/
@@ -142,44 +126,26 @@
 			}
 		]
 	},
-
-
-
-
 	//----------------------------------------------------//
 	// VSCode Terminal Settings like fonts and themes.
 	//----------------------------------------------------//
-
 	// Scrollback history of terminal.
 	"terminal.integrated.scrollback": 100000,
-
-
 	// By default the starting font will be set or also try wrapping them in single qoutes to set
-	"terminal.integrated.fontFamily": "JetBrainsMono Nerd Font, OverpassMono Nerd Font",
-
-
+	// "terminal.integrated.fontFamily": "'md io', JetBrainsMono Nerd Font, OverpassMono Nerd Font, JetBrainsMono Nerd Font Mono",
+	"terminal.integrated.fontFamily": "'Rec Mono Duatone', JetBrainsMono Nerd Font, OverpassMono Nerd Font, JetBrainsMono Nerd Font Mono",
+	// "terminal.integrated.fontFamily": "'UbuntuSansMono NF', 'DM Mono', JuliaMono, JetBrainsMono Nerd Font Mono",
 	"terminal.integrated.letterSpacing": 2, // Number of pixels to be added between charachters.
-
-
 	"terminal.integrated.lineHeight": 1.2, // Line height for the terminal charachters.
-
-
 	"terminal.integrated.fontSize": 10, // Fonts size of terminal charachters.
-
-
+	// "terminal.integrated.fontWeight": "700", // Weight of terminals characters -- bold, normal, or number between 200 to 800.
 	"terminal.integrated.fontWeight": "100", // Weight of terminals characters -- bold, normal, or number between 200 to 800.
-
-
 	// Terminal Cursor Settings
 	"terminal.integrated.cursorStyle": "block", // Can be block, line, underline
 	"terminal.integrated.cursorWidth": 2, // Width in pixels when the cursor style is set to line
 	"terminal.integrated.cursorStyleInactive": "none", // Can be outline, block, line, underline, none
 	// "terminal.integrated.cursorBlinking": "True",    // Cursor should blink when the terminal is focused
-
-  
 	// Terminal Colors
-
-
 	// "workbench.colorCustomizations": {
 	// "terminal.background": "#28211C",
 	// "terminal.foreground": "#8A8986",
@@ -202,8 +168,6 @@
 	// "terminal.ansiWhite": "#8A8986",
 	// "terminal.ansiYellow": "#F9EE98"
 	// },
-
-
 	// "workbench.colorCustomizations": {
 	// "terminal.background": "#1E1423",
 	// "terminal.foreground": "#737DA0",
@@ -226,8 +190,6 @@
 	// "terminal.ansiWhite": "#8A8986",
 	// "terminal.ansiYellow": "#F9EE98"
 	// },
-
-
 	// "workbench.colorCustomizations": {
 	// "terminal.background":"#1D2021",
 	// "terminal.foreground":"#A89984",
@@ -250,8 +212,6 @@
 	// "terminal.ansiWhite":"#A89984",
 	// "terminal.ansiYellow":"#FAC03B"
 	// },
-
-
 	// "workbench.colorCustomizations": {
 	// "terminal.background":"#090300",
 	// "terminal.foreground":"#A5A2A2",
@@ -274,8 +234,6 @@
 	// "terminal.ansiWhite":"#A5A2A2",
 	// "terminal.ansiYellow":"#FDED02"
 	// },
-
-
 	// "workbench.colorCustomizations": {
 	// "terminal.background":"#F7F3F7",
 	// "terminal.foreground":"#695D69",
@@ -298,8 +256,6 @@
 	// "terminal.ansiWhite":"#695D69",
 	// "terminal.ansiYellow":"#BB8A35"
 	// },
-
-
 	// "workbench.colorCustomizations": {
 	// "terminal.background":"#282936",
 	// "terminal.foreground":"#E9E9F4",
@@ -322,8 +278,6 @@
 	// "terminal.ansiWhite":"#E9E9F4",
 	// "terminal.ansiYellow":"#00F769"
 	// },
-
-
 	// "workbench.colorCustomizations": {
 	// "terminal.background":"#161B1D",
 	// "terminal.foreground":"#7EA2B4",
@@ -346,8 +300,6 @@
 	// "terminal.ansiWhite":"#7EA2B4",
 	// "terminal.ansiYellow":"#8A8A0F"
 	// },
-
-
 	// "workbench.colorCustomizations": {
 	// "terminal.background":"#FBF1C7",
 	// "terminal.foreground":"#504945",
@@ -370,8 +322,6 @@
 	// "terminal.ansiWhite":"#504945",
 	// "terminal.ansiYellow":"#B57614"
 	// },
-
-
 	// "workbench.colorCustomizations": {
 	// "terminal.background": "#282828",
 	// "terminal.foreground": "#D5C4A1",
@@ -394,8 +344,6 @@
 	// "terminal.ansiWhite": "#D5C4A1",
 	// "terminal.ansiYellow": "#FABD2F"
 	// },
-
-
 	// Liked
 	// "workbench.colorCustomizations": {
 	// "terminal.background": "#2E3435",
@@ -419,29 +367,127 @@
 	// "terminal.ansiWhite": "#D5C4A1",
 	// "terminal.ansiYellow": "#FABD2F"
 	// },
-
-  
 	//----------------------------------------------------//
 	// Misc settings for other extensions.
 	//----------------------------------------------------//
 	"security.workspace.trust.untrustedFiles": "open",
-
-
-
-
-
-
 	//----------------------------------------------------//
 	// Other settings for other extensions.
 	//----------------------------------------------------//
+	//----------------------------------------------------//
+	// Vim Emulation setting if used -- Install bookmark extension 
+	//----------------------------------------------------//
+	"vim.enableNeovim": true,
+	"vim.neovimUseConfigFile": true,
+	"vim.easymotion": true,
+	"vim.incsearch": true,
+	"vim.useSystemClipboard": true,
+	"vim.useCtrlKeys": true,
+	"vim.hlsearch": true,
+	"vim.insertModeKeyBindings": [
+		{
+			"before": [
+				"i",
+				"i"
+			],
+			"after": [
+				"<Esc>"
+			]
+		},
+	],
+	"vim.normalModeKeyBindings": [
+		{
+			"before": [
+				":"
+			],
+			"commands": [
+				"vim.showQuickpickCmdLine",
+			],
+			"silent": true
+		},
+	],
 	
-
-
-
+	"vim.operatorPendingModeKeyBindings": [
+		// {
+		// 	"before": [
+		// 		":"
+		// 	],
+		// 	"commands": [
+		//     "vim.showQuickpickCmdLine",
+		// 	],
+		// 	"silent": true
+		// },
+	],
+	"vim.normalModeKeyBindingsNonRecursive": [
+		{
+			"before": [
+				"leader",
+				"w"
+			],
+			"commands": [
+				"workbench.action.files.save",
+			]
+		},
+		{
+			"before": [
+				"<leader>",
+				"d"
+			],
+			"after": [
+				"d",
+				"d"
+			]
+		},
+		{
+			"before": [
+				"<C-n>"
+			],
+			"commands": [
+				":nohl"
+			]
+		},
+		{
+			"before": [
+				"K"
+			],
+			"commands": [
+				"lineBreakInsert"
+			],
+			"silent": true
+		},
+		{
+			"before": [
+				"<leader>",
+				"m"
+			],
+			"commands": [
+				"bookmarks.toggle"
+			]
+		},
+		{
+			"before": [
+				"<leader>",
+				"b"
+			],
+			"commands": [
+				"bookmarks.list"
+			]
+		}
+	],
+	"vim.leader": "<space>",
+	"vim.handleKeys": {
+		"<C-a>": false,
+		"<C-f>": false
+	},
+	// To improve performance
+	"extensions.experimental.affinity": {
+		"vscodevim.vim": 1,
+		"asvetliakov.vscode-neovim": 1
+	},
+	"workbench.activityBar.location": "top",
 	"workbench.editorAssociations": {
 		"*.gz": "zipViewer.GZipEdit"
 	},
-  
 	"window.titleBarStyle": "custom",
 	"workbench.editor.wrapTabs": true,
 	"workbench.colorTheme": "Solarized Osaka",
@@ -468,4 +514,12 @@
 		"--struct_union_members_alignment=align",
 		"--try_wrap_long_lines=true"
 	],
+	"verible-formatter.flagFile": "/proj/fe/work/asultan/verible-v0.0-3869-gb0aaf2c0/bin/.verilog_format",
+	"verible-formatter.path": "/proj/fe/work/asultan/verible-v0.0-3869-gb0aaf2c0/bin/verible-verilog-format",
+	"verible.path": "/proj/fe/work/asultan/verible-v0.0-3869-gb0aaf2c0/bin/verible-verilog-ls",
+	"files.associations": {
+		"*.toml": "json"
+	},
+	"update.mode": "manual",
+	"git.autofetch": true,
 }
