@@ -202,7 +202,7 @@ end
 -- config.color_scheme = "Solarized"
 
 -- Charachter Settings
-config.cell_width = 1.1 -- Set this to increase the charachter spacing in the terminal.
+config.cell_width = 1.1  -- Set this to increase the charachter spacing in the terminal.
 config.line_height = 1.2 -- Set this to in/decrease the charachter height in the terminal.
 
 -- Font Settings
@@ -219,7 +219,11 @@ local fontWeight = "Regular"
 -- local font_family_name = "UbuntuSansMono NF"
 -- local font_family_name = "Fantasque Sans Mono"
 -- local font_family_name = "Fira Code"
-local font_family_name = "JetBrains Mono"
+-- local font_family_name = "JetBrains Mono"
+local font_family_name = "Rec Mono Duotone"
+-- local font_family_name = "Rec Mono Linear"
+-- local font_family_name = "Rec Mono Casual"
+-- local font_family_name = "Rec Mono Semicasual"
 -- local font_family_name = "JuliaMono"
 -- local font_family_name = "Maple Mono"
 -- local font_family_name = "MartianMono NFM"
@@ -539,9 +543,28 @@ end
 ---------------------------------------------------------------
 --- keybinds
 ---------------------------------------------------------------
+local last_action = nil
+local last_key = nil
+
+-- Function to handle key bindings
+local function handle_key_binding(action, key)
+  return function(window, pane)
+    if last_action and key == last_action.key then
+      -- Simulate the leader key press for repeatable actions
+      window:perform_action(wezterm.action { SendKey = { key = leader.key, mods = leader.mods } }, pane)
+      window:perform_action(action, pane)
+    else
+      -- Perform the new action and update the last action
+      last_action = { action = action, key = key }
+      window:perform_action(action, pane)
+    end
+  end
+end
+
 config.leader = { -- leader key is a a modal modifier key. Just like vi/Vim/Nvim.
   key = "a",
   mods = "ALT",
+  -- timeout_milliseconds = 1000
 }
 
 local tmux_keybinds = {
@@ -615,7 +638,9 @@ local tmux_keybinds = {
 
 local other_keybinds = {
   { key = "q", mods = "LEADER", action = act({ CloseCurrentTab = { confirm = false } }) }, -- k for kill
+  -- Enter "leader mode" when pressing Ctrl+Space
 }
+
 
 local default_keybinds = {
   { key = "j",        mods = "LEADER",       action = wezterm.action.ShowLauncher },
@@ -658,6 +683,17 @@ local default_keybinds = {
   { key = "p", mods = "LEADER",       action = act.PaneSelect({ alphabet = "1234567890" }) },
   { key = "`", mods = "LEADER",       action = act.RotatePanes("Clockwise") },
   { key = "`", mods = "LEADER|SHIFT", action = act.RotatePanes("CounterClockwise") },
+  -- Enter leader mode by pressing ALT + a
+  -- {
+  --   key = 'a',
+  --   mods = 'LEADER',
+  --   action = wezterm.action.ActivateKeyTable {
+  --     name = 'leader',
+  --     one_shot = false, -- Keeps the mode active for multiple presses
+  --     timeout_milliseconds = 3000,
+  --     replace_current = false,
+  --   },
+  -- },
   {
     key = "E",
     mods = "LEADER",
@@ -692,7 +728,20 @@ local function create_keybinds()
   return merged_table
 end
 
+local function test()
+  wezterm.log_info("Handling key: ")
+end
+
 local key_tables = {
+  -- This is the "leader mode" where the user can press additional keys
+  leader = {
+    -- Move left (previous tab)
+    { key = 'h',      action = wezterm.action.ActivateTabRelative(-1) },
+
+    -- Move right (next tab)
+    { key = 'l',      action = wezterm.action.ActivateTabRelative(1) },
+    { key = "Escape", action = "PopKeyTable" },
+  },
   resize_pane = {
     { key = "LeftArrow",  action = act({ AdjustPaneSize = { "Left", 1 } }) },
     { key = "h",          action = act({ AdjustPaneSize = { "Left", 1 } }) },
@@ -843,8 +892,8 @@ local key_tables = {
     },
   },
   search_mode = {
-    { key = "Escape", mods = "NONE", action = act.CopyMode("Close") },
-    { key = "a", mods = "ALT|LEADER", action = act.CopyMode("Close") },
+    { key = "Escape", mods = "NONE",       action = act.CopyMode("Close") },
+    { key = "a",      mods = "ALT|LEADER", action = act.CopyMode("Close") },
     {
       key = "Enter",
       mods = "NONE",
@@ -853,11 +902,11 @@ local key_tables = {
         act.ActivateCopyMode,
       }),
     },
-    { key = "p",      mods = "CTRL", action = act.CopyMode("PriorMatch") },
-    { key = "n",      mods = "CTRL", action = act.CopyMode("NextMatch") },
-    { key = "r",      mods = "CTRL", action = act.CopyMode("CycleMatchType") },
-    { key = "/",      mods = "NONE", action = act.CopyMode("ClearPattern") },
-    { key = "u",      mods = "CTRL", action = act.CopyMode("ClearPattern") },
+    { key = "p", mods = "CTRL", action = act.CopyMode("PriorMatch") },
+    { key = "n", mods = "CTRL", action = act.CopyMode("NextMatch") },
+    { key = "r", mods = "CTRL", action = act.CopyMode("CycleMatchType") },
+    { key = "/", mods = "NONE", action = act.CopyMode("ClearPattern") },
+    { key = "u", mods = "CTRL", action = act.CopyMode("ClearPattern") },
   },
 }
 
