@@ -15,8 +15,10 @@ local opts = -- Keep the outer brackets of options otherwise won't work
 
 return {
    'nvim-lualine/lualine.nvim',
---   lazy = true,
+    dependencies = { 'nvim-tree/nvim-web-devicons' },
+   -- lazy = true,
    -- event = 'VimEnter',
---   event = 'LazyFile',
-   opts = opts
+   -- event = 'VeryLazy',
+   ft = "*",
+    opts = opts
 }

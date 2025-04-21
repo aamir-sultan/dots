@@ -1,7 +1,8 @@
 return {
   "sphamba/smear-cursor.nvim",
---   lazy = true,
- -- event = "VeryLazy",
+  -- lazy = true,
+  -- event = "VeryLazy",
+  ft = "*",
   -- cond = vim.g.neovide == nil,
   -- opts = {
   --   hide_target_hack = true,

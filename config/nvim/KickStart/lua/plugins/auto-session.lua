@@ -1,4 +1,4 @@
-local options = {
+    local options = {
 
   suppressed_dirs = { '~/', '~/Projects', '~/Downloads', '/' },
   log_level = 'debug',
@@ -47,11 +47,12 @@ local options = {
 }
 
 return {
-  -- 'rmagatti/auto-session',
-  -- lazy = false,
+  --  'rmagatti/auto-session',
+  --  lazy = true,
   --
-  -- ---enables autocomplete for opts
-  -- ---@module "auto-session"
-  -- ---@type AutoSession.Config
-  -- opts = options
+  -- 
+  --  ---enables autocomplete for opts
+  --  ---@module "auto-session"
+  --  ---@type AutoSession.Config
+  --  opts = options
 }

@@ -88,5 +88,6 @@ return {
   -- event = "VimEnter",
   -- event = "LazyFile",
   -- event = "VeryLazy",
+  ft = "*",
   opts = options,
 }

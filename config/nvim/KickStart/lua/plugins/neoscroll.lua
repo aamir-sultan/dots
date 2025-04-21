@@ -24,6 +24,6 @@ return {
   "karb94/neoscroll.nvim",
   version = "*",
   lazy = true,
- -- event = "VeryLazy",
+  -- event = "VeryLazy",
   opts = neoscroll_opts,
 }
