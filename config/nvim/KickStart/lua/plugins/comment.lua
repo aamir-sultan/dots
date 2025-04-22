@@ -44,48 +44,48 @@ Comment_options = {
 
 return {
   -- add this to your lua/plugins.lua, lua/plugins/init.lua,  or the file you keep your other plugins:
-  --    {
-  --      "echasnovski/mini.comment",
-  --      lazy = true,
-  --      -- event = { "LazyFile" },
-  --      event = { "VeryLazy" },
-  --      opts = {
-  --        options = {
-  --          -- custom_commentstring = function()
-  --          --   return require("ts_context_commentstring.internal").calculate_commentstring() or vim.bo.commentstring
-  --          -- end,
-  --          custom_commentstring = function()
-  --            local ext = vim.fn.expand('%:e') -- Get the file extension
+  -- {
+  --   'echasnovski/mini.comment',
+  --   lazy = true,
+  --   -- event = { "LazyFile" },
+  --   event = { 'VeryLazy' },
+  --   opts = {
+  --     options = {
+  --       -- custom_commentstring = function()
+  --       --   return require("ts_context_commentstring.internal").calculate_commentstring() or vim.bo.commentstring
+  --       -- end,
+  --       custom_commentstring = function()
+  --         local ext = vim.fn.expand '%:e' -- Get the file extension
   --
-  --            -- Define custom comment strings for specific file types
-  --            local commentstrings = {
-  --              -- lua = "-- %s",        -- Lua comment string
-  --              -- py = "# %s",          -- Python comment string
-  --              -- js = "// %s",         -- JavaScript comment string
-  --              -- html = "<!-- %s -->", -- HTML comment string
-  --              v = "// %s",
-  --              vh = "// %s",
-  --              sv = "// %s",
-  --              svh = "// %s",
-  --              -- Add more custom comment strings as needed
-  --            }
+  --         -- Define custom comment strings for specific file types
+  --         local commentstrings = {
+  --           -- lua = "-- %s",        -- Lua comment string
+  --           -- py = "# %s",          -- Python comment string
+  --           -- js = "// %s",         -- JavaScript comment string
+  --           -- html = "<!-- %s -->", -- HTML comment string
+  --           v = '// %s',
+  --           vh = '// %s',
+  --           sv = '// %s',
+  --           svh = '// %s',
+  --           -- Add more custom comment strings as needed
+  --         }
   --
-  --            -- Return the custom comment string based on the file extension
-  --            local commentstring = commentstrings[ext]
-  --            if commentstring then
-  --              return commentstring
-  --            else
-  --              -- Fallback to treesitter or default commentstring
-  --              return require("ts_context_commentstring.internal").calculate_commentstring() or vim.bo.commentstring
-  --            end
-  --          end,
-  --        },
-  --      },
-  --    },
+  --         -- Return the custom comment string based on the file extension
+  --         local commentstring = commentstrings[ext]
+  --         if commentstring then
+  --           return commentstring
+  --         else
+  --           -- Fallback to treesitter or default commentstring
+  --           return require('ts_context_commentstring.internal').calculate_commentstring() or vim.bo.commentstring
+  --         end
+  --       end,
+  --     },
+  --   },
+  -- },
   {
     'numToStr/Comment.nvim',
     lazy = true,
-    event = { 'VeryLazy' },
+    event = { 'BufReadPost' },
     -- ft = '*',
     keys = { 'gcc', 'gbc' },
     -- init = function()

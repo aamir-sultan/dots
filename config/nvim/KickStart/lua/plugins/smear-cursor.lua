@@ -1,8 +1,9 @@
 return {
-  "sphamba/smear-cursor.nvim",
+  'sphamba/smear-cursor.nvim',
   -- lazy = true,
   -- event = "VeryLazy",
-  ft = "*",
+  event = 'BufEnter',
+  -- ft = "*",
   -- cond = vim.g.neovide == nil,
   -- opts = {
   --   hide_target_hack = true,
@@ -19,6 +20,6 @@ return {
   --   },
   -- },
   opts = {
-    -- cursor_color = "none"
+    cursor_color = '#D66924',
   },
 }
