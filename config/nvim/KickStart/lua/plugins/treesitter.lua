@@ -38,7 +38,7 @@ return {
 				"toml",
 				"todotxt",
 				"ssh_config",
-				"verilog",
+				-- "verilog", -- Get hanged on the start for loading the tree-sitter. The treesitter file is 29 mb by itself.
 				-- "systemverilog",
 				"vim",
 				"xml",
@@ -58,8 +58,8 @@ return {
 			-- 		filetype = "systemverilog", -- Associate with the systemverilog filetype
 			-- 	},
 			-- },
-			auto_install = true,
-			sync_install = true,
+			-- auto_install = true,
+			-- sync_install = true,
 		})
 	end,
 }

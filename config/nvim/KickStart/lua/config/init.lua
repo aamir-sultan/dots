@@ -1,3 +1,124 @@
 require("config.keymaps")
 require("config.options")
 require("config.autocmds")
+
+-- lua/my_replace_plugin/init.lua
+
+-- local M = {} -- Module table
+--
+-- -- Flag to indicate if InsertLeave should trigger the jump to the next match
+-- local should_inject_next = false
+--
+-- -- Define an augroup for our autocommands
+-- local auto_move_to_next_augroup = vim.api.nvim_create_augroup("auto_move_to_next_lua", { clear = true })
+--
+-- --- Handles the InsertLeave event to jump to the next match.
+-- local function handle_insert_leave()
+-- 	if should_inject_next then
+-- 		-- Simulate pressing 'n' (next search match) in normal mode
+-- 		vim.api.nvim_feedkeys("n", "n", true)
+-- 		-- Set the '.' command to repeat the replace_occurrence_and_next action
+-- 		vim.fn["repeat#set"]("<Plug>ReplaceOccurencesLua")
+-- 	end
+-- 	-- Reset the flag after processing (or if it was set but no jump happened)
+-- 	should_inject_next = false
+-- end
+--
+-- -- Create the InsertLeave autocommand
+-- vim.api.nvim_create_autocmd("InsertLeave", {
+-- 	group = auto_move_to_next_augroup,
+-- 	callback = handle_insert_leave,
+-- 	pattern = "*", -- Apply to all buffers
+-- })
+--
+-- --- Function executed by the repeatable action ('.') to replace the current occurrence.
+-- -- Assumes the cursor is currently on a highlighted match when called.
+-- local function replace_occurrence_and_next()
+-- 	-- In the original script, this function had complex logic to check
+-- 	-- if the cursor was *exactly* on an occurrence using ygn and marks.
+-- 	-- For the standard interactive replace workflow (using '.' after cgn),
+-- 	-- the cursor *should* be on the match that the autocommand jumped you to.
+-- 	-- So, we simplify: just perform cgn on the current position.
+-- 	-- The InsertLeave autocommand will handle moving to the *next* match
+-- 	-- and setting up the repeat for the *subsequent* match when you exit insert mode.
+--
+-- 	vim.cmd("normal! cgn") -- Change the current match and enter insert mode
+--
+-- 	-- We do NOT call feedkeys('n') or repeat#set() here directly.
+-- 	-- The 'n' jump and repeat#set are handled by the InsertLeave autocommand
+-- 	-- (via handle_insert_leave) *after* the user finishes editing and exits insert mode.
+-- end
+--
+-- -- Expose the function so it can be called by the plug mapping
+-- M.replace_occurrence_and_next = replace_occurrence_and_next
+--
+-- -- Create the internal <Plug> mapping in normal mode
+-- vim.api.nvim_set_keymap(
+-- 	"n",
+-- 	"<Plug>ReplaceOccurencesLua",
+-- 	':lua require("my_replace_plugin").replace_occurrence_and_next()<CR>',
+-- 	{
+-- 		silent = true, -- Don't show the command on the command line
+-- 		noremap = true, -- Prevent further remapping
+-- 	}
+-- )
+--
+-- -- Normal mode mapping for <Leader>r
+-- vim.api.nvim_set_keymap("n", "<Leader>r", "", {
+-- 	silent = true,
+-- 	noremap = true,
+-- 	callback = function()
+-- 		local word = vim.fn.expand("<cword>")
+-- 		-- Escape special characters for the search pattern
+-- 		local escaped_word = vim.fn.escape(word, "/\\.*$^~[]")
+-- 		-- Set the search register (@/) to the whole word under the cursor, case-sensitive
+-- 		vim.fn.setreg("/", "\\C\\<" .. escaped_word .. "\\>")
+-- 		vim.opt.hlsearch = true -- Turn on search highlighting
+--
+-- 		should_inject_next = true -- Set the flag to trigger jump on InsertLeave
+--
+-- 		-- Execute 'cgn': select the next match (which is the word under the cursor)
+-- 		-- and enter insert mode to change it.
+-- 		vim.cmd("normal! cgn")
+-- 		-- The InsertLeave autocommand will take over after the user finishes editing.
+-- 	end,
+-- })
+--
+-- -- Visual mode mapping for <Leader>r
+-- vim.api.nvim_set_keymap("v", "<Leader>r", "", {
+-- 	silent = true,
+-- 	noremap = true,
+-- 	callback = function()
+-- 		-- Save and restore the default register content
+-- 		local old_reg = vim.fn.getreg('"')
+-- 		local old_regtype = vim.fn.getregtype('"')
+--
+-- 		vim.cmd("gvy") -- Yank the visual selection into the default register
+-- 		local search_pattern = vim.fn.getreg('"')
+--
+-- 		-- Escape special characters for the search pattern
+-- 		local escaped_pattern = vim.fn.escape(search_pattern, "/\\.*$^~[]")
+-- 		-- Replace sequences of whitespace with a pattern matching any whitespace sequence
+-- 		local final_pattern = vim.fn.substitute(escaped_pattern, "\\_s\\+", "\\_s\\+", "g")
+--
+-- 		-- Set the search register (@/) to the visually selected text pattern
+-- 		vim.fn.setreg("/", final_pattern)
+-- 		vim.opt.hlsearch = true -- Turn on search highlighting
+--
+-- 		should_inject_next = true -- Set the flag
+--
+-- 		-- Restore the default register to its state before the yank
+-- 		vim.fn.setreg('"', old_reg, old_regtype)
+--
+-- 		-- Execute 'cgn': select the next match (which should be the visual selection itself
+-- 		-- if it's the first match) and enter insert mode to change it.
+-- 		-- Note: The original vmap had gV before setreg and cgn. gV re-selects the area.
+-- 		-- cgn operates on the *next* match *after* the cursor. If the cursor is at the
+-- 		-- start of the visual selection, cgn will act on that selection.
+-- 		-- The simpler approach is to just perform cgn after setting the search pattern.
+-- 		vim.cmd("normal! cgn")
+-- 		-- The InsertLeave autocommand will take over after the user finishes editing.
+-- 	end,
+-- })
+--
+-- return M -- Return the module table

@@ -46,7 +46,15 @@ vim.api.nvim_create_autocmd({ "BufReadPost" }, {
 -- 	group = autocmd_group,
 -- })
 
--- local filetype = vim.api.nvim_buf_get_option(buf, "filetype")
+-- " I can't remember a time when I didn't want to save a file after tabbing away from my editor (especially with version control and Vim's persistent undo):
+vim.api.nvim_create_autocmd({ "FocusLost" }, {
+	desc = "Save on focus lost aka autosave",
+	callback = function()
+		vim.cmd(":wa")
+	end,
+	group = autocmd_group,
+})
+
 -- Highlight when yanking (copying) text
 --  Try it with `yap` in normal mode
 --  See `:help vim.highlight.on_yank()`

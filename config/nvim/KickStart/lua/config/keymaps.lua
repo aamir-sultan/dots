@@ -26,5 +26,93 @@ map("n", "<C-l>", "<C-w><C-l>", { desc = "Move focus to the right window" })
 map("n", "<C-j>", "<C-w><C-j>", { desc = "Move focus to the lower window" })
 map("n", "<C-k>", "<C-w><C-k>", { desc = "Move focus to the upper window" })
 
+-- Exits to normal mode from visual
+map("v", "ii", "<C-c>", { desc = "Exits to normal mode from visual" })
+-- vim.keymap.set("v", "ii", "<C-c>")
+-- Fix * (Keep the cursor position, don't move to next match)
+map("n", "*", "*N", { desc = "Create new line below this line" })
+
+-- leader-o/O inserts blank line below/above
+map("n", "<leader>o", "o<ESC>", { desc = "Create new line below this line" })
+map("n", "<leader>O", "O<ESC>", { desc = "Create new line below this line" })
+
+-- Mimic shell movements
+map("i", "<C-E>", "<C-o>$", { desc = "Jump to line End -- Mimic shell movement" })
+map("i", "<C-A>", "<C-o>^", { desc = "Jump to line Start -- Mimic shell movement" })
+
+-- Shortcut to yank register
+map({ "n", "x" }, "<leader>p", '"0p', { desc = "Paste from yank register" })
+
+-- Keymaps for better default experience
+map({ "n", "v" }, "<Space>", "<Nop>", { silent = true })
+
 -- Replace Ctrl-C with Esc. Although its almost the same but not always.
-map({ "i", "v", "x" }, "<C-c>", "<Esc>", { desc = "Replacement for Esc" })
+map({ "n", "v", "i", "x" }, "<C-c>", "<Esc>", { desc = "Replacement for Esc" })
+
+-- *************************************************-
+-- Default Disables
+-- *************************************************-
+-- Disabled keys -- Ctrl + hjkl are disabled for config instead the following will be used.
+-- Move to window using the <ctrl> hjkl keys
+-- map("n", "<C-h>", ":<C-U>TmuxNavigateLeft<cr>", { desc = "Go to left window either tmux or nvim" })
+-- map("n", "<C-j>", ":<C-U>TmuxNavigateDown<cr>", { desc = "Go to lower window either tmux or nvim" })
+-- map("n", "<C-k>", ":<C-U>TmuxNavigateUp<cr>", { desc = "Go to upper window either tmux or nvim" })
+-- map("n", "<C-l>", ":<C-U>TmuxNavigateRight<cr>", { desc = "Go to right window either tmux or nvim" })
+--
+
+map("n", "<leader>ww", "<cmd>w<CR>", { desc = "Save Current Buffer" })
+map("n", "<leader>wo", "<C-W>p", { desc = "Other window" })
+map("n", "--", "<C-^>", { desc = "Toggle window to last active buffer" })
+
+-- Neotree Keympas
+map("n", "<leader>e", ":Neotree reveal toggle<CR>", { desc = "Toggle Neotree" })
+
+-- ToggleTerm Keympas
+-- map({ 'n' }, "<leader>tt", ":ToggleTerm<CR>", { desc = "Toggle floating terminal" })
+-- map({ 't' }, "<leader>tt", "<Esc><cmd>ToggleTerm<CR>", { desc = "Toggle floating terminal" })
+--
+-- -- NeoScroll Settings
+map({ "n", "v", "x" }, "<C-d>", function()
+	require("neoscroll").ctrl_d({ duration = 100 })
+end, { desc = "Ctrl+d half screen down scroll" })
+map({ "n", "v", "x" }, "<C-u>", function()
+	require("neoscroll").ctrl_u({ duration = 100 })
+end, { desc = "Ctrl+u half screen up scroll" })
+map({ "n", "v", "x" }, "<C-f>", function()
+	require("neoscroll").ctrl_f({ duration = 100 })
+end, { desc = "Ctrl+f full screen down scroll" })
+map({ "n", "v", "x" }, "<C-b>", function()
+	require("neoscroll").ctrl_b({ duration = 100 })
+end, { desc = "Ctrl+b full screen up scroll" })
+map({ "n", "v", "x" }, "<C-y>", function()
+	require("neoscroll").scroll(-0.1, { move_cursor = false, duration = 100 })
+end, { desc = "Few Lines up scroll" })
+map({ "n", "v", "x" }, "<C-e>", function()
+	require("neoscroll").scroll(0.1, { move_cursor = false, duration = 100 })
+end, { desc = "Few Lines down scroll" })
+map({ "n", "v", "x" }, "zz", function()
+	require("neoscroll").zz({ half_win_duration = 50 })
+end, { desc = "Reposition cursor to the middle of the screen" })
+map({ "n", "v", "x" }, "zt", function()
+	require("neoscroll").zt({ half_win_duration = 50 })
+end, { desc = "Reposition cursor to the top of the screen" })
+map({ "n", "v", "x" }, "zb", function()
+	require("neoscroll").zb({ half_win_duration = 50 })
+end, { desc = "Reposition cursor to the bottom of the screen" })
+
+-- Harpoon Keys
+-- This setting works with lazy loading of Harpoon
+-- map('n', "<leader>A", function() require("harpoon"):list():add() end, { desc = "harpoon file" })
+-- map('n', "<leader>a", function()
+--   local harpoon = require("harpoon")
+--   harpoon.ui:toggle_quick_menu(harpoon:list())
+-- end, { desc = "harpoon quick menu" })
+-- map('n', "<C-c>", function()
+--   local harpoon = require("harpoon")
+--   harpoon.ui:close_menu()
+-- end, { desc = "harpoon close window" })
+-- map('n', "<leader>1", function() require("harpoon"):list():select(1) end, { desc = "harpoon to file 1", })
+-- map('n', "<leader>2", function() require("harpoon"):list():select(2) end, { desc = "harpoon to file 2", })
+-- map('n', "<leader>3", function() require("harpoon"):list():select(3) end, { desc = "harpoon to file 3", })
+-- map('n', "<leader>4", function() require("harpoon"):list():select(4) end, { desc = "harpoon to file 4", })
+-- map('n', "<leader>5", function() require("harpoon"):list():select(5) end, { desc = "harpoon to file 5", })
