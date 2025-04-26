@@ -19,7 +19,7 @@
 -- Create group to assign commands
 -- "clear = true" must be set to prevent loading an
 -- auto-command repeatedly every time a file is resourced
-local autocmd_group = vim.api.nvim_create_augroup('User auto-commands', { clear = true })
+local autocmd_group = vim.api.nvim_create_augroup("User auto-commands", { clear = true })
 -- vim.api.nvim_create_autocmd({ 'BufEnter' }, {
 -- command = "echo 'Welcome to LazyLite!'",
 -- print("Welcome to LazyLite!")
@@ -29,22 +29,31 @@ local autocmd_group = vim.api.nvim_create_augroup('User auto-commands', { clear 
 -- group = autocmd_group,
 -- })
 
-vim.api.nvim_create_autocmd({ 'BufReadPost' }, {
-  desc = 'Auto Install listed Mason tools',
-  callback = function()
-    vim.cmd ':MasonToolsInstallSync'
-    -- print("Executed the MasonToolsInstallSync")
-  end,
-  group = autocmd_group,
+vim.api.nvim_create_autocmd({ "BufReadPost" }, {
+	desc = "Auto Install listed Mason tools",
+	callback = function()
+		vim.cmd(":MasonToolsInstallSync")
+		-- print("Executed the MasonToolsInstallSync")
+	end,
+	group = autocmd_group,
 })
 
+-- Find what filetype this current buffer is
+-- vim.api.nvim_create_autocmd({ "BufEnter" }, {
+-- 	callback = function()
+-- 		vim.cmd(":set filetype?")
+-- 	end,
+-- 	group = autocmd_group,
+-- })
+
+-- local filetype = vim.api.nvim_buf_get_option(buf, "filetype")
 -- Highlight when yanking (copying) text
 --  Try it with `yap` in normal mode
 --  See `:help vim.highlight.on_yank()`
-vim.api.nvim_create_autocmd('TextYankPost', {
-  desc = 'Highlight when yanking (copying) text',
-  group = vim.api.nvim_create_augroup('kickstart-highlight-yank', { clear = true }),
-  callback = function()
-    vim.highlight.on_yank()
-  end,
+vim.api.nvim_create_autocmd("TextYankPost", {
+	desc = "Highlight when yanking (copying) text",
+	group = vim.api.nvim_create_augroup("kickstart-highlight-yank", { clear = true }),
+	callback = function()
+		vim.highlight.on_yank()
+	end,
 })
