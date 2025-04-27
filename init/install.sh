@@ -92,7 +92,7 @@ mirror_dotfiles() {
 install_tools() {
   if [ $tools ]; then
     echo "Installing tools..."
-    $INIT_PATH/install-tools.sh --all
+    $INIT_PATH/tools.sh --all
     e_separator
   fi
 }
