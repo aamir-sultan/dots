@@ -30,6 +30,7 @@ local autocmd_group = vim.api.nvim_create_augroup("UserAutoCmds", { clear = true
 -- })
 
 vim.api.nvim_create_autocmd({ "BufReadPost" }, {
+	-- vim.api.nvim_create_autocmd({ "BufReadPre" }, {
 	desc = "Auto Install listed Mason tools",
 	callback = function()
 		vim.cmd(":MasonToolsInstallSync")

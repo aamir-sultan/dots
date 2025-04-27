@@ -100,6 +100,19 @@ map({ "n", "v", "x" }, "zb", function()
 	require("neoscroll").zb({ half_win_duration = 50 })
 end, { desc = "Reposition cursor to the bottom of the screen" })
 
+local nvim_tmux_nav = require("nvim-tmux-navigation")
+
+vim.keymap.set("n", "<C-h>", nvim_tmux_nav.NvimTmuxNavigateLeft)
+vim.keymap.set("n", "<C-j>", nvim_tmux_nav.NvimTmuxNavigateDown)
+vim.keymap.set("n", "<C-k>", nvim_tmux_nav.NvimTmuxNavigateUp)
+vim.keymap.set("n", "<C-l>", nvim_tmux_nav.NvimTmuxNavigateRight)
+vim.keymap.set("n", "<C-\\>", nvim_tmux_nav.NvimTmuxNavigateLastActive)
+
+-- Optional: setup the plugin if not done by your plugin manager
+-- nvim_tmux_nav.setup {
+--   disable_when_zoomed = true,
+-- }
+
 -- Harpoon Keys
 -- This setting works with lazy loading of Harpoon
 -- map('n', "<leader>A", function() require("harpoon"):list():add() end, { desc = "harpoon file" })
