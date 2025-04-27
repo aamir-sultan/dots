@@ -7,7 +7,8 @@
 ```
 git clone https://github.com/aamir-sultan/dots.git ~/.dots
 cd .dots
-./install
+
+./init/install
 ```
 ### Full Installation (Install different tools binaries)
 
@@ -25,7 +26,8 @@ Full installation should be proceeded with caution. It install different binarie
 ```
 git clone https://github.com/aamir-sultan/dots.git ~/.dots
 cd .dots
-./install --all
+
+./init/install.sh --all
 ```
 
 
@@ -33,15 +35,24 @@ cd .dots
 
 Change directory area where dots are cloned.
 ```
+dots uninstall --all
+
+OR
+
 cd path/to/.dots
-./uninstall
+./init/uninstall.sh --all
 ```  
 
 ## Call Help
 
 Invoke help command to check other options which can different results based on different options provided. [WIP]
 ```
+dots help
+dots install --help
+
+OR
+
 cd path/to/.dots
-./install --help
+./init/install.sh --help
 ```
 
