@@ -30,7 +30,6 @@ Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-commentary'
 Plug 'junegunn/fzf.vim'
 Plug 'junegunn/fzf', { 'dir': '~/.vim/dotplugged/.fzf', 'do': './install --all --no-update-rc --bin' }
-Plug 'AxolotlC/Fox.vim'
 Plug 'jdkanani/vim-material-theme'
 
 " Nerdtree + Git plugin (shows git status in nerdtree)
