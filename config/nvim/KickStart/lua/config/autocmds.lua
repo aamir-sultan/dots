@@ -19,7 +19,7 @@
 -- Create group to assign commands
 -- "clear = true" must be set to prevent loading an
 -- auto-command repeatedly every time a file is resourced
-local autocmd_group = vim.api.nvim_create_augroup("User auto-commands", { clear = true })
+local autocmd_group = vim.api.nvim_create_augroup("UserAutoCmds", { clear = true })
 -- vim.api.nvim_create_autocmd({ 'BufEnter' }, {
 -- command = "echo 'Welcome to LazyLite!'",
 -- print("Welcome to LazyLite!")
