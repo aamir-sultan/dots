@@ -138,7 +138,7 @@ for opt in $@; do
   case $opt in
   --help) help ;;
   --all)
-    nvconfig="LazyLite"
+    nvconfig="KickStart"
     tmux_plugs=true
     tools=true
     # sync=true
