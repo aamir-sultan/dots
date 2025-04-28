@@ -1,6 +1,4 @@
 # bin
-# config/nvim/lazyvim/lazy-lock.json
-config/nvim/lazyvim/lazyvim.json 
 .bookmarks
 *.bak
 tools/
