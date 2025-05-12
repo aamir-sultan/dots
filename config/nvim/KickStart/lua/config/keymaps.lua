@@ -49,7 +49,21 @@ map({ "n", "v" }, "<Space>", "<Nop>", { silent = true })
 -- Replace Ctrl-C with Esc. Although its almost the same but not always.
 map({ "n", "v", "i", "x" }, "<C-c>", "<Esc>", { desc = "Replacement for Esc" })
 
--- *************************************************-
+map({ "n" }, "<leader>tn", "<Esc>:set nornu! nonu!<CR>", { desc = "[T]oggle line [N]umbering" })
+map({ "n" }, "<leader>tb", ":let &bg=(&bg=='light'?'dark':'light')<cr>", { desc = "[T]oggle [B]ackground" })
+map({ "n" }, "<leader>th", "<esc>:set nohlsearch!<CR>", { desc = "[T]oggle search [H]ighlight" })
+map({ "n" }, "<leader>tw", "<esc>:set wrap!<CR>", { desc = "[T]oggle line [W]rapping" })
+
+-- " Toggle line numbering leader+n
+-- nnoremap <leader>tn <esc>:set nornu! nonu!<CR>
+-- " Toggle background
+-- nnoremap <leader>tb :let &bg=(&bg=='light'?'dark':'light')<cr>
+-- " Remove the highlight from searched item
+-- nnoremap <leader>th <esc>:set nohlsearch!<CR>
+-- " Toggle line wrapping
+-- nnoremap <leader>tw <esc>:set wrap!<CR>
+--
+-- -- *************************************************-
 -- Default Disables
 -- *************************************************-
 -- Disabled keys -- Ctrl + hjkl are disabled for config instead the following will be used.
