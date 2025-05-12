@@ -10,8 +10,8 @@ return {
 			-- Automatically install LSPs and related tools to stdpath for Neovim
 			-- Mason must be loaded before its dependents so we need to set it up here.
 			-- NOTE: `opts = {}` is the same as calling `require('mason').setup({})`
-			{ "williamboman/mason.nvim", opts = {} },
-			{ "williamboman/mason-lspconfig.nvim" },
+			{ "williamboman/mason.nvim", tag = "v1.11.0", opts = {} },
+			{ "williamboman/mason-lspconfig.nvim", tag = "v1.31.0" },
 			{ "WhoIsSethDaniel/mason-tool-installer.nvim", opts = {} },
 			{ "antosha417/nvim-lsp-file-operations", config = true },
 
@@ -137,7 +137,7 @@ return {
 			})
 
 			-- used to enable autocompletion (assign to every lsp server config)
-			local capabilities = cmp_nvim_lsp.default_capabilities()
+			-- local capabilities = cmp_nvim_lsp.default_capabilities()
 
 			-- Change the Diagnostic symbols in the sign column (gutter)
 			-- (not in youtube nvim video)
