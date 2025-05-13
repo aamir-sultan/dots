@@ -54,6 +54,11 @@ map({ "n" }, "<leader>tb", ":let &bg=(&bg=='light'?'dark':'light')<cr>", { desc 
 map({ "n" }, "<leader>th", "<esc>:set nohlsearch!<CR>", { desc = "[T]oggle search [H]ighlight" })
 map({ "n" }, "<leader>tw", "<esc>:set wrap!<CR>", { desc = "[T]oggle line [W]rapping" })
 
+map({ "n" }, "<leader>yp", "<esc>:let @\" = expand('%:p')<CR>", { desc = "[Y]ank current file [P]ath" })
+map({ "n" }, "<leader>cp", "<esc>:let @+ = expand('%:p')<CR>", { desc = "[C]opy current file [P]ath" })
+map({ "n" }, "<leader>cr", "<esc>:let @+ = expand('%')<CR>", { desc = "[C]opy [R]elative file path" })
+map({ "n" }, "<leader>cf", "<esc>:let @+ = expand('%:t')<CR>", { desc = "[C]opy [F]ile" })
+
 -- " Toggle line numbering leader+n
 -- nnoremap <leader>tn <esc>:set nornu! nonu!<CR>
 -- " Toggle background
