@@ -58,7 +58,7 @@ map({ "n" }, "<leader>yp", "<esc>:let @\" = expand('%:p')<CR>", { desc = "[Y]ank
 map({ "n" }, "<leader>cp", "<esc>:let @* = expand('%:p')<CR>", { desc = "[C]opy current file [P]ath" })
 map({ "n" }, "<leader>cr", "<esc>:let @* = expand('%')<CR>", { desc = "[C]opy [R]elative file path" })
 map({ "n" }, "<leader>cf", "<esc>:let @* = expand('%:t')<CR>", { desc = "[C]opy [F]ile" })
-map({ "n" }, "<leader>yy", '"*y', { desc = "[C]opy current [S]election" })
+map({ "v" }, "<leader>yy", '"*y', { desc = "[C]opy current [S]election" })
 map({ "n" }, "<leader>p", '"*p', { desc = "[P]aste contents of * register" })
 
 -- -- *************************************************-
