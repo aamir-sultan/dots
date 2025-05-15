@@ -30,7 +30,7 @@ map("n", "<C-k>", "<C-w><C-k>", { desc = "Move focus to the upper window" })
 map("v", "ii", "<C-c>", { desc = "Exits to normal mode from visual" })
 -- vim.keymap.set("v", "ii", "<C-c>")
 -- Fix * (Keep the cursor position, don't move to next match)
-map("n", "*", "*N", { desc = "Create new line below this line" })
+map("n", "*", "*N", { desc = "Keep the cursor position, don't move to next match" })
 
 -- leader-o/O inserts blank line below/above
 map("n", "<leader>o", "o<ESC>", { desc = "Create new line below this line" })
@@ -55,19 +55,12 @@ map({ "n" }, "<leader>th", "<esc>:set nohlsearch!<CR>", { desc = "[T]oggle searc
 map({ "n" }, "<leader>tw", "<esc>:set wrap!<CR>", { desc = "[T]oggle line [W]rapping" })
 
 map({ "n" }, "<leader>yp", "<esc>:let @\" = expand('%:p')<CR>", { desc = "[Y]ank current file [P]ath" })
-map({ "n" }, "<leader>cp", "<esc>:let @+ = expand('%:p')<CR>", { desc = "[C]opy current file [P]ath" })
-map({ "n" }, "<leader>cr", "<esc>:let @+ = expand('%')<CR>", { desc = "[C]opy [R]elative file path" })
-map({ "n" }, "<leader>cf", "<esc>:let @+ = expand('%:t')<CR>", { desc = "[C]opy [F]ile" })
+map({ "n" }, "<leader>cp", "<esc>:let @* = expand('%:p')<CR>", { desc = "[C]opy current file [P]ath" })
+map({ "n" }, "<leader>cr", "<esc>:let @* = expand('%')<CR>", { desc = "[C]opy [R]elative file path" })
+map({ "n" }, "<leader>cf", "<esc>:let @* = expand('%:t')<CR>", { desc = "[C]opy [F]ile" })
+map({ "n" }, "<leader>yy", '"*y', { desc = "[C]opy current [S]election" })
+map({ "n" }, "<leader>p", '"*p', { desc = "[P]aste contents of * register" })
 
--- " Toggle line numbering leader+n
--- nnoremap <leader>tn <esc>:set nornu! nonu!<CR>
--- " Toggle background
--- nnoremap <leader>tb :let &bg=(&bg=='light'?'dark':'light')<cr>
--- " Remove the highlight from searched item
--- nnoremap <leader>th <esc>:set nohlsearch!<CR>
--- " Toggle line wrapping
--- nnoremap <leader>tw <esc>:set wrap!<CR>
---
 -- -- *************************************************-
 -- Default Disables
 -- *************************************************-
