@@ -9,12 +9,12 @@ source "$DOTS/init/dots.conf"
 # Function to install Tmux plugins
 install() {
   echo "Installing..."
-  $INIT_PATH/install.sh $@
+  $DOTS/install.sh $@
 }
 
 # Function to install Tmux plugins
 uninstall() {
-  $INIT_PATH/uninstall.sh $@
+  $DOTS/uninstall.sh $@
 }
 
 help() {
