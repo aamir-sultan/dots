@@ -114,6 +114,11 @@ else
   hostStyle="${bold}${hostNonSSHColor}"
 fi
 
+# dateStyle=`date +"%a, %b %d %Y %H:%M:%S"`
+# dateStyle=`date +"%b %d %Y %H:%M:%S"`
+# dateStyle=`date "+%Y-%m-%d %H:%M:%S"`
+dateStyle=`date "+Y%yM%mD%d %H:%M:%S"`
+
 textStyle="${textColor}"
 wordStyle="${wordColor}"
 branchStyle="${branchColor}"
@@ -196,7 +201,8 @@ prompt_git() {
 PS1="\n"                  # newline
 PS1+="\[${userStyle}\]\u" # username
 PS1+="\[${wordStyle}\] at "
-PS1+="\[${hostStyle}\]\h (\t)" # host
+# PS1+="\[${hostStyle}\]\h (\d \t)" # host
+PS1+="\[${hostStyle}\]\h (${dateStyle})" # host
 PS1+="\[${wordStyle}\] in "
 PS1+="\[${pwdStyle}\]\w"                                                                    # working directory full path
 PS1+="\$(prompt_git \"\[${wordStyle}\] on \[${branchStyle}\]\" \"\[${repoStatusStyle}\]\")" # Git repository details
