@@ -10,13 +10,34 @@ return {
 		bigfile = { enabled = true },
 		dashboard = { enabled = false },
 		explorer = { enabled = false },
-		indent = { enabled = true, char = "╎" },
+		indent = {
+			enabled = true,
+			indent = {
+				-- Change the indent character to a closing curly brace
+				char = "╎",
+			},
+		},
 		input = { enabled = true },
 		notifier = { enabled = false },
 		picker = { enabled = true },
 		quickfile = { enabled = true },
 		scope = { enabled = true },
-		scroll = { enabled = true },
+		scroll = {
+			enabled = true,
+			animate = {
+				duration = {
+					step = 20,
+					total = 200,
+				}, -- Example: Adjust the step for faster scrolling
+				easing = "linear",
+			},
+			-- faster animation when repeating scroll after delay
+			animate_repeat = {
+				delay = 50, -- delay in ms before using the repeat animation
+				duration = { step = 3, total = 20 },
+				easing = "linear",
+			},
+		},
 		statuscolumn = { enabled = true },
 		words = { enabled = true },
 	},
