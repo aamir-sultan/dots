@@ -17,6 +17,10 @@ map("n", "<leader>e", ":Neotree reveal toggle<CR>", { desc = "Toggle Neotree" })
 map("n", "<tab>", ":bnext<CR>", { desc = "Next Buffer" })
 map("n", "<S-tab>", ":bprev<CR>", { desc = "Previous Buffer" })
 
+--  See `:help wincmd` for a list of all window commands
+map("n", "j", "v:count == 0 ? 'gj' : 'j'", { expr = true, silent = true, desc = "Move cursor charachter down" })
+map("n", "k", "v:count == 0 ? 'gk' : 'k'", { expr = true, silent = true, desc = "Move cursor charachter up" })
+
 -- Keybinds to make split navigation easier.
 --  Use CTRL+<hjkl> to switch between windows
 --

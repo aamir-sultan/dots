@@ -25,6 +25,21 @@ return {
 		cursor_color = "#D66924",
 		-- Sets animation framerate
 		time_interval = 17, -- milliseconds
+		-- Smear cursor when switching buffers or windows
+		smear_between_buffers = true,
+
+		-- Smear cursor when moving within line or to neighbor lines
+		-- Use `min_horizontal_distance_smear` and `min_vertical_distance_smear` for finer control
+		smear_between_neighbor_lines = true,
+
+		-- Only smear cursor when moving at least these distances
+		min_horizontal_distance_smear = 2,
+		min_vertical_distance_smear = 2,
+
+		-- Toggles for directions
+		smear_horizontally = true,
+		smear_vertically = true,
+		smear_diagonally = true, -- Neither horizontal nor vertical
 
 		-- Disable smear in the current buffer if the animation is stuck for at least this amount of time.
 		-- Set to nil to disable this feature.
