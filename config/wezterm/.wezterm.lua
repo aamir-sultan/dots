@@ -222,8 +222,8 @@ local fontWeight = "Regular"
 -- local font_family_name = "Fantasque Sans Mono"
 -- local font_family_name = "Fira Code"
 -- local font_family_name = "JetBrains Mono"
-local font_family_name = "Rec Mono Duotone"
--- local font_family_name = "Rec Mono Linear"
+-- local font_family_name = "Rec Mono Duotone"
+local font_family_name = "Rec Mono Linear"
 -- local font_family_name = "Rec Mono Casual"
 -- local font_family_name = "Rec Mono Semicasual"
 -- local font_family_name = "JuliaMono"
@@ -264,7 +264,7 @@ config.font = wezterm.font_with_fallback({
 })
 
 -- Background Settings
--- config.window_background_image = 'D://Mega//backgrounds//2184.jpg' -- Background image path
+-- config.window_background_image = "D://05_Resources//System//Wallpapers//simple//Santa_Monica.png" -- Background image path
 -- config.window_background_opacity = .98 -- Background transparency = 0 and opacity = 1
 -- config.win32_system_backdrop = 'Tabbed' -- Creates blurred effects when combined with window_background_opacity -- 'Acrylic', 'Mica', 'Tabbed'
 -- config.text_background_opacity = 0.3 -- The image content can have relatively low contrast with respect to the text.
