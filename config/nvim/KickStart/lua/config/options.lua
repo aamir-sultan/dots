@@ -4,6 +4,10 @@ vim.cmd([[colorscheme solarized-osaka]])
 vim.g.mapleader = " "
 vim.g.maplocalleader = "\\"
 
+-- if vim.loader then
+--   vim.loader.enable()
+-- end
+
 -- LazyVim auto format
 vim.g.autoformat = true
 

@@ -128,6 +128,13 @@ create_tool_symlink() {
 
 # Main loop to install all tools
 install_all_tools() {
+
+  if [[ "${SSH_TTY}" ]]; then
+    install_mode="remote"
+  else
+    install_mode="local"
+  fi
+
   mkdir -p "$TOOLS"
   for tool_name in "${tools[@]}"; do
     # Declare an empty associative array
@@ -135,13 +142,17 @@ install_all_tools() {
     # Populate tool array by copying from the original
     eval "$(declare -p "$tool_name" | sed "s/declare -A $tool_name/declare -A tool/")"
 
-    local tool_type="${tool[type]}"
-    if [[ "$tool_type" == "repo" ]]; then
-      install_tool_repo "$tool"
-      create_tool_symlink "$tool"
-    elif [[ "$tool_type" == "bin" ]]; then
-      install_tool_binary "$tool"
-      create_tool_symlink "$tool"
+    local tool_install_mode="${tool[install_mode]}"
+    if [[ "$tool_install_mode" == "$install_mode" || "$tool_install_mode" == "all" ]]; then
+
+      local tool_type="${tool[type]}"
+      if [[ "$tool_type" == "repo" ]]; then
+        install_tool_repo "$tool"
+        create_tool_symlink "$tool"
+      elif [[ "$tool_type" == "bin" ]]; then
+        install_tool_binary "$tool"
+        create_tool_symlink "$tool"
+      fi
     fi
   done
 }
