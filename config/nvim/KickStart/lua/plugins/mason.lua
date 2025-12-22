@@ -2,7 +2,9 @@ return {
 	{
 		"williamboman/mason-lspconfig.nvim",
 		lazy = true,
-		event = "InsertEnter",
+		-- event = "InsertEnter",
+		-- event = "VeryLazy",
+		event = "BufReadPost",
 		opts = {
 			-- list of servers for mason to install
 			ensure_installed = {
@@ -13,6 +15,7 @@ return {
 		dependencies = {
 			{
 				"williamboman/mason.nvim",
+				lazy = true,
 				opts = {
 					ui = {
 						icons = {
@@ -25,6 +28,7 @@ return {
 			},
 			{
 				"neovim/nvim-lspconfig",
+				lazy = true,
 			},
 		},
 	},

@@ -86,22 +86,22 @@ vim.api.nvim_create_autocmd("BufReadPost", {
 })
 
 -- Find what filetype this current buffer is
-vim.api.nvim_create_autocmd({ "BufEnter" }, {
-  callback = function()
-    vim.cmd(":set filetype?")
-  end,
-  group = autocmd_group,
-})
+-- vim.api.nvim_create_autocmd({ "BufEnter" }, {
+--   callback = function()
+--     vim.cmd(":set filetype?")
+--   end,
+--   group = autocmd_group,
+-- })
 
 -- I can't remember a time when I didn't want to save a file after tabbing away from my editor (especially with version control and Vim's persistent undo):
 -- Currently it is having issues when a buffer is open with no name and focus is lost
-vim.api.nvim_create_autocmd({ "FocusLost" }, {
-  desc = "Save on focus lost aka autosave",
-  callback = function()
-    vim.cmd(":wa")
-  end,
-  group = autocmd_group,
-})
+-- vim.api.nvim_create_autocmd({ "FocusLost" }, {
+--   desc = "Save on focus lost aka autosave",
+--   callback = function()
+--     vim.cmd(":wa")
+--   end,
+--   group = autocmd_group,
+-- })
 
 -- Highlight on yank
 vim.api.nvim_create_autocmd("TextYankPost", {
