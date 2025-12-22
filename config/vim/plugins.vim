@@ -48,7 +48,7 @@ Plug 'tmux-plugins/vim-tmux' " Plugin for .tmux.conf file syntax
 Plug 'lambdalisue/nerdfont.vim'
 Plug 'ervandew/supertab', { 'dir': '~/.vim/pack/plugins/start/supertab' }
 Plug 'easymotion/vim-easymotion'
-Plug 'christoomey/vim-tmux-navigator'
+Plug 'christoomey/vim-tmux-navigator', { 'commit': 'd847ea942a5bb4d4fab6efebc9f30d787fd96e65' }
 
 " For Buffer management
 Plug 'ctrlpvim/ctrlp.vim'
