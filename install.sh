@@ -100,10 +100,6 @@ install_tools() {
 configure_nvim() {
   if [ $nvconfig ]; then
     echo "Configuring nvim..."
-    if [ "$nvconfig" == "LazyLite" ]; then
-      mkdir -p $NVIMCONFIG_PATH
-      link "$CONFIG_PATH/nvim/LazyLite" "$XDG_CONFIG_HOME/nvim"
-    fi
 
     if [ "$nvconfig" == "KickStart" ]; then
       mkdir -p $NVIMCONFIG_PATH
@@ -128,7 +124,6 @@ usage: $0 [OPTIONS]
     --[no-]tmux-plugs    Enable/disable tmux plugins cloning and installation
     --lazyvim            Use LazyVim for NeoVim Configuration
     --kickstart          Use KickStart for NeoVim Configuration. This is the basic config.
-    --lazylite           Use Selfdeveloped LazyLite for NeoVim Configuration.
 EOF
   exit 0
 }
@@ -150,7 +145,6 @@ for opt in $@; do
   # --no-fonts) fonts=false ;;
   --tools) tools=true ;;
   --no-tools) tools=false ;;
-  --lazylite) nvconfig="LazyLite" ;;
   --lazyvim) nvconfig="LazyVim" ;;
   --kickstart) nvconfig="KickStart" ;;
   --tmux-plugs) tmux_plugs=true ;;
