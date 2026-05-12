@@ -57,10 +57,17 @@
 	// "editor.fontFamily": "'Rec Mono Duotone', 'JetBrainsMono Nerd Font', monospace",
 	// "editor.fontFamily": "'Rec Mono Casual', 'JetBrainsMono Nerd Font', monospace",
 	// "editor.fontFamily": "'Rec Mono Semicasual', 'JetBrainsMono Nerd Font', monospace",
-	"editor.fontFamily": "'Rec Mono Linear', 'JetBrainsMono Nerd Font', monospace",
 	// "editor.fontFamily": "'Nimbus Mono', 'JetBrainsMono Nerd Font', monospace",
 	// "editor.fontFamily": "'TeXGyreCursor', 'JetBrainsMono Nerd Font', monospace",
 	// "editor.fontFamily": "'MonoLisa Regular', monospace",
+	// "editor.fontFamily": "'Rec Mono Linear', 'JetBrainsMono Nerd Font', monospace",
+	// "editor.fontFamily": "'Lilex Nerd Font Mono', 'JetBrainsMono Nerd Font', monospace",
+	// "editor.fontFamily": "'Zed Mono', 'JetBrainsMono Nerd Font', monospace",
+	// "editor.fontFamily": "'Zenbones Proto', 'JetBrainsMono Nerd Font', monospace",
+	// "editor.fontFamily": "'Ioskeley Mono', 'JetBrainsMono Nerd Font', monospace",
+	// "editor.fontFamily": "'Typestar OCR', 'JetBrainsMono Nerd Font', monospace",
+	"editor.fontFamily": "'Iosvmata', 'JetBrainsMono Nerd Font', monospace",
+
 	// Set font size
 	// =========================================================//
 	// Jet Brains Mono settings
@@ -69,7 +76,8 @@
 	// "editor.lineHeight": 1.7, // Line height for the editor Characters.
 	// =========================================================//
 	// "editor.fontSize": 11, // Font Size
-	"editor.fontSize": 13, // Font Size
+	// "editor.fontSize": 13, // Font Size
+	"editor.fontSize": 14, // Font Size
 	// Set font boldness with normal or bold or some number
 	// "editor.fontWeight": "bold", // Font Weight
 	// "editor.fontWeight": "400", // Font Weight -- Can use other numbers from 200 to 800
@@ -151,19 +159,22 @@
 			}
 		]
 	},
+
+
 	//----------------------------------------------------//
 	// VSCode Terminal Settings like fonts and themes.
 	//----------------------------------------------------//
 	// Scrollback history of terminal.
 	"terminal.integrated.scrollback": 100000,
 	// By default the starting font will be set or also try wrapping them in single qoutes to set
-	"terminal.integrated.fontFamily": "'Rec Mono Linear', 'JetBrainsMono Nerd Font', monospace",
 	// "terminal.integrated.fontFamily": "'md io', JetBrainsMono Nerd Font, OverpassMono Nerd Font, JetBrainsMono Nerd Font Mono",
 	// "terminal.integrated.fontFamily": "'UbuntuSansMono NF', 'DM Mono', JuliaMono, JetBrainsMono Nerd Font Mono",
+	"terminal.integrated.fontFamily": "'Rec Mono Linear', 'JetBrainsMono Nerd Font', monospace",
+	"terminal.integrated.fontFamily": "'Iosvmata', 'JetBrainsMono Nerd Font', monospace",
 	"terminal.integrated.letterSpacing": 1, // Number of pixels to be added between charachters.
 	// "terminal.integrated.letterSpacing": 2, // Number of pixels to be added between charachters.
 	"terminal.integrated.lineHeight": 1.2, // Line height for the terminal charachters.
-	"terminal.integrated.fontSize": 13, // Fonts size of terminal charachters.
+	"terminal.integrated.fontSize": 14, // Fonts size of terminal charachters.
 	// "terminal.integrated.fontWeight": "700", // Weight of terminals characters -- bold, normal, or number between 200 to 800.
 	"terminal.integrated.fontWeight": "100", // Weight of terminals characters -- bold, normal, or number between 200 to 800.
 	// Terminal Cursor Settings
@@ -393,10 +404,15 @@
 	// "terminal.ansiWhite": "#D5C4A1",
 	// "terminal.ansiYellow": "#FABD2F"
 	// },
+
+
 	//----------------------------------------------------//
 	// Misc settings for other extensions.
 	//----------------------------------------------------//
 	"security.workspace.trust.untrustedFiles": "open",
+
+
+	
 	//----------------------------------------------------//
 	// Other settings for other extensions.
 	//----------------------------------------------------//
@@ -405,7 +421,9 @@
 		"100.69.254.18": "linux",
 		"10.1.1.116": "linux",
 		"100.69.254.15": "linux",
-		"100.69.254.33": "linux"
+		"100.69.254.33": "linux",
+		"100.69.254.30": "linux",
+		"ms-hs.duckdns.org": "linux"
 	},
 	"workbench.activityBar.location": "top",
 	"workbench.editorAssociations": {
@@ -413,10 +431,9 @@
 	},
 	"window.titleBarStyle": "custom",
 	"remote.SSH.serverInstallPath": {
-		"100.69.254.18": "/proj/fe/work/asultan/",
-		"10.1.1.116": "/proj/work/asultan/"
+		"10.1.1.116": "/proj/work/asultan/",
+		"100.69.254.30": "/proj/fe/work/asultan/"
 	},
-	"workbench.colorTheme": "Solarized Osaka",
 	"verible.arguments": [
 		"--column_limit=300",
 		"--assignment_statement_alignment=align",
@@ -449,6 +466,17 @@
 	"git.autofetch": true,
 	"explorer.confirmDragAndDrop": false,
 	"workbench.editor.wrapTabs": true,
-	"latex-workshop.latex.clean.command": "latexmk -f",
-	"latex-workshop.latex.clean.subfolder.enabled": true,
+
+	"fonted.font": "Iosvmata",
+	"window.menuBarVisibility": "compact",
+	"window.commandCenter": false,
+	"makefile.configureOnOpen": false,
+	"extensions.ignoreRecommendations": true,
+	"workbench.colorTheme": "Solarized Osaka",
+	"workbench.editorLargeFileConfirmation": 100,
+	"mql_tools.Metaeditor.Metaeditor5Dir": "C:\\Program Files\\MetaTrader 5\\MetaEditor64.exe",
+	"mql_tools.Metaeditor.Include5Dir": "C:\\Users\\AamirSultan\\AppData\\Roaming\\MetaQuotes\\Terminal\\D0E8209F77C8CF37AD8BF550E51FF075\\MQL5",
+	"mql_tools.Color": "enabled",
+	"C_Cpp.default.compilerPath": "c:\\Program Files\\MetaTrader 5\\MetaEditor64.exe",
+
 }
