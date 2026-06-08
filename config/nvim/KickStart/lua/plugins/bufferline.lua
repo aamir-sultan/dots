@@ -7,6 +7,14 @@ return {
   opts = {
     options = {
       -- mode = 'tabs',
+      -- separator_style = "thick",
+      -- separator_style = "{''}",
+  -- separator_style = { '', '' },
+  --     | "slope" | "thick" | "thin" | { 'any', 'any' },
+    indicator = {
+        icon = ' ',
+        style = 'icon', 
+    },
       mode = 'bufffers',
       diagnostics = 'nvim_lsp',
       offsets = {
@@ -40,3 +48,4 @@ return {
     },
   },
 }
+
