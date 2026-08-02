@@ -370,7 +370,8 @@ config.window_background_gradient = {
   -- },
   -- colors = { "#DCDAD6" }, -- Smoke
   -- colors = { "#FFFFFF" }, -- White
-  colors = { "#FFFEF0" }, -- OffWhite
+  -- colors = { "#FFFEF0" }, -- OffWhite
+  colors = { "#FDF6E3" }, -- OffWhite
   -- colors = { "#000000" }, -- Black
   -- colors = { "#00141a" }, -- Solarized Osaka Background Colors
   -- colors = { '#161b1d' }, -- Solarized Osaka Background Colors
@@ -481,15 +482,15 @@ config.window_padding = { -- Controls the amount of padding between the window b
   bottom = 0,
 }
 config.hide_tab_bar_if_only_one_tab = false -- When there is only a single tab, the tab bar is hidden from the display
-config.use_fancy_tab_bar = false     -- When true, the tab bar is rendered in a native style with proportional fonts.
-config.tab_max_width = 32            -- Don't let any individual tab name take too much room
+config.use_fancy_tab_bar = false            -- When true, the tab bar is rendered in a native style with proportional fonts.
+config.tab_bar_at_bottom = false            -- When true, the tab bar will be rendered at the bottom of the window.
+config.tab_max_width = 32                   -- Don't let any individual tab name take too much room
 config.exit_behavior =
-"CloseOnCleanExit"                   -- if the shell program exited with a successful status, close the pane else keep it open.
-config.tab_bar_at_bottom = true      -- When true, the tab bar will be rendered at the bottom of the window.
+"CloseOnCleanExit"                          -- if the shell program exited with a successful status, close the pane else keep it open.
 config.window_close_confirmation =
-"AlwaysPrompt"                       -- Set this to "NeverPrompt" if you don't like confirming closing windows every time.
+"AlwaysPrompt"                              -- Set this to "NeverPrompt" if you don't like confirming closing windows every time.
 -- config.enable_csi_u_key_encoding = true -- Not recommended to enable this option as it does change the behavior of some keys in backwards incompatible ways
-config.allow_win32_input_mode = true -- Not recommended to enable this option as it does change the behavior of some keys in backwards incompatible ways
+config.allow_win32_input_mode = true        -- Not recommended to enable this option as it does change the behavior of some keys in backwards incompatible ways
 
 -- config.front_end = "WebGpu" -- Other options are CPU based "Software", GPU based "OpenGL".
 -- config.front_end = "Software" -- Other options are CPU based "Software", GPU based "OpenGL".
