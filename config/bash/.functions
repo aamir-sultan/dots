@@ -300,7 +300,7 @@ function lsth() {
 
 # Print colors
 # ==============================================================================
-function print_colors() {
+function colors() {
   for clbg in {40..47} {100..107} 49; do
     for clfg in {30..37} {90..97} 39; do
       for attr in {0..9}; do
@@ -311,7 +311,7 @@ function print_colors() {
   done
 }
 
-function print_colors_256() {
+function colors256() {
   for fgbg in 38 48; do
     for color in {0..255}; do
       printf "\e[${fgbg};5;%sm  %3s  \e[0m" "$color" "$color"
@@ -323,7 +323,7 @@ function print_colors_256() {
   done
 }
 
-function print_colors_tput() {
+function colors_tput() {
   for c in {0..255}; do
     tput setaf $c
     tput setaf $c | cat -v
@@ -331,7 +331,7 @@ function print_colors_tput() {
   done
 }
 
-function print_colors_spectrum() {
+function colors_spectrum() {
   awk -v term_cols="${width:-$(tput cols || echo 80)}" 'BEGIN{
   s="/\\";
   for (colnum = 0; colnum<term_cols; colnum++) {

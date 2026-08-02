@@ -289,126 +289,132 @@ hsb_dimmer = {      -- Will implicitly prepend a layer to the background configu
   saturation = 1.0  -- You can adjust the saturation also.
 }
 
-config.background = {
-  -- This is the deepest/back-most layer. It will be rendered first
-  {
-    source = {
-      -- File = getRandomBackgroundPath(),
-      -- File = get_random_image_path("D://Mega//backgrounds"),
-      -- File = "D://Resources//System//Wallpapers//lineart//samurai.png" -- Background image path
-      -- File = "D://Resources//System//Wallpapers//lineart//handreach.png" -- Background image path
-      -- File = "D://Resources//System//Wallpapers//lineart//peek.png" -- Background image path
-      -- File = "D://Resources//System//Wallpapers//lineart//gaze.png" -- Background image path
-      -- File = "D://Resources//System//Wallpapers//lineart//fullface.png" -- Background image path
-      -- File = "D://Resources//System//Wallpapers//lineart//halfface.png" -- Background image path
-      File = "D://Resources//System//Wallpapers//YellowLeaf.jpg" -- Background image path
-      -- File = "D://Resources//System//Wallpapers//celestial//blackhole.png" -- Background image path
-    },
-
-    -- The texture tiles vertically but not horizontally.
-    -- When we repeat it, mirror it so that it appears "more seamless".
-    -- An alternative to this is to set `width = "100%"` and have
-    -- it stretch across the display
-    -- "Contain" scales the image to fit inside the window without cropping.
-    -- "Cover" scales it to fill the entire background (might crop edges).
-    -- width = 'Contain',
-    height = 'Contain',
-
-    -- Other repeat options are Mirror, Repeat, NoRepeat.
-    -- repeat_x = 'Mirror',
-    -- repeat_y = "Mirror",
-    repeat_x = "NoRepeat",
-    repeat_y = "NoRepeat",
-
-
-
-    -- Other options for the horizontal align are "Center", "Right", and "Left". "Left" is default.
-    -- horizontal_align = "Left",
-    horizontal_align = "Right",
-    -- horizontal_align = "Center",
-    -- Other options for the vertical align are "Middle", "Top", and "Bottom". "Top" is default.
-    vertical_align = "Top",
-    -- v ertical_align = "Bottom",
-
-
-
-    -- -- Specify an offset from the initial vertical position
-    -- -- string of the form '123px' where 'px' is a unit
-    -- -- and can be one of 'px', '%', 'pt' or 'cell'
-    -- horizontal_offset = "0px",
-    -- vertical_offset = "0px",
-
-    hsb = hsb_dimmer,
-    -- opacity = 0.98,
-    -- When the viewport scrolls, move this layer 10% of the number of
-    -- pixels moved by the main viewport. This makes it appear to be
-    -- further behind the text.
-    -- attachment = { Parallax = 0.1 },
-    attachment = "Fixed",
-    -- attachment = "Scroll",
-  },
-}
-
--- config.window_background_gradient = {
---   -- Can be "Vertical" or "Horizontal".  Specifies the direction
---   -- in which the color gradient varies.  The default is "Horizontal",
---   -- with the gradient going from left-to-right.
---   -- Linear and Radial gradients are also supported; see the other
---   -- examples below
---   -- orientation = 'Vertical',
---   orientation = { Linear = { angle = -45.0 } },
+-- config.background = {
+--   -- This is the deepest/back-most layer. It will be rendered first
+--   {
+--     source = {
+--       -- File = getRandomBackgroundPath(),
+--       -- File = get_random_image_path("D://Mega//backgrounds"),
+--       -- File = "D://Resources//System//Wallpapers//lineart//samurai.png" -- Background image path
+--       -- File = "D://Resources//System//Wallpapers//lineart//handreach.png" -- Background image path
+--       -- File = "D://Resources//System//Wallpapers//lineart//peek.png" -- Background image path
+--       -- File = "D://Resources//System//Wallpapers//lineart//gaze.png" -- Background image path
+--       -- File = "D://Resources//System//Wallpapers//lineart//fullface.png" -- Background image path
+--       -- File = "D://Resources//System//Wallpapers//lineart//halfface.png" -- Background image path
+--       -- File = "D://Resources//System//Wallpapers//road.jpg" -- Background image path
+--       -- File = "D://Resources//System//Wallpapers//YellowLeaf.jpg" -- Background image path
+--       -- -- File = "D://Resources//System//Wallpapers//leather.jpg" -- Background image path
+--       -- File = "D://Resources//System//Wallpapers//celestial//blackhole.png" -- Background image path
+--     },
 --
---   -- Specifies the set of colors that are interpolated in the gradient.
---   -- Accepts CSS style color specs, from named colors, through rgb
---   -- strings and more
---   -- colors = {
---   --   '#0f0c29',
---   --   '#302b63',
---   --   '#24243e',
---   -- },
---   colors = { "#00141a" }, -- Solarized Osaka Background Colors
---   -- colors = { '#161b1d' }, -- Solarized Osaka Background Colors
---   -- colors = { '#300924' }, -- Ubuntu Terminal Colors
---   -- colors = { '#EEE8D5' }, -- Solarized Background Colors
---   -- colors = { '#073642' }, -- Solarized Background Colors
---   -- colors = { '#300924', '#2E3436' },
---   -- colors = { '#fdf6e3' },
---   -- colors = { '#dfca88' },
---   -- colors = { '#3C3836' },
+--     -- The texture tiles vertically but not horizontally.
+--     -- When we repeat it, mirror it so that it appears "more seamless".
+--     -- An alternative to this is to set `width = "100%"` and have
+--     -- it stretch across the display
+--     -- "Contain" scales the image to fit inside the window without cropping.
+--     -- "Cover" scales it to fill the entire background (might crop edges).
+--     -- width = 'Contain',
+--     height = 'Contain',
 --
---   -- Instead of specifying `colors`, you can use one of a number of
---   -- predefined, preset gradients.
---   -- A list of presets is shown in a section below.
---   -- preset = "Warm",
+--     -- Other repeat options are Mirror, Repeat, NoRepeat.
+--     -- repeat_x = 'Mirror',
+--     -- repeat_y = "Mirror",
+--     repeat_x = "NoRepeat",
+--     repeat_y = "NoRepeat",
 --
---   -- Specifies the interpolation style to be used.
---   -- "Linear", "Basis" and "CatmullRom" as supported.
---   -- The default is "Linear".
---   interpolation = "Linear",
 --
---   -- How the colors are blended in the gradient.
---   -- "Rgb", "LinearRgb", "Hsv" and "Oklab" are supported.
---   -- The default is "Rgb".
---   blend = "Rgb",
 --
---   -- To avoid vertical color banding for horizontal gradients, the
---   -- gradient position is randomly shifted by up to the `noise` value
---   -- for each pixel.
---   -- Smaller values, or 0, will make bands more prominent.
---   -- The default value is 64 which gives decent looking results
---   -- on a retina macbook pro display.
---   -- noise = 64,
+--     -- Other options for the horizontal align are "Center", "Right", and "Left". "Left" is default.
+--     -- horizontal_align = "Left",
+--     horizontal_align = "Right",
+--     -- horizontal_align = "Center",
+--     -- Other options for the vertical align are "Middle", "Top", and "Bottom". "Top" is default.
+--     vertical_align = "Top",
+--     -- v ertical_align = "Bottom",
 --
---   -- By default, the gradient smoothly transitions between the colors.
---   -- You can adjust the sharpness by specifying the segment_size and
---   -- segment_smoothness parameters.
---   -- segment_size configures how many segments are present.
---   -- segment_smoothness is how hard the edge is; 0.0 is a hard edge,
---   -- 1.0 is a soft edge.
 --
---   -- segment_size = 11,
---   -- segment_smoothness = 0.0,
+--
+--     -- -- Specify an offset from the initial vertical position
+--     -- -- string of the form '123px' where 'px' is a unit
+--     -- -- and can be one of 'px', '%', 'pt' or 'cell'
+--     -- horizontal_offset = "0px",
+--     -- vertical_offset = "0px",
+--
+--     hsb = hsb_dimmer,
+--     -- opacity = 0.98,
+--     -- When the viewport scrolls, move this layer 10% of the number of
+--     -- pixels moved by the main viewport. This makes it appear to be
+--     -- further behind the text.
+--     -- attachment = { Parallax = 0.1 },
+--     attachment = "Fixed",
+--     -- attachment = "Scroll",
+--   },
 -- }
+
+config.window_background_gradient = {
+  -- Can be "Vertical" or "Horizontal".  Specifies the direction
+  -- in which the color gradient varies.  The default is "Horizontal",
+  -- with the gradient going from left-to-right.
+  -- Linear and Radial gradients are also supported; see the other
+  -- examples below
+  -- orientation = 'Vertical',
+  orientation = { Linear = { angle = -45.0 } },
+
+  -- Specifies the set of colors that are interpolated in the gradient.
+  -- Accepts CSS style color specs, from named colors, through rgb
+  -- strings and more
+  -- colors = {
+  --   '#0f0c29',
+  --   '#302b63',
+  --   '#24243e',
+  -- },
+  -- colors = { "#DCDAD6" }, -- Smoke
+  -- colors = { "#FFFFFF" }, -- White
+  colors = { "#FFFEF0" }, -- OffWhite
+  -- colors = { "#000000" }, -- Black
+  -- colors = { "#00141a" }, -- Solarized Osaka Background Colors
+  -- colors = { '#161b1d' }, -- Solarized Osaka Background Colors
+  -- colors = { '#300924' }, -- Ubuntu Terminal Colors
+  -- colors = { '#EEE8D5' }, -- Solarized Background Colors
+  -- colors = { '#073642' }, -- Solarized Background Colors
+  -- colors = { '#300924', '#2E3436' },
+  -- colors = { '#fdf6e3' },
+  -- colors = { '#dfca88' },
+  -- colors = { '#3C3836' },
+
+  -- Instead of specifying `colors`, you can use one of a number of
+  -- predefined, preset gradients.
+  -- A list of presets is shown in a section below.
+  -- preset = "Warm",
+
+  -- Specifies the interpolation style to be used.
+  -- "Linear", "Basis" and "CatmullRom" as supported.
+  -- The default is "Linear".
+  interpolation = "Linear",
+
+  -- How the colors are blended in the gradient.
+  -- "Rgb", "LinearRgb", "Hsv" and "Oklab" are supported.
+  -- The default is "Rgb".
+  blend = "Rgb",
+
+  -- To avoid vertical color banding for horizontal gradients, the
+  -- gradient position is randomly shifted by up to the `noise` value
+  -- for each pixel.
+  -- Smaller values, or 0, will make bands more prominent.
+  -- The default value is 64 which gives decent looking results
+  -- on a retina macbook pro display.
+  -- noise = 64,
+
+  -- By default, the gradient smoothly transitions between the colors.
+  -- You can adjust the sharpness by specifying the segment_size and
+  -- segment_smoothness parameters.
+  -- segment_size configures how many segments are present.
+  -- segment_smoothness is how hard the edge is; 0.0 is a hard edge,
+  -- 1.0 is a soft edge.
+
+  -- segment_size = 11,
+  -- segment_smoothness = 0.0,
+}
 
 -- Additional Settings
 config.automatically_reload_config = true  -- reload it automatically when detected change - Default = true
@@ -430,7 +436,7 @@ config.warn_about_missing_glyphs = false
 
 -- Cursor Settings
 config.default_cursor_style =
-"SteadyBlock" -- Acceptable values are SteadyBlock, BlinkingBlock, SteadyUnderline, BlinkingUnderline, SteadyBar, and BlinkingBar
+"SteadyBlock" -- Accetable values are SteadyBlock, BlinkingBlock, SteadyUnderline, BlinkingUnderline, SteadyBar, and BlinkingBar
 config.cursor_blink_ease_in = "Constant"
 config.cursor_blink_ease_out = "Constant"
 config.cursor_blink_rate = 0
@@ -465,7 +471,6 @@ config.colors = {
 }
 
 -- config.color_scheme_dirs = { os.getenv("HOME") .. "/.config/wezterm/colors/" }
-config.hide_tab_bar_if_only_one_tab = false -- When there is only a single tab, the tab bar is hidden from the display
 config.adjust_window_size_when_changing_font_size = false -- The default value is now nil
 config.selection_word_boundary =
 " \t\n{}[]()\"'`,;:│=&!%" -- What is selected when doing a word selection with the mouse.
@@ -475,6 +480,7 @@ config.window_padding = { -- Controls the amount of padding between the window b
   top = 0,
   bottom = 0,
 }
+config.hide_tab_bar_if_only_one_tab = false -- When there is only a single tab, the tab bar is hidden from the display
 config.use_fancy_tab_bar = false     -- When true, the tab bar is rendered in a native style with proportional fonts.
 config.tab_max_width = 32            -- Don't let any individual tab name take too much room
 config.exit_behavior =
