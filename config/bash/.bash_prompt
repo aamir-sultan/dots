@@ -49,10 +49,11 @@ if tput setaf 1 &>/dev/null; then
 
   # Symbol color variable.
   # symbolColor="${sBlue}"
-  symbolColor="${dGreen}"
+  # symbolColor="${dGreen}"
   # symbolColor="${sCyan}"
   # symbolColor="${lOrange}"
-  # symbolColor="${lGrey}"
+  # symbolColor="${dOrange}"
+  symbolColor="${lGrey}"
   errorColor="${rRed}"
 
   # Branch color variable.
