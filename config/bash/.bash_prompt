@@ -38,12 +38,20 @@ if tput setaf 1 &>/dev/null; then
   # textColor="${blue1}"
   # textColor="${sBlue}"
   # textColor="${rCyan}"
-  # textColor="${lOrange}"
+  # textColor="${dOrange}"
   # textColor="${dYellow}"
+  # textColor="${blue}"
+  # textColor="${dullGreen2}"
+  # textColor="${dGreen}"
+  # textColor="${lOrange}"
+  # textColor="${dullGreen3}"
   textColor="${sBlue}"
 
   # Symbol color variable.
-  symbolColor="${sBlue}"
+  # symbolColor="${sBlue}"
+  symbolColor="${dGreen}"
+  # symbolColor="${sCyan}"
+  # symbolColor="${lOrange}"
   # symbolColor="${lGrey}"
   errorColor="${rRed}"
 
