@@ -39,21 +39,21 @@ if tput setaf 1 &>/dev/null; then
   # textColor="${sBlue}"
   # textColor="${rCyan}"
   # textColor="${dOrange}"
-  # textColor="${dYellow}"
+  textColor="${dYellow}"
   # textColor="${blue}"
   # textColor="${dullGreen2}"
   # textColor="${dGreen}"
   # textColor="${lOrange}"
   # textColor="${dullGreen3}"
-  textColor="${sBlue}"
+  # textColor="${sBlue}"
 
   # Symbol color variable.
-  # symbolColor="${sBlue}"
+  symbolColor="${sBlue}"
   # symbolColor="${dGreen}"
   # symbolColor="${sCyan}"
   # symbolColor="${lOrange}"
   # symbolColor="${dOrange}"
-  symbolColor="${lGrey}"
+  # symbolColor="${lGrey}"
   errorColor="${rRed}"
 
   # Branch color variable.
