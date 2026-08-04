@@ -183,9 +183,25 @@ function success() {
   echo -e "\e[01;32m* $MSG\e[0m"
 }
 
-function trash() {
-    mkdir -p ~/.Trash
-    mv "$@" ~/.Trash/
+# Biggest files
+bigf() {
+    find . -type f -printf '%s %p\n' |
+        sort -nr |
+        head -20 |
+        numfmt --to=iec
+}
+
+# Biggest directories
+bigdir() {
+    du -sh * | sort -h
+}
+
+# Delet to directory like recycle bin
+# Usage: trash filename.txt
+trash() {
+    local trash_dir="$HOME/.trash"
+    mkdir -p "$trash_dir"
+    mv "$@" "$trash_dir/" && echo "Moved to $trash_dir"
 }
 
 # Usage: cdf folder_name
