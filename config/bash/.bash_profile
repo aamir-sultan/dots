@@ -6,14 +6,10 @@ for file in $DOTS/config/*/.{path,env,ls_color,exports,aliases,functions,keybind
 done
 unset file
 
-# Case-insensitive globbing (used in pathname expansion)
-shopt -s nocaseglob
-
-# Append to the Bash history file, rather than overwriting it
-shopt -s histappend
-
-# Autocorrect typos in path names when using `cd`
-shopt -s cdspell
+shopt -s nocaseglob     # Case-insensitive globbing (used in pathname expansion)
+shopt -s histappend     # Append to the Bash history file, rather than overwriting it
+shopt -s cdspell        # Autocorrect typos in path names when using `cd`
+shopt -s dirspell       # Autocorrect typos in directory names when using `cd`
 
 # Enable some Bash 4 features when possible:
 # * `autocd`, e.g. `**/qux` will enter `./foo/bar/baz/qux`

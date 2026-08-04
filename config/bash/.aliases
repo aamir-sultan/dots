@@ -10,23 +10,25 @@ alias ~="cd ~" # `cd` is probably faster to type though
 alias -- -="cd -"
 
 # Shortcuts
-#alias d="cd ~/Documents/Dropbox"
+# alias d="cd ~/Documents/Dropbox"
 alias cdd="cd $DOTS"
 alias dl="cd ~/Downloads"
 alias dt="cd ~/Desktop"
 alias p="cd ~/projects"
+alias cdg='cd "$(git rev-parse --show-toplevel)"'
 alias g="git"
 alias cpr='cp -vr'
 alias cpf='cp -rvf'
 
-alias mkdir="mkdir -p"
+alias mkdir="mkdir -pv"
 # alias vi="vim"
 # alias e="$EDITOR"
 alias vi="$VISUAL"
 
 # Likewise this, plus I'm always mistyping it...
 alias findy='find . -name'
-alias sb='current_path=$(pwd); source ~/.bashrc; cd $current_path'
+# alias sb='current_path=$(pwd); source ~/.bashrc; cd $current_path'
+alias sb='source ~/.bashrc'
 alias vb='vim ~/.bashrc'
 alias vd='vim $DOTS'
 
@@ -40,6 +42,9 @@ alias tls='tmux ls'
 alias tn="tmux new -s"
 alias tst='tmux source-file ~/.tmux.conf'
 alias tsa='tmux a -t '
+# Smart Attach / Fallback
+# Attaches to an existing session, or creates a new one if none exist
+alias td='tmux attach || tmux new-session'
 
 # Vim/NeoVim aliases
 alias nv='nvim'
@@ -53,7 +58,7 @@ alias sl='fc -ln -1 | sed "s/^\s*//" >> ~/.saved_commands.txt'
 alias slg='< ~/.saved_commands.txt grep'
 
 # FZF search and edit with nvim
-alias fv='nvim $(fz)'
+alias fv='nvim "$(fz)"'
 alias fz='rg --files --hidden --follow --ignore-vcs -g "!{node_modules,.git}" | fzf'
 
 # Prints a directory tree
@@ -118,23 +123,47 @@ alias lt='ls --human-readable --size -1 -S --classify'
 # Always use color output for `ls`
 alias ls="command ls ${colorflag}"
 
+alias diff='diff --color=auto'
+
 # Always enable colored `grep` output
 # Note: `GREP_OPTIONS="--color=auto"` is deprecated, hence the alias usage.
 alias grep='grep --color=auto'
-alias gre='grep -Er'
-alias fgrep='fgrep --color=auto'
-alias egrep='egrep --color=auto'
-
+alias fgrep='fgrep -F --color=auto'
+alias egrep='egrep -E --color=auto'
+alias zgrep='zgrep --color=auto'   # search inside .gz without unpacking
+alias gx='grep -Er' # Grep eXtended and Recursive
 # Find a command in your grep history
-alias gh='history|grep'
+alias hgrep='history|grep'
+
+
+# Check disk space in readable units
+alias df='df -h'
+alias du='du -h'
+alias free='free -m'           # Memory usage in MBs
+
+# Clearing and exiting fast
+alias clr='clear'
+alias q='exit'
+
+# Clear the current terminal buffer AND session history
+alias hclear='history -c && history -w'
+# Show only the last N commands (default history output is usually too long)
+alias h10='history 10'
+alias h20='history 20'
+alias h50='history 50'
+# Prints your most-used commands - Help find aliases
+alias top10='history | awk "{\$1=\"\";print \$0}" | sort | uniq -c | sort -rn | head'
+alias hmerge='history -a && history -c && history -r' # Merge history from all terminals
+
+alias please='sudo $(fc -ln -1)' # Repeat the last command with sudo
 
 # Add a copy progress bar
 alias cpv='rsync -ah --info=progress2'
 
-# Protect yourself from file removal accidents. This alias provides a way to toss files into the Trash bin from your terminal
-TRASH=~/.local/share/Trash
-alias tcn='$(if [ ! -d "$TRASH" ] ; then mkdir $TRASH; echo echo -e "Trash Dir Created -> Deleted files will be available in: $TRASH"; else echo echo -e "Trash Dir Exists -> Deleted files will be available in: $TRASH"; fi); mv --force -t $TRASH '
-# alias tcn='mv --force -t ~/.local/share/Trash '
+alias cpu='ps auxf | sort -nr -k 3 | head -10' # Top 10 CPU-consuming processes
+alias mem='ps auxf | sort -nr -k 4 | head -10' # Top 10 Memory-consuming processes
+
+alias myip='curl -s ifconfig.me; echo'
 
 # Enable aliases to be sudo’ed
 alias sudo='sudo '

@@ -15,6 +15,9 @@ export HISTSIZE=1000000
 # allowing you to see when each command was executed.
 export HISTTIMEFORMAT='%F %T '
 
+# Ignore common commands
+export HISTIGNORE='ls:ll:cd:pwd:clear:history'
+
 # Make new shells get the history lines from all previous
 # shells instead of the default "last window closed" history
 export PROMPT_COMMAND="history -a; $PROMPT_COMMAND"

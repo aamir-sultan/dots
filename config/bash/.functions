@@ -5,11 +5,6 @@ function mkd() {
   mkdir -p "$@" && cd "$_"
 }
 
-# Change working directory to the top-most Finder window location
-function cdf() { # short for `cdfinder`
-  cd "$(osascript -e 'tell app "Finder" to POSIX path of (insertion location as alias)')"
-}
-
 # Create a .tar.gz archive, using `zopfli`, `pigz` or `gzip` for compression
 function targz() {
   local tmpFile="${@%/}.tar"
@@ -152,15 +147,6 @@ if [ ! $(uname -s) = 'Darwin' ]; then
   fi
 fi
 
-# `o` with no arguments opens the current directory, otherwise opens the given
-# location
-function o() {
-  if [ $# -eq 0 ]; then
-    open .
-  else
-    open "$@"
-  fi
-}
 
 # `tre` is a shorthand for `tree` with hidden files and color enabled, ignoring
 # the `.git` directory, listing directories first. The output gets piped into
@@ -197,18 +183,41 @@ function success() {
   echo -e "\e[01;32m* $MSG\e[0m"
 }
 
+function trash() {
+    mkdir -p ~/.Trash
+    mv "$@" ~/.Trash/
+}
+
+# Usage: cdf folder_name
+cdf() {
+    local dir
+    dir=$(find . -type d -name "*$1*" 2>/dev/null | head -n 1)
+    if [ -n "$dir" ]; then
+        cd "$dir"
+    else
+        echo "Directory not found: $1"
+    fi
+}
+
 # Variant for cd .. Now use up 2 or up 3 to go three dirs up
+# up() {
+#   local d=""
+#   limit=$1
+#   for ((i = 1; i <= limit; i++)); do
+#     d=$d/..
+#   done
+#   d=$(echo $d | sed 's/^\///')
+#   if [ -z "$d" ]; then
+#     d=..
+#   fi
+#   cd $d
+# }
+
 up() {
-  local d=""
-  limit=$1
-  for ((i = 1; i <= limit; i++)); do
-    d=$d/..
-  done
-  d=$(echo $d | sed 's/^\///')
-  if [ -z "$d" ]; then
-    d=..
-  fi
-  cd $d
+    local n=${1:-1}
+    while ((n--)); do
+        cd ..
+    done
 }
 
 # A Bash shell function to save your fingers from typing "awk '{ print $5 }'" all the time
