@@ -162,8 +162,8 @@ alias please='sudo $(fc -ln -1)' # Repeat the last command with sudo
 # Add a copy progress bar
 alias cpv='rsync -ah --info=progress2'
 
-alias cpu='ps auxf | sort -nr -k 3 | head -10' # Top 10 CPU-consuming processes
-alias mem='ps auxf | sort -nr -k 4 | head -10' # Top 10 Memory-consuming processes
+alias pscpu='ps auxf | sort -nr -k 3 | head -10' # Top 10 CPU-consuming processes
+alias psmem='ps auxf | sort -nr -k 4 | head -10' # Top 10 Memory-consuming processes
 
 alias myip='curl -s ifconfig.me; echo'
 
