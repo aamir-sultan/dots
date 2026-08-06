@@ -484,11 +484,12 @@ cdj() {
   local bookmarks="$DOTS/.bookmarks"
 
   if [[ -n "$2" ]]; then
-    bookmark $1 $2
+    # Forward every argument so options like -c <name> <dir> and -r <old> <new> work
+    bookmark "$@"
   elif [[ -n "$1" ]]; then
 
     # If the passed argument is available in the bookmarks use the bookmarks else use the fuzzy matching for directory
-    bookmark $1
+    bookmark "$1"
     if [[ $? != 0 ]]; then # Check the return value of bookmark $1 command
       if command -v fzf >/dev/null 2>&1; then
         # d $1
@@ -530,7 +531,7 @@ fe() {
 
 bookmark() {
   local bookmarks="$DOTS/.bookmarks"
-  touch $bookmarks
+  touch "$bookmarks"
 
   read -r -d '' usage <<'EOT'
 USAGE:
@@ -544,19 +545,14 @@ OPTIONS:
   -h, --help          Display usage text.
   -l                  Display all bookmarks.
   -d <bookmark>       Bookmark to delete.
-  -c <bookmark>       Bookmark to create.
+  -c <bookmark> [dir] Bookmark to create, defaults to the current directory.
+  -r <old> <new>      Rename a bookmark, keeping its path.
 EOT
 
   case $1 in
 
-  "--help")
+  "-h" | "--help")
     echo "$usage"
-    return
-    ;;
-
-  "-h")
-    echo "$usage"
-
     return
     ;;
 
@@ -566,57 +562,94 @@ EOT
     ;;
 
   "-c")
-    if [[ -z "$2" ]]; then
+    local name="$2" dir="${3:-$PWD}"
+    if [[ -z "$name" ]]; then
       echo "Missing argument for -c"
       return 1
     fi
-
-    local bookmark="${2}=$(pwd)"
-    if [[ -z $(grep "$bookmark" "$bookmarks") ]]; then
-      echo $bookmark >>$bookmarks
-      echo $bookmark
-    else
-      echo "Bookmark '$bookmark' already exists."
+    if [[ ! -d "$dir" ]]; then
+      echo "'$dir' is not a directory."
+      return 1
     fi
+
+    # Store an absolute path so the bookmark resolves from anywhere
+    local entry="${name}=$(cd "$dir" && pwd)"
+    # Match on the name only, so reusing a name overrides the old path
+    local existing=$(grep "^$name=" "$bookmarks")
+
+    if [[ "$existing" == "$entry" ]]; then
+      echo "Bookmark '$entry' already exists."
+    elif [[ -n "$existing" ]]; then
+      sed -i "/^$name=/d" "$bookmarks"
+      echo "$entry" >>"$bookmarks"
+      echo "Bookmark '$name' updated."
+      echo "  old: $existing"
+      echo "  new: $entry"
+    else
+      echo "$entry" >>"$bookmarks"
+      echo "$entry"
+    fi
+    return
+    ;;
+
+  "-r")
+    local old="$2" new="$3"
+    if [[ -z "$old" || -z "$new" ]]; then
+      echo "Missing argument for -r"
+      echo "Usage: bookmark -r <old> <new>"
+      return 1
+    fi
+
+    local existing=$(grep "^$old=" "$bookmarks")
+    if [[ -z "$existing" ]]; then
+      echo "Bookmark '$old' does not exist."
+      return 1
+    fi
+    if [[ "$old" == "$new" ]]; then
+      echo "Bookmark '$old' already has that name."
+      return
+    fi
+
+    # Renaming onto an existing name overrides it, same as -c does
+    local clobbered=$(grep "^$new=" "$bookmarks")
+    local entry="${new}=${existing#*=}"
+
+    sed -i "/^$old=/d" "$bookmarks"
+    sed -i "/^$new=/d" "$bookmarks"
+    echo "$entry" >>"$bookmarks"
+
+    echo "Bookmark '$old' renamed to '$new'."
+    [[ -n "$clobbered" ]] && echo "  overrode: $clobbered"
+    echo "  $entry"
     return
     ;;
 
   "-d")
-    if [[ -z "$2" ]]; then
+    local name="$2"
+    if [[ -z "$name" ]]; then
       echo "Missing argument for -d"
       return 1
-
     fi
 
-    local pat="$2"
-    if grep -q "^$pat=" "$bookmarks"; then
-      sed -i "/^$pat=/d" "$bookmarks"
-      echo -e "Bookmark '$pat' removed.\n"
-      echo -e "Bookmarks:"
-      cat "$bookmarks"
+    if grep -q "^$name=" "$bookmarks"; then
+      sed -i "/^$name=/d" "$bookmarks"
+      echo -e "Bookmark '$name' removed.\n"
     else
-      echo -e "Bookmark '$pat' does not exist.\n"
-      echo -e "Bookmarks:"
-      cat "$bookmarks"
+      echo -e "Bookmark '$name' does not exist.\n"
     fi
+    echo "Bookmarks:"
+    cat "$bookmarks"
     return
     ;;
 
   *)
-    # local bookmark="${1}="
-    # if [[ -z $(grep "$bookmark" "$bookmarks") ]]; then
-    # 	echo "Bookmark '$1' does not exists."
-    # 	return 1
-    # fi
-
-    local target=$(grep "$1=" "$bookmarks")
-    if [ "$target" == "" ]; then
-      # echo "Bookmark '$1' does not exists."
+    local target=$(grep "^$1=" "$bookmarks")
+    if [[ -z "$target" ]]; then
       return 1
     fi
 
-    local result=${target/$1=/}
-    cd "$result"
+    local result="${target#*=}"
+    cd "$result" && echo "$result"
     return
     ;;
   esac
