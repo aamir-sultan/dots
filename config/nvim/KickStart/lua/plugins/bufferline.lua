@@ -1,51 +1,40 @@
 return {
   'akinsho/bufferline.nvim',
   event = { 'BufReadPost' },
-  -- ft = '*',
   dependencies = { 'nvim-tree/nvim-web-devicons' },
   version = '*',
   opts = {
     options = {
-      -- mode = 'tabs',
-      -- separator_style = "thick",
-      -- separator_style = "{''}",
-  -- separator_style = { '', '' },
-  --     | "slope" | "thick" | "thin" | { 'any', 'any' },
-    indicator = {
-        icon = ' ',
-        style = 'icon', 
-    },
-      mode = 'bufffers',
+      -- separator_style: "slant" | "slope" | "thick" | "thin" | { 'any', 'any' }
+      indicator = {
+        icon = ' ',
+        style = 'icon',
+      },
+      mode = 'buffers', -- was 'bufffers' (typo); valid values are 'buffers' | 'tabs'
       diagnostics = 'nvim_lsp',
       offsets = {
         {
           filetype = 'neo-tree',
-          text = 'Noe-Tree',
+          text = 'Neo-Tree',
           separator = true,
           text_align = 'left',
         },
       },
-
-      diagnostics_indicator = function(count, level, diagnostics_dict, context)
-        if context.buffer:current() then
-          return ''
-        end
-
-        return ''
-      end,
-
-      config = function(_, opts)
-        require('bufferline').setup(opts)
-        -- Fix bufferline when restoring a session
-        vim.api.nvim_create_autocmd({ 'BufAdd', 'BufDelete' }, {
-          callback = function()
-            vim.schedule(function()
-              pcall(nvim_bufferline)
-            end)
-          end,
-        })
-      end,
     },
   },
+  -- NOTE: `config` and the session-restore fix used to be nested inside
+  -- `opts.options`, where lazy.nvim never looked at them, so neither ran.
+  config = function(_, opts)
+    require('bufferline').setup(opts)
+    -- Refresh bufferline when a session is restored, otherwise the tabline
+    -- can come back empty or stale.
+    vim.api.nvim_create_autocmd({ 'BufAdd', 'BufDelete' }, {
+      group = vim.api.nvim_create_augroup('bufferline_refresh', { clear = true }),
+      callback = function()
+        vim.schedule(function()
+          pcall(vim.cmd, 'redrawtabline')
+        end)
+      end,
+    })
+  end,
 }
-

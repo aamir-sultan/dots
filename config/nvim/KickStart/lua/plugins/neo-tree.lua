@@ -79,13 +79,17 @@ return {
 		"MunifTanjim/nui.nvim",
 		-- {"3rd/image.nvim", opts = {}}, -- Optional image support in preview window: See `# Preview Mode` for more information
 	},
-	lazy = false, -- neo-tree will lazily load itself
+	-- Loaded eagerly on purpose: `hijack_netrw_behavior` below has to be in place
+	-- before `nvim <dir>` is handled, and netrw itself is disabled in core/lazy.lua.
+	lazy = false,
 	---@module "neo-tree"
 	---@type neotree.Config?
-	-- event = { "VeryLazy" }, -- Keep it as VeryLazy otherwise the area for the file opened is not selected
-	cmd = { "NeoTree toggle" },
+	-- NOTE: `cmd = { "NeoTree toggle" }` was removed -- that is not a command
+	-- name (the command is `Neotree`), so it registered a bogus lazy stub.
+	-- This is now the single definition of <leader>e; the duplicates in
+	-- config/keymaps.lua and plugins/snacks.lua were removed.
 	keys = {
-		{ "<leader>e", "<cmd>NeoTree toggle<CR>", desc = "Toggle the NeoTree" },
+		{ "<leader>e", "<cmd>Neotree reveal toggle<CR>", desc = "Toggle Neo-tree" },
 	},
 	opts = neotree_options,
 }

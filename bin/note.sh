@@ -34,7 +34,7 @@ EOT
       $EDITOR "$notes_path/$1"
     else
       # If fd is not available then use find as default editor
-      if [ ! -x "$(which fd 2>/dev/null)" ]; then
+      if ! command -v fd >/dev/null 2>&1; then
         file=$(find "$notes_path" -type f  2>/dev/null | fzf +m) && $EDITOR "$file"
       else
         file=$(fd . -H -I -E .git --type f "$notes_path" 2>/dev/null | fzf +m) && $EDITOR "$file"

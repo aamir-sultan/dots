@@ -144,15 +144,10 @@ vim.api.nvim_create_autocmd("BufEnter", { command = [[set formatoptions-=cro]] }
 -- 	end,
 -- })
 
--- uv_close: Assertion '!uv__is_closing(handle)' failed fix on exit from a large file
-vim.api.nvim_create_autocmd({ "VimLeave" }, {
-  callback = function()
-    vim.fn.jobstart('notify-send "hello"', { detach = true })
-  end,
-})
-
-
-
+-- NOTE: a `VimLeave` autocmd here used to run `notify-send "hello"` on every
+-- exit. It was a debugging leftover (nominally a workaround for a uv_close
+-- assertion on quitting a large file) and fired a desktop notification every
+-- single time Neovim closed. Removed.
 
 
 -- Create an augroup so autocmds don't stack when the config is reloaded

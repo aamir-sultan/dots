@@ -1,47 +1,18 @@
 vim.cmd([[colorscheme solarized-osaka]])
 
--- This file is automatically loaded by plugins.core
+-- Leader keys are set early in core/lazy.lua (they must be set before
+-- lazy.nvim loads); repeated here only so this file stands alone.
 vim.g.mapleader = " "
 vim.g.maplocalleader = "\\"
-
--- if vim.loader then
---   vim.loader.enable()
--- end
-
--- LazyVim auto format
-vim.g.autoformat = true
 
 -- Snacks animations
 -- Set to `false` to globally disable all snacks animations
 -- vim.g.snacks_animate = true
 
--- if the completion engine supports the AI source,
--- use that instead of inline suggestions
-vim.g.ai_cmp = true
-
--- LazyVim root dir detection
--- Each entry can be:
--- * the name of a detector function like `lsp` or `cwd`
--- * a pattern or array of patterns like `.git` or `lua`.
--- * a function with signature `function(buf) -> string|string[]`
-vim.g.root_spec = { "lsp", { ".git", "lua" }, "cwd" }
-
--- Optionally setup the terminal to use
--- This sets `vim.o.shell` and does some additional configuration for:
--- * pwsh
--- * powershell
--- LazyVim.terminal.setup("pwsh")
-
--- Set LSP servers to be ignored when used with `util.root.detectors.lsp`
--- for detecting the LSP root
-vim.g.root_lsp_ignore = { "copilot" }
-
--- Hide deprecation warnings
-vim.g.deprecation_warnings = false
-
--- Show the current document symbols location from Trouble in lualine
--- You can disable this for a buffer by setting `vim.b.trouble_lualine = false`
-vim.g.trouble_lualine = true
+-- NOTE: this file used to set vim.g.autoformat, vim.g.ai_cmp, vim.g.root_spec,
+-- vim.g.root_lsp_ignore, vim.g.deprecation_warnings and vim.g.trouble_lualine.
+-- Those are all LazyVim-only variables -- nothing in this Kickstart-style
+-- config ever reads them, so they were dead weight. Removed.
 
 local opt = vim.opt
 
@@ -103,8 +74,7 @@ opt.updatetime = 200               -- Save swap file and trigger CursorHold
 opt.virtualedit = "block"          -- Allow cursor to move where there is no text in visual block mode
 opt.wildmode = "longest:full,full" -- Command-line completion mode
 opt.winminwidth = 5                -- Minimum window width
--- opt.wrap = false -- Disable line wrap
-opt.wrap = true                    -- Disable line wrap
+opt.wrap = true                    -- Wrap long lines (see <leader>tw to toggle)
 
 -- if vim.fn.has("nvim-0.10") == 1 then
 opt.smoothscroll = true

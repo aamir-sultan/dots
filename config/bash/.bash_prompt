@@ -127,10 +127,12 @@ else
   hostStyle="${bold}${hostNonSSHColor}"
 fi
 
-# dateStyle=`date +"%a, %b %d %Y %H:%M:%S"`
-# dateStyle=`date +"%b %d %Y %H:%M:%S"`
-# dateStyle=`date "+%Y-%m-%d %H:%M:%S"`
-dateStyle=`date "+Y%yM%mD%d %H:%M:%S"`
+# NOTE: this used to be `dateStyle=$(date "+Y%yM%mD%d %H:%M:%S")`, evaluated
+# once when the shell started and then baked into PS1 as a literal string -- so
+# the clock in the prompt was frozen at login time and never ticked.
+# Bash's own `\D{...}` escape is re-expanded on every prompt, costs no
+# subprocess, and has been available since bash 2.x (fine on CentOS 7).
+dateStyle='\D{Y%yM%mD%d %H:%M:%S}'
 
 textStyle="${textColor}"
 wordStyle="${wordColor}"
@@ -146,14 +148,21 @@ errorSymbolStyle="${bold}${errorColor}"
 # Prompt functions for the handling last command status and git status
 # ----------------------------------------------------------------------------------------
 
-# get_status() {
-#   local EXIT="$?"
-#   if [ $EXIT != 0 ]; then
-#     symbolStyle=$errorSymbolStyle
-#   else
-symbolStyle=$defaultSymbolStyle
-#   fi
-# }
+# Colour the prompt symbol red when the previous command failed.
+#
+# NOTE: the old `get_status` was commented out and `symbolStyle` was pinned to
+# the default colour, so the symbol never turned red. It can't be a plain
+# variable: PS1 is expanded at *assignment* time, so the value would freeze.
+# Instead PS1 calls this function via `\$(...)`, which re-runs on every prompt.
+# `__dots_status` is captured by __dots_prompt() in .exports before anything
+# else can clobber $?.
+prompt_symbol_style() {
+  if [ "${__dots_status:-0}" -ne 0 ] 2>/dev/null; then
+    printf '%s' "${errorSymbolStyle}"
+  else
+    printf '%s' "${defaultSymbolStyle}"
+  fi
+}
 
 # Prompt Symbol
 # ❯, >, , », ⨔, ⌇, 󰘧, λ, λ:, ⁂, ➲, \$, \>
@@ -208,24 +217,17 @@ prompt_git() {
   echo -e "${1}${branchName}${2}${s}"
 }
 
-# function prompt_update() {
-#   get_status # Get the last command status and set the color of the symbol based on it
-#   # Set the terminal title and prompt.
 PS1="\n"                  # newline
 PS1+="\[${userStyle}\]\u" # username
 PS1+="\[${wordStyle}\] at "
-# PS1+="\[${hostStyle}\]\h (\d \t)" # host
-PS1+="\[${hostStyle}\]\h (${dateStyle})" # host
+PS1+="\[${hostStyle}\]\h (${dateStyle})"                                                    # host + live clock (\D{...})
 PS1+="\[${wordStyle}\] in "
 PS1+="\[${pwdStyle}\]\w"                                                                    # working directory full path
 PS1+="\$(prompt_git \"\[${wordStyle}\] on \[${branchStyle}\]\" \"\[${repoStatusStyle}\]\")" # Git repository details
 PS1+="\n"                                                                                   # newline after prompt and before symbol
-PS1+="\[${symbolStyle}\]${promptSymbol} \[${reset}\]"                                       # `$` (and reset color)
+PS1+="\[\$(prompt_symbol_style)\]${promptSymbol} \[${reset}\]"                              # prompt symbol, red on failure
 PS1+="\[${textColor}\]"                                                                     # Terminal stdout color
 export PS1
-# }
-
-# PROMPT_COMMAND=prompt_update # Updates the prompt on each command execution
 
 PS2="\[${rYellow}\]→ \[${reset}\]"
 export PS2

@@ -1,9 +1,9 @@
+-- NOTE: mason moved from `williamboman/*` to `mason-org/*` with v2.
+-- The old paths only still resolve because GitHub 301-redirects them.
 return {
 	{
-		"williamboman/mason-lspconfig.nvim",
+		"mason-org/mason-lspconfig.nvim",
 		lazy = true,
-		-- event = "InsertEnter",
-		-- event = "VeryLazy",
 		event = "BufReadPost",
 		opts = {
 			-- list of servers for mason to install
@@ -14,7 +14,7 @@ return {
 
 		dependencies = {
 			{
-				"williamboman/mason.nvim",
+				"mason-org/mason.nvim",
 				lazy = true,
 				opts = {
 					ui = {
@@ -42,7 +42,7 @@ return {
 			},
 		},
 		dependencies = {
-			"williamboman/mason.nvim",
+			"mason-org/mason.nvim",
 		},
 	},
 }

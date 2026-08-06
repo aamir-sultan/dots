@@ -1,10 +1,14 @@
-# More robust way to handle DOTS (check if it's set and a directory)
+# More robust way to handle DOTS (check if it's set and a directory).
+#
+# NOTE: these used to be `exit 1`. This file is *sourced* by an interactive
+# shell, so `exit` closed the user's terminal instead of just bailing out of
+# the dotfiles. `return` bails out of the sourced file and leaves the shell up.
 if [[ -z "$DOTS" ]]; then
-  echo "Error: DOTS variable is not set."
-  exit 1
+  echo "Error: DOTS variable is not set." >&2
+  return 1 2>/dev/null || exit 1
 elif [[ ! -d "$DOTS" ]]; then
-  echo "Error: DOTS is not a directory: $DOTS"
-  exit 1
+  echo "Error: DOTS is not a directory: $DOTS" >&2
+  return 1 2>/dev/null || exit 1
 fi
 
 [ -n "$PS1" ] && source $DOTS/config/bash/.bash_profile

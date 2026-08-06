@@ -73,13 +73,40 @@ touch_gitconfig() {
   touch ~/.gitconfig
 }
 
+# The global gitignore lives inside the dots tree, but $DOTS is relocatable, so
+# the path can only be resolved here at install time. git resolves
+# core.excludesfile against the *cwd*, not against the config file it is written
+# in, so a relative value is useless -- it must be absolute.
+GLOBAL_EXCLUDES="$DOTS/config/git/.gitignore.global"
+
+set_excludesfile() {
+  if [ -f "$GLOBAL_EXCLUDES" ]; then
+    echo "Setting global gitignore: $GLOBAL_EXCLUDES"
+    git config --global core.excludesfile "$GLOBAL_EXCLUDES"
+  else
+    echo "Warning: global gitignore not found - $GLOBAL_EXCLUDES"
+  fi
+}
+
+unset_excludesfile() {
+  # Only clear it if it still points into this dots tree, so we never clobber a
+  # global ignore file the user configured themselves.
+  current="$(git config --global --get core.excludesfile 2>/dev/null)"
+  if [ "$current" = "$GLOBAL_EXCLUDES" ]; then
+    echo "Removing global gitignore setting: $GLOBAL_EXCLUDES"
+    git config --global --unset core.excludesfile 2>/dev/null
+  fi
+}
+
 # Main script logic
 case "$1" in
   --install)
     touch_gitconfig
     add_include_paths
+    set_excludesfile
     ;;
   --remove)
+    unset_excludesfile
     remove_include_paths
     ;;
   *)

@@ -1,18 +1,31 @@
 #!/usr/bin/env bash
 
 if [ -z "$FZFRC_PATH" ]; then
-    FZFRC_PATH="$DOTS/fzf/.fzfrc"
+    FZFRC_PATH="$DOTS/config/fzf/.fzfrc" # was $DOTS/fzf/.fzfrc, which does not exist
 fi
 
 # Fuzzy File Finder setup and activation
 #---------------------------------------
 # Setup fzf
 # ---------
-if [[ ! "$PATH" == *$DOTS/tools/fzf/bin* ]]; then
-  PATH="${PATH:+${PATH}:}$DOTS/tools/fzf/bin"
-fi
+# NOTE: this used to add $DOTS/tools/fzf/bin to PATH. That directory has never
+# existed -- the binary lands at $DOTS/tools/fzf/fzf and is symlinked into
+# $DOTS/tools/bin, which config/system/.path already puts on PATH.
 
-eval "$(fzf --bash)"
+# `fzf --bash` only exists in fzf >= 0.48. Fall back to the shipped shell
+# integration scripts on older builds (e.g. a distro fzf on CentOS 7) instead of
+# spraying "unknown option" errors into every new shell.
+if fzf --bash >/dev/null 2>&1; then
+  eval "$(fzf --bash)"
+else
+  for __fzf_f in /usr/share/fzf/shell/key-bindings.bash \
+    /usr/share/fzf/key-bindings.bash \
+    /usr/share/bash-completion/completions/fzf \
+    ~/.fzf.bash; do
+    [ -r "$__fzf_f" ] && . "$__fzf_f"
+  done
+  unset __fzf_f
+fi
 
 
 # General setting for the fzf

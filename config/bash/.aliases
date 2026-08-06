@@ -36,12 +36,14 @@ alias vd='vim $DOTS'
 # alias ta="tmux attach -t"
 alias ta='tmux a'
 alias tas='tmux a; tmux source-file ~/.tmux.conf'
-alias td="tmux detach"
 alias tk='tmux kill-session -t '
 alias tls='tmux ls'
 alias tn="tmux new -s"
 alias tst='tmux source-file ~/.tmux.conf'
 alias tsa='tmux a -t '
+# NOTE: `td` was defined twice -- as `tmux detach` here and as the smart-attach
+# below. The second silently won, so `td` never detached. Detach is now `tdd`.
+alias tdd='tmux detach'
 # Smart Attach / Fallback
 # Attaches to an existing session, or creates a new one if none exist
 alias td='tmux attach || tmux new-session'
@@ -62,7 +64,7 @@ alias fv='nvim "$(fz)"'
 alias fz='rg --files --hidden --follow --ignore-vcs -g "!{node_modules,.git}" | fzf'
 
 # Prints a directory tree
-if [ ! -x "$(which tree 2>/dev/null)" ]; then
+if ! command -v tree >/dev/null 2>&1; then
   alias tree="find . -print | sed -e 's;[^/]*/;|__;g;s;__|; |;g'"
 fi
 
@@ -188,8 +190,15 @@ command -v md5sum >/dev/null || alias md5sum="md5"
 # macOS has no `sha1sum`, so use `shasum` as a fallback
 command -v sha1sum >/dev/null || alias sha1sum="shasum"
 
-# URL-encode strings
-alias urlencode='python -c "import sys, urllib as ul; print ul.quote_plus(sys.argv[1]);"'
+# URL-encode strings.
+# NOTE: this was Python 2 only (`import urllib`, `print` statement), so it died
+# with a SyntaxError anywhere `python` is Python 3. Prefer python3, but keep the
+# Python 2 form as a fallback for old boxes (e.g. stock CentOS 7).
+if command -v python3 >/dev/null 2>&1; then
+  alias urlencode='python3 -c "import sys, urllib.parse as ul; print(ul.quote_plus(sys.argv[1]))"'
+elif command -v python >/dev/null 2>&1; then
+  alias urlencode='python -c "import sys, urllib as ul; print ul.quote_plus(sys.argv[1])"'
+fi
 
 # Intuitive map function
 # For example, to list all directories that contain a certain file:

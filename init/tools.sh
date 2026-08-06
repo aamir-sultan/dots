@@ -77,6 +77,33 @@ install_tool_binary() {
   local setup_path="$dload_path/$name"
   local file_path="$dload_path/$filename"
 
+  # With --sync, replace an existing install so version bumps in tools.conf
+  # actually take effect.
+  #
+  # NOTE: --sync was previously parsed and then ignored (and init/sync.sh is an
+  # empty file), so once a tool had been installed once there was no way to
+  # upgrade it short of deleting $TOOLS by hand: the `-d "$setup_path"` check
+  # below short-circuited every subsequent run.
+  # Backups go in a dedicated directory rather than alongside the install as
+  # "<name>.bak". A sibling backup sits inside the "<name>*" glob used after
+  # extraction, which makes that `mv` see two sources and a non-directory
+  # target ("mv: target 'nvim' is not a directory").
+  local backup_dir="$dload_path/.backup"
+
+  if [ "$sync" = "true" ] && [ -d "$setup_path" ]; then
+    if [ "$backup" = "true" ]; then
+      log "Backing up existing $name to $backup_dir/$name"
+      mkdir -p "$backup_dir"
+      rm -rf "${backup_dir:?}/$name"
+      mv "$setup_path" "$backup_dir/$name"
+    else
+      log "Removing existing $name at $setup_path (--sync)"
+      rm -rf "$setup_path"
+    fi
+    # Drop any stale archive so the new version is really fetched.
+    rm -f "$file_path"
+  fi
+
   if [ ! -d "$setup_path" ]; then
     if [ ! -f "$file_path" ]; then
       if command -v "$dload_tool" > /dev/null 2>&1; then
@@ -96,10 +123,38 @@ install_tool_binary() {
     if [ -n "$post_proc_cmd" ]; then
       log "Running post-processing for $name"
       eval "$post_proc_cmd"
-      # mv "$name"* "$name"
-      # echo "Moving ${filename}  to $name"
-      rm -rf ${filename}
-      mv "$name"* "$name"
+      # Remove the archive first so the search below only sees directories.
+      # Quoted: $filename contains no glob chars, but an unquoted `rm -rf` on
+      # an unvalidated variable is not worth the risk.
+      rm -rf "$filename"
+
+      # Rename the freshly extracted directory to the plain tool name.
+      #
+      # NOTE: this used to be a bare `mv "$name"* "$name"`. That silently
+      # assumed the glob matched exactly one entry, and broke the moment
+      # anything else in $TOOLS started with the tool name (a backup, a
+      # leftover from an interrupted run, a second extracted version) -- `mv`
+      # then got 3+ arguments and failed with a confusing "target is not a
+      # directory". Now the match is explicit and ambiguity is reported.
+      local extracted="" candidate
+      for candidate in "$name"*; do
+        [ -d "$candidate" ] || continue
+        [ "$candidate" = "$name" ] && continue
+        case "$candidate" in *.bak) continue ;; esac
+        if [ -n "$extracted" ]; then
+          log "Error: ambiguous extraction for $name: '$extracted' and '$candidate'"
+          return 1
+        fi
+        extracted="$candidate"
+      done
+
+      if [ -z "$extracted" ]; then
+        log "Error: could not find extracted directory for $name in $dload_path"
+        return 1
+      fi
+
+      log "Renaming $extracted -> $name"
+      mv "$extracted" "$name"
     fi
 
     # rm -rf dfile "$filename"
@@ -137,10 +192,32 @@ install_all_tools() {
 
   mkdir -p "$TOOLS"
   for tool_name in "${tools[@]}"; do
+    # NOTE: `declare -A tool` does not reset the array on later iterations
+    # (declare inside a function makes it local once), so keys set by an earlier
+    # tool -- e.g. tmux's `version_or_branch` -- leaked into the next one.
+    unset tool
     # Declare an empty associative array
     declare -A tool
     # Populate tool array by copying from the original
     eval "$(declare -p "$tool_name" | sed "s/declare -A $tool_name/declare -A tool/")"
+
+    # Honour the --[no-]<tool> flags.
+    #
+    # NOTE: these flags never did anything before. The option parser set plain
+    # variables named after each tool (`nvim=true`, `fd=false`, ...) -- but
+    # those are the exact names of the associative arrays declared in
+    # tools.conf, so the assignments either failed or silently corrupted the
+    # tool definition, and this loop never consulted them anyway. The flags now
+    # live in a separate `enable_<tool>` namespace that cannot collide.
+    local enable_var="enable_${tool_name}"
+    local tool_enabled="${!enable_var-}"
+    if [ -z "$tool_enabled" ]; then
+      tool_enabled="$default_enable"
+    fi
+    if [ "$tool_enabled" != "true" ]; then
+      log "Skipping $tool_name (disabled)"
+      continue
+    fi
 
     local tool_install_mode="${tool[install_mode]}"
     if [[ "$tool_install_mode" == "$install_mode" || "$tool_install_mode" == "all" ]]; then
@@ -164,8 +241,15 @@ usage: $0 [OPTIONS]
 
     --help            Show this message
     --all             Download and Install everything that is supported
-    --sync            Sync all of the tools with latest and create backup
-    --backup          Create backup all of the tools
+    --sync            Re-install selected tools, replacing any existing copy.
+                      Needed to pick up version bumps in tools.conf, since a
+                      tool that is already present is otherwise skipped.
+                      Combine with a selection, e.g. '--all --sync'.
+    --backup          With --sync, keep the previous copy as <tool>.bak
+                      instead of deleting it
+
+  Selection: with --all every tool is installed unless switched off with
+  --no-<tool>. Without --all, only the tools named with --<tool> are installed.
     --[no-]fzf        Enable/disable installation of fzf
     --[no-]tmux       Enable/disable installation of tmux
     --[no-]fd         Enable/disable installation of fd
@@ -177,37 +261,39 @@ EOF
 exit 0
 }
 
-# Test for known flags
-for opt in $@
+# With --all, every tool is on unless explicitly turned off with --no-<tool>.
+# Without it, nothing is installed unless explicitly turned on with --<tool>.
+default_enable=false
+
+# Test for known flags.
+#
+# NOTE: these used to assign to bare `fzf=true` / `nvim=false` etc, which are
+# the same names as the associative arrays defined in tools.conf. The
+# `enable_` prefix keeps the two namespaces apart -- see install_all_tools().
+for opt in "$@"
 do
     case $opt in
         --help)     help ;;
-        --sync)     sync=true ;; 
-        --backup)   backup=true ;; 
-        --all) 
-                    fzf=true 
-                    tmux=true 
-                    fd=true 
-                    bat=true 
-                    vivid=true 
-                    nvim=true 
-                    rg=true
+        --sync)     sync=true ;;
+        --backup)   backup=true ;;
+        --all)
+                    default_enable=true
                     backup=true
                     ;;
-        --fzf)      fzf=true ;;
-        --no-fzf)   fzf=false ;;
-        --tmux)     tmux=true ;;
-        --no-tmux)  tmux=false ;;
-        --fd)       fd=true ;;
-        --no-fd)    fd=false ;;
-        --bat)      bat=true ;;
-        --no-bat)   bat=false ;;
-        --vivid)    vivid=true ;;
-        --no-vivid) vivid=false ;;
-        --nvim)     nvim=true ;;
-        --no-nvim)  nvim=false ;;
-        --rg)       rg=true ;;
-        --no-rg)    rg=false ;;
+        --fzf)      enable_fzf=true ;;
+        --no-fzf)   enable_fzf=false ;;
+        --tmux)     enable_tmux=true ;;
+        --no-tmux)  enable_tmux=false ;;
+        --fd)       enable_fd=true ;;
+        --no-fd)    enable_fd=false ;;
+        --bat)      enable_bat=true ;;
+        --no-bat)   enable_bat=false ;;
+        --vivid)    enable_vivid=true ;;
+        --no-vivid) enable_vivid=false ;;
+        --nvim)     enable_nvim=true ;;
+        --no-nvim)  enable_nvim=false ;;
+        --rg)       enable_rg=true ;;
+        --no-rg)    enable_rg=false ;;
         -*|--*) e_warning "Warning: invalid option $opt"; help ;;
     esac
 done

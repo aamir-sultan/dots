@@ -39,7 +39,7 @@ install_vim_plugins() {
     vimrc_path="$VIMRC_PATH"
 
     if [ ! -f "$vimplug_path" ]; then
-      if [ ! "$(which curl)" = "" ]; then
+      if command -v curl >/dev/null 2>&1; then
         curl -fLo "$vimplug_path" \
           --create-dirs \
           "$url" &

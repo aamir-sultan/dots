@@ -19,6 +19,23 @@ export HISTTIMEFORMAT='%F %T '
 export HISTIGNORE='ls:ll:cd:pwd:clear:history'
 
 # Make new shells get the history lines from all previous
-# shells instead of the default "last window closed" history
-export PROMPT_COMMAND="history -a; $PROMPT_COMMAND"
+# shells instead of the default "last window closed" history.
+#
+# NOTE: this used to be an unguarded `PROMPT_COMMAND="history -a; $PROMPT_COMMAND"`,
+# which appended another copy on every re-source (e.g. the `sb` alias), so
+# PROMPT_COMMAND grew into "history -a; history -a; history -a; ..." without
+# bound. Kept as a string (not a bash 5.1+ array) so this still works on the
+# bash 4.2 shipped with CentOS 7.
+case ";${PROMPT_COMMAND};" in
+*";__dots_prompt;"*) ;; # already installed
+*) export PROMPT_COMMAND="__dots_prompt;${PROMPT_COMMAND}" ;;
+esac
+
+# Runs before every prompt. Capturing $? must be the very first thing it does,
+# otherwise `history -a` clobbers the exit status the prompt wants to show.
+__dots_prompt() {
+  __dots_status=$?
+  history -a
+  return $__dots_status
+}
 

@@ -70,13 +70,25 @@ function dataurl() {
   echo "data:${mimeType};base64,$(openssl base64 -in "$1" | tr -d '\n')"
 }
 
-# Start an HTTP server from a directory, optionally specifying the port
+# Start an HTTP server from a directory, optionally specifying the port.
+#
+# NOTE: this used to hard-code Python 2's `SimpleHTTPServer` module, which was
+# removed in Python 3 -- so it failed with ImportError on any current system.
+# Now prefers python3's `http.server`, falling back to the Python 2 form for old
+# boxes (e.g. stock CentOS 7, where `python` is 2.7 and python3 may be absent).
 function server() {
   local port="${1:-8000}"
   sleep 1 && open "http://localhost:${port}/" &
-  # Set the default Content-Type to `text/plain` instead of `application/octet-stream`
-  # And serve everything as UTF-8 (although not technically correct, this doesn’t break anything for binary files)
-  python -c $'import SimpleHTTPServer;\nmap = SimpleHTTPServer.SimpleHTTPRequestHandler.extensions_map;\nmap[""] = "text/plain";\nfor key, value in map.items():\n\tmap[key] = value + ";charset=UTF-8";\nSimpleHTTPServer.test();' "$port"
+  # Serve unknown types as text/plain and everything as UTF-8 (not technically
+  # correct, but it doesn't break anything for binary files).
+  if command -v python3 >/dev/null 2>&1; then
+    python3 -c $'import sys, http.server as hs\nm = hs.SimpleHTTPRequestHandler.extensions_map\nm[""] = "text/plain"\nfor k, v in m.items():\n    m[k] = v + ";charset=UTF-8"\nhs.test(HandlerClass=hs.SimpleHTTPRequestHandler, port=int(sys.argv[1]))' "$port"
+  elif command -v python >/dev/null 2>&1; then
+    python -c $'import SimpleHTTPServer;\nmap = SimpleHTTPServer.SimpleHTTPRequestHandler.extensions_map;\nmap[""] = "text/plain";\nfor key, value in map.items():\n\tmap[key] = value + ";charset=UTF-8";\nSimpleHTTPServer.test();' "$port"
+  else
+    echo "server: no python interpreter found" >&2
+    return 1
+  fi
 }
 
 # Start a PHP server from a directory, optionally specifying the port
@@ -138,9 +150,13 @@ function getcertnames() {
 
 # Normalize `open` across Linux, macOS, and Windows.
 # This is needed to make the `o` function (see below) cross-platform.
-if [ ! $(uname -s) = 'Darwin' ]; then
-  if grep -q Microsoft /proc/version; then
-    # Ubuntu on Windows using the Linux subsystem
+# NOTE: the WSL test used to be `grep -q Microsoft /proc/version`. WSL2 kernels
+# spell it lowercase ("...-microsoft-standard-WSL2"), so the test never matched
+# and `open` fell through to xdg-open even on WSL. `-i` fixes it. The
+# /proc/version guard keeps this from erroring on systems without procfs.
+if [ "$(uname -s)" != 'Darwin' ]; then
+  if [ -r /proc/version ] && grep -qi microsoft /proc/version; then
+    # Windows Subsystem for Linux
     alias open='explorer.exe'
   else
     alias open='xdg-open'
@@ -418,7 +434,7 @@ EOT
 
     local dir
     # If fd is not available then use find as default editor
-    if [ ! -x "$(which fd 2>/dev/null)" ]; then
+    if ! command -v fd >/dev/null 2>&1; then
       dir=$(find . -type d 2>/dev/null | fzf --query=$2) && cd "$dir"
       echo "$dir"
     else
@@ -432,7 +448,7 @@ EOT
     local dir
     if [[ -n "$1" ]]; then
       local lines
-      if [ ! -x "$(which fd 2>/dev/null)" ]; then
+      if ! command -v fd >/dev/null 2>&1; then
         lines=$(find . -type d 2>/dev/null | fzf --filter=$1)
       else
         lines=$(fd -H -I -E .git --type d 2>/dev/null | fzf --filter=$1)
@@ -450,7 +466,7 @@ EOT
       fi
     else
       # If fd is not available then use find as default editor
-      if [ ! -x "$(which fd 2>/dev/null)" ]; then
+      if ! command -v fd >/dev/null 2>&1; then
         dir=$(find . -type d 2>/dev/null | fzf +m) && cd "$dir"
         echo "$dir"
       else
@@ -481,7 +497,7 @@ cdj() {
     # If the passed argument is available in the bookmarks use the bookmarks else use the fuzzy matching for directory
     bookmark $1
     if [[ $? != 0 ]]; then # Check the return value of bookmark $1 command
-      if [ -x "$(which fzf 2>/dev/null)" ]; then
+      if command -v fzf >/dev/null 2>&1; then
         # d $1
         d -q $1
       else
@@ -494,7 +510,7 @@ cdj() {
     # d $1
   else
     # 	# Use j without any arguments to fuzzy search the directories
-    if [ -x "$(which fzf 2>/dev/null)" ]; then
+    if command -v fzf >/dev/null 2>&1; then
       d
     else
       echo "fzf utility not available"
@@ -504,14 +520,14 @@ cdj() {
 
 fe() {
   if [[ -n "$1" ]]; then
-    if [ -x "$(which fzf 2>/dev/null)" ]; then
+    if command -v fzf >/dev/null 2>&1; then
       f -q $1
     else
       echo "fzf utility not available"
     fi
   else
     # Use ef without any arguments to fuzzy search the directories
-    if [ -x "$(which fzf 2>/dev/null)" ]; then
+    if command -v fzf >/dev/null 2>&1; then
       f
     else
       echo "fzf utility not available"
@@ -714,7 +730,7 @@ function matrix() {
 jfa() {
   local dir
   # If fd is not available then use find as default editor
-  if [ ! -x "$(which fd 2>/dev/null)" ]; then
+  if ! command -v fd >/dev/null 2>&1; then
     dir=$(find / -type d 2>/dev/null | fzf +m) && cd "$dir"
   else
     dir=$(fd . '/' -H -I -E .git --type d 2>/dev/null | fzf +m) && cd "$dir"
@@ -752,7 +768,7 @@ b() {
 
       # Process each line
       base_name=$(basename "$line")
-      if [ ! -x "$(which fzf 2>/dev/null)" ]; then
+      if ! command -v fzf >/dev/null 2>&1; then
         grep_output=$(echo "$base_name" | grep -E "^$1")
         if [ "$grep_output" != "" ]; then
           cd "$line"
@@ -818,7 +834,7 @@ EOT
 
     local file
     # If fd is not available then use find as default editor
-    if [ ! -x "$(which fd 2>/dev/null)" ]; then
+    if ! command -v fd >/dev/null 2>&1; then
       file=$(find . -type f 2>/dev/null | fzf --query=$2) && $EDITOR "$file"
       echo "$EDITOR $file"
     else
@@ -832,7 +848,7 @@ EOT
     local file
     if [[ -n "$1" ]]; then
       local lines
-      if [ ! -x "$(which fd 2>/dev/null)" ]; then
+      if ! command -v fd >/dev/null 2>&1; then
         lines=$(find . -type f 2>/dev/null | fzf --filter=$1)
       else
         lines=$(fd -H -I -E .git --type f 2>/dev/null | fzf --filter=$1)
@@ -848,7 +864,7 @@ EOT
       fi
     else
       # If fd is not available then use find as default editor
-      if [ ! -x "$(which fd 2>/dev/null)" ]; then
+      if ! command -v fd >/dev/null 2>&1; then
         file=$(find . -type f 2>/dev/null | fzf +m) && $EDITOR "$file"
       else
         file=$(fd -H -I -E .git --type f 2>/dev/null | fzf +m) && $EDITOR "$file"

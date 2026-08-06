@@ -76,7 +76,6 @@ return {
     event = 'VeryLazy',
     opts_extend = { 'spec' },
     opts = {
-      defaults = {},
       spec = {
         {
           mode = { 'n', 'v' },
@@ -130,14 +129,9 @@ return {
         desc = 'Window Hydra Mode (which-key)',
       },
     },
-    config = function(_, opts)
-      local wk = require 'which-key'
-      wk.setup(opts)
-      if not vim.tbl_isempty(opts.defaults) then
-        LazyLite.warn 'which-key: opts.defaults is deprecated. Please use opts.spec instead.'
-        wk.register(opts.defaults)
-      end
-    end,
+    -- NOTE: the old `config` branched on the removed `opts.defaults` and called
+    -- `LazyLite.warn` (an undefined global left over from a previous config)
+    -- plus the deprecated `wk.register`. Dropped; `opts` alone is enough.
   },
 }
 -- vim: ts=2 sts=2 sw=2 et

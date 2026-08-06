@@ -72,20 +72,10 @@ return {
 			end,
 			desc = "Command History",
 		},
-		{
-			"<leader>n",
-			function()
-				Snacks.picker.notifications()
-			end,
-			desc = "Notification History",
-		},
-		{
-			"<leader>e",
-			function()
-				Snacks.explorer()
-			end,
-			desc = "File Explorer",
-		},
+		-- NOTE: <leader>n (Snacks.picker.notifications) was defined here and
+		-- again further down as Snacks.notifier.show_history(). Only the latter
+		-- is kept. <leader>e (Snacks.explorer) was also defined here, but
+		-- `explorer` is disabled above and neo-tree owns <leader>e.
 		-- find
 		{
 			"<leader>fb",
@@ -209,13 +199,8 @@ return {
 			desc = "GitHub Pull Requests (all)",
 		},
 		-- Grep
-		{
-			"<leader>sb",
-			function()
-				Snacks.picker.lines()
-			end,
-			desc = "Buffer Lines",
-		},
+		-- NOTE: <leader>sb (Snacks.picker.lines) was listed here and again in
+		-- the "search" group below; the duplicate was removed.
 		{
 			"<leader>sB",
 			function()
