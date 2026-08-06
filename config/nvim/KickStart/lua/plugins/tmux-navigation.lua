@@ -1,11 +1,9 @@
 -- Seamless <C-hjkl> movement between Neovim splits and tmux panes.
--- Pairs with `christoomey/vim-tmux-navigator` on the tmux side (see .tmux.conf).
---
--- These keys used to be set in config/keymaps.lua via a top-level
--- `require("nvim-tmux-navigation")`, which defeated lazy loading and silently
--- overwrote the plain <C-w> window maps defined earlier in that same file.
+-- Pairs with `christoomey/vim-tmux-navigator` on the tmux side (.tmux.conf).
 return {
 	"alexghergh/nvim-tmux-navigation",
+	-- No tags upstream; last upstream commit 2024-02.
+	commit = "4898c98702954439233fdaf764c39636681e2861", -- 2024-02-06
 	opts = {
 		-- disable_when_zoomed = true,
 	},

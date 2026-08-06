@@ -1,5 +1,7 @@
 return {
   "xiyaowong/transparent.nvim",
+  -- No tags upstream.
+  commit = "e00ca1cf09caef575edf8da7e5a8b9193893b4c7", -- 2026-06-12
   lazy = false,
   priority = 1000,
 

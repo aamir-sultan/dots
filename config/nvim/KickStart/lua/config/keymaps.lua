@@ -1,5 +1,3 @@
--- `local` on purpose: this used to define a global `map`, which leaked into
--- every Lua file and tripped lua_ls' undefined/global-write diagnostics.
 local function map(mode, lhs, rhs, opts)
 	local options = { noremap = true, silent = true }
 	if opts then
@@ -12,8 +10,7 @@ end
 map("n", "<leader>lz", ":Lazy<CR>", { desc = "Open Lazy" })
 map("n", "<leader>cm", ":Mason<CR>", { desc = "Open Mason" })
 
--- NOTE: <leader>e (Neo-tree) lives in plugins/neo-tree.lua. It used to be
--- defined here twice and in plugins/snacks.lua as well.
+-- <leader>e (Neo-tree) is defined in plugins/neo-tree.lua.
 
 -- Buffer Keymaps
 map("n", "<tab>", ":bnext<CR>", { desc = "Next Buffer" })
@@ -23,9 +20,7 @@ map("n", "<S-tab>", ":bprev<CR>", { desc = "Previous Buffer" })
 map("n", "j", "v:count == 0 ? 'gj' : 'j'", { expr = true, silent = true, desc = "Move cursor charachter down" })
 map("n", "k", "v:count == 0 ? 'gk' : 'k'", { expr = true, silent = true, desc = "Move cursor charachter up" })
 
--- NOTE: plain <C-hjkl> window-navigation maps used to be defined here and then
--- immediately overwritten at the bottom of this file by nvim-tmux-navigation.
--- Only the tmux-aware versions remain (see the end of this file).
+-- <C-hjkl> window navigation is tmux-aware; see plugins/tmux-navigation.lua.
 
 -- Exits to normal mode from visual
 map("v", "ii", "<C-c>", { desc = "Exits to normal mode from visual" })
@@ -41,9 +36,7 @@ map("n", "<leader>O", "O<ESC>", { desc = "Create new line below this line" })
 map("i", "<C-E>", "<C-o>$", { desc = "Jump to line End -- Mimic shell movement" })
 map("i", "<C-A>", "<C-o>^", { desc = "Jump to line Start -- Mimic shell movement" })
 
--- Shortcut to yank register.
--- NOTE: this was on <leader>p, which is redefined further down as `"*p`, so it
--- was dead. Moved to <leader>P so both are reachable.
+-- Shortcut to yank register (<leader>p is the * register, further down).
 map({ "n", "x" }, "<leader>P", '"0p', { desc = "[P]aste from yank register" })
 
 -- Keymaps for better default experience
@@ -68,8 +61,3 @@ map("n", "<leader>ww", "<cmd>w<CR>", { desc = "Save Current Buffer" })
 map("n", "<leader>wo", "<C-W>p", { desc = "Other window" })
 map("n", "--", "<C-^>", { desc = "Toggle window to last active buffer" })
 
--- NOTE: ~100 lines of fully commented-out ToggleTerm / Neoscroll / Harpoon /
--- Telescope mappings used to live here, along with a top-level
--- `require("nvim-tmux-navigation")` that forced the plugin to load eagerly on
--- every startup. The <C-hjkl> tmux-aware navigation now lives in its own lazy
--- spec: plugins/tmux-navigation.lua

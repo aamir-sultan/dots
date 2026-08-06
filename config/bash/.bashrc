@@ -1,8 +1,6 @@
-# More robust way to handle DOTS (check if it's set and a directory).
-#
-# NOTE: these used to be `exit 1`. This file is *sourced* by an interactive
-# shell, so `exit` closed the user's terminal instead of just bailing out of
-# the dotfiles. `return` bails out of the sourced file and leaves the shell up.
+# Check DOTS is set and is a directory.
+# `return`, not `exit`: this file is sourced by an interactive shell, so `exit`
+# would close the terminal.
 if [[ -z "$DOTS" ]]; then
   echo "Error: DOTS variable is not set." >&2
   return 1 2>/dev/null || exit 1

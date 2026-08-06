@@ -4,4 +4,6 @@ test.sh
 nvim
 
 spell/
-lazy-lock.json
+
+# lazy-lock.json is deliberately NOT ignored: it is committed so exact plugin
+# revisions travel to other machines. See lua/core/lazy.lua.

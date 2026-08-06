@@ -72,22 +72,27 @@ local neotree_options = {
 }
 return {
 	"nvim-neo-tree/neo-tree.nvim",
-	branch = "v3.x",
+	-- v3 tags carry no "v" prefix. Tracks `main`, where releases are cut --
+	-- the old `branch = "v3.x"` sat on an untagged commit 27 behind it.
+	version = "3.41.0", -- 2026-05-15, latest release
+	-- Shared libs pinned here; lazy merges specs by name, so bufferline.lua
+	-- and lualine.lua get these revisions from their plain-string entries.
 	dependencies = {
-		"nvim-lua/plenary.nvim",
-		"nvim-tree/nvim-web-devicons", -- not strictly required, but recommended
-		"MunifTanjim/nui.nvim",
+		-- Commit-pinned: newest tag (v0.1.4) is from 2023-10.
+		{ "nvim-lua/plenary.nvim", commit = "74b06c6c75e4eeb3108ec01852001636d85a932b" }, -- 2026-04-10
+		-- Commit-pinned: newest tag (v0.100, 2024-05) would drop two years of icons.
+		{ "nvim-tree/nvim-web-devicons", commit = "2ae6958df7ced50baac5035cec0c15799eedfbf7" }, -- 2026-07-23
+		{ "MunifTanjim/nui.nvim", version = "0.4.0" }, -- 2025-05-03, latest release
 		-- {"3rd/image.nvim", opts = {}}, -- Optional image support in preview window: See `# Preview Mode` for more information
 	},
-	-- Loaded eagerly on purpose: `hijack_netrw_behavior` below has to be in place
-	-- before `nvim <dir>` is handled, and netrw itself is disabled in core/lazy.lua.
+	-- Eager: `hijack_netrw_behavior` must be set before `nvim <dir>` is handled,
+	-- and netrw is disabled in core/lazy.lua.
 	lazy = false,
 	---@module "neo-tree"
 	---@type neotree.Config?
-	-- NOTE: `cmd = { "NeoTree toggle" }` was removed -- that is not a command
-	-- name (the command is `Neotree`), so it registered a bogus lazy stub.
-	-- This is now the single definition of <leader>e; the duplicates in
-	-- config/keymaps.lua and plugins/snacks.lua were removed.
+	-- Single definition of <leader>e (duplicates in keymaps.lua and snacks.lua
+	-- were removed). `cmd` was dropped: the command is `Neotree`, not
+	-- "NeoTree toggle", so it only registered a bogus lazy stub.
 	keys = {
 		{ "<leader>e", "<cmd>Neotree reveal toggle<CR>", desc = "Toggle Neo-tree" },
 	},

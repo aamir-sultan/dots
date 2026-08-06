@@ -1,6 +1,6 @@
 return {
   "sphamba/smear-cursor.nvim",
-  version = 'v0.6.0',
+  version = 'v0.6.0', -- 2025-11-28, latest release
   lazy = true,
   event = 'CursorMoved',
 

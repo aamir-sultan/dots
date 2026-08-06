@@ -88,6 +88,7 @@ local options = {
 }
 return {
 	"j-hui/fidget.nvim",
+	version = "v2.0.0", -- 2026-06-20, latest release
 
 	lazy = true,
 	-- event = "VimEnter",

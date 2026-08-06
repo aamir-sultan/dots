@@ -127,11 +127,8 @@ else
   hostStyle="${bold}${hostNonSSHColor}"
 fi
 
-# NOTE: this used to be `dateStyle=$(date "+Y%yM%mD%d %H:%M:%S")`, evaluated
-# once when the shell started and then baked into PS1 as a literal string -- so
-# the clock in the prompt was frozen at login time and never ticked.
-# Bash's own `\D{...}` escape is re-expanded on every prompt, costs no
-# subprocess, and has been available since bash 2.x (fine on CentOS 7).
+# `\D{...}` is re-expanded on every prompt so the clock ticks; a `$(date)`
+# here would be evaluated once and frozen at login.
 dateStyle='\D{Y%yM%mD%d %H:%M:%S}'
 
 textStyle="${textColor}"
@@ -148,14 +145,9 @@ errorSymbolStyle="${bold}${errorColor}"
 # Prompt functions for the handling last command status and git status
 # ----------------------------------------------------------------------------------------
 
-# Colour the prompt symbol red when the previous command failed.
-#
-# NOTE: the old `get_status` was commented out and `symbolStyle` was pinned to
-# the default colour, so the symbol never turned red. It can't be a plain
-# variable: PS1 is expanded at *assignment* time, so the value would freeze.
-# Instead PS1 calls this function via `\$(...)`, which re-runs on every prompt.
-# `__dots_status` is captured by __dots_prompt() in .exports before anything
-# else can clobber $?.
+# Colour the prompt symbol red when the previous command failed. Must be a
+# function called from PS1 via `\$(...)`: a plain variable would be expanded
+# once at assignment and freeze. $? is captured by __dots_prompt() in .exports.
 prompt_symbol_style() {
   if [ "${__dots_status:-0}" -ne 0 ] 2>/dev/null; then
     printf '%s' "${errorSymbolStyle}"

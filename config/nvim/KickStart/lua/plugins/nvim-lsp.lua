@@ -1,5 +1,6 @@
 return {
 	"neovim/nvim-lspconfig",
+	version = "v2.11.0", -- 2026-07-21, latest release
 	event = "VeryLazy",
 	dependencies = { "saghen/blink.cmp" },
 

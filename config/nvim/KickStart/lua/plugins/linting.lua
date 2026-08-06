@@ -1,5 +1,7 @@
 return {
 	"mfussenegger/nvim-lint",
+	-- No tags upstream.
+	commit = "a219b2c9e5b4765e5c845aba119dad55806fcaf1", -- 2026-06-25
 	event = { "BufReadPre", "BufNewFile" },
 	config = function()
 		local lint = require("lint")

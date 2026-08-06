@@ -144,12 +144,6 @@ vim.api.nvim_create_autocmd("BufEnter", { command = [[set formatoptions-=cro]] }
 -- 	end,
 -- })
 
--- NOTE: a `VimLeave` autocmd here used to run `notify-send "hello"` on every
--- exit. It was a debugging leftover (nominally a workaround for a uv_close
--- assertion on quitting a large file) and fired a desktop notification every
--- single time Neovim closed. Removed.
-
-
 -- Create an augroup so autocmds don't stack when the config is reloaded
 local numbertoggle = vim.api.nvim_create_augroup("numbertoggle", { clear = true })
 
@@ -175,39 +169,17 @@ vim.api.nvim_create_autocmd({ "BufLeave", "FocusLost", "InsertEnter", "WinLeave"
 
 
 -- ============================================================================
--- Commenting -- per-filetype `commentstring` overrides
+-- Commenting: per-filetype `commentstring` overrides
 -- ============================================================================
--- Commenting itself is built into Neovim (0.10+); there is no plugin:
+-- Commenting is built into Neovim (0.10+), no plugin: gcc (line),
+-- gc{motion}, gc (visual). It reads `commentstring`, so it works in every
+-- filetype -- unlike Comment.nvim, which broke on nvim 0.11 in any filetype
+-- without a treesitter parser (.tmux.conf, sh, yaml, ...).
 --
---   gcc          toggle comment on the current line
---   gc{motion}   toggle comment over a motion   (e.g. gcap, gc3j)
---   gc           toggle comment on the selection (visual mode)
---
--- numToStr/Comment.nvim used to provide these and was removed: it is
--- unmaintained (last commit June 2024) and broken on Neovim >= 0.11. It asked
--- treesitter for the comment syntax via
---     local ok, parser = pcall(vim.treesitter.get_parser, buf)
--- and 0.11 changed get_parser() to RETURN nil instead of raising when there is
--- no parser. So `ok` was true, `parser` was nil, its `if not ok` fallback never
--- fired, and it then indexed nil -- swallowed by its own error handler as the
--- useless message "[Comment.nvim] nil". The effect was that gcc silently did
--- nothing in every filetype without a treesitter parser, including .tmux.conf,
--- .conf, sh, yaml and json. The built-in reads `commentstring` directly and
--- never touches treesitter, so it works everywhere.
---
--- ---------------------------------------------------------------------------
--- ADDING A FILETYPE  <-- edit the table below
--- ---------------------------------------------------------------------------
--- Neovim's bundled ftplugins already set `commentstring` correctly for almost
--- everything (checked: conf/tmux `# %s`, sh `# %s`, python `# %s`, yaml
--- `# %s`, lua `-- %s`, systemverilog `// %s`). Only add an entry when a
--- filetype is missing or wrong.
---
--- To see what a filetype currently uses, open such a file and run:
---     :set commentstring?          or     :lua print(vim.bo.commentstring)
---
--- The key is the FILETYPE (what `:set filetype?` reports), not the extension.
--- `%s` marks where the commented text goes.
+-- Neovim's ftplugins already set `commentstring` correctly almost everywhere,
+-- so only add an entry when one is missing or wrong. Key is the FILETYPE
+-- (`:set filetype?`), not the extension; `%s` is where the text goes.
+-- Check the current value with `:set commentstring?`.
 local commentstrings = {
 	-- Strict JSON has no comment syntax, so Neovim leaves commentstring empty.
 	-- Uncomment if you edit JSON-with-comments (jsonc, tsconfig, ...).
@@ -233,52 +205,23 @@ if next(commentstrings) ~= nil then
 end
 
 -- ============================================================================
--- Treesitter -- start highlighting when a parser is available
+-- Treesitter: start highlighting when a parser is available
 -- ============================================================================
--- Treesitter is built into Neovim. It bundles parsers AND queries for:
---     c  lua  markdown  markdown_inline  query  vim  vimdoc
--- and `foldexpr` is already v:lua.vim.treesitter.foldexpr() by default, so
--- treesitter folding needs no configuration. Filetypes with no parser fall
--- back to Neovim's classic regex syntax highlighting, so nothing looks plain.
+-- Neovim bundles parsers and queries for c, lua, markdown, markdown_inline,
+-- query, vim and vimdoc, and sets a treesitter `foldexpr` by default.
+-- Filetypes without a parser fall back to regex syntax highlighting.
 --
--- There is deliberately NO parser-installer plugin. Every current one --
--- including tree-sitter-manager.nvim, the maintained successor to
--- nvim-treesitter -- lists the `tree-sitter` CLI as a mandatory requirement,
--- and no prebuilt CLI release runs on the machines this repo targets (the
--- current one needs glibc 2.39, the oldest checked needs 2.29; CentOS 7 has
--- 2.17). Building it needs a Rust toolchain. So this config sticks to the
--- parsers Neovim ships with. See "ADDING A PARSER" below if that changes.
+-- There is no parser-installer plugin on purpose: nvim-treesitter is archived,
+-- and every replacement (incl. tree-sitter-manager.nvim) requires the
+-- `tree-sitter` CLI, which has no prebuilt release that runs on CentOS 7
+-- (needs glibc >= 2.29; CentOS 7 has 2.17).
 --
--- nvim-treesitter was removed: it is archived upstream, and on this setup it
--- could never install a parser anyway -- its `main` branch shells out to the
--- `tree-sitter` CLI, which was absent, so every install failed with
---     Error during "tree-sitter build": ENOENT (cmd): 'tree-sitter'
--- and its bulk install list was dead code besides (registered on `User
--- LazyDone` from inside `config`, which only ran later on FileType, so the
--- event had already fired -- measured: 0 autocmds registered).
---
--- ---------------------------------------------------------------------------
--- ADDING A PARSER  <-- if you ever want a language beyond the bundled seven
--- ---------------------------------------------------------------------------
--- A language needs TWO things, both found on the runtimepath:
---   1. a compiled parser at  ~/.local/share/nvim/site/parser/<lang>.so
---   2. queries at            ~/.local/share/nvim/site/queries/<lang>/highlights.scm
---                            (plus optional folds.scm / injections.scm)
---
--- Once both are in place the autocmd below picks the language up
--- automatically -- no plugin and no config change needed.
---
--- Queries can be copied from:
---   https://github.com/nvim-treesitter/nvim-treesitter/tree/main/runtime/queries/<lang>
---
--- The .so needs a compiler on some machine (not necessarily this one -- a .so
--- built on any glibc-compatible box can just be copied in). With a C compiler
--- and the tree-sitter CLI available somewhere:
---     tree-sitter build -o <lang>.so /path/to/tree-sitter-<lang>
---
--- Inspect what is currently available with:
---     :lua =vim.api.nvim_get_runtime_file('parser/*.so', true)
---     :checkhealth vim.treesitter
+-- To add a language, drop both on the runtimepath -- the autocmd below then
+-- picks it up with no config change:
+--   ~/.local/share/nvim/site/parser/<lang>.so
+--   ~/.local/share/nvim/site/queries/<lang>/highlights.scm
+-- Queries: github.com/nvim-treesitter/nvim-treesitter/tree/main/runtime/queries
+-- Inspect with `:checkhealth vim.treesitter`.
 vim.api.nvim_create_autocmd("FileType", {
 	group = vim.api.nvim_create_augroup("user_treesitter", { clear = true }),
 	desc = "Enable treesitter highlighting when a parser is available",

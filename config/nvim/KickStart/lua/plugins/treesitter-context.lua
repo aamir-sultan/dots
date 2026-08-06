@@ -1,15 +1,12 @@
 -- Sticky header showing the enclosing function/class as you scroll.
---
--- NOTE: this used to be a dependency of nvim-treesitter, which has been removed
--- (see the Treesitter section of lua/config/autocmds.lua for why). It does not
--- need nvim-treesitter --
--- it talks to Neovim's built-in vim.treesitter and ships its own queries for
--- ~86 languages. It only shows context in buffers that actually have a parser,
--- which out of the box means the languages bundled with Neovim.
+-- Standalone: uses Neovim's built-in vim.treesitter and ships its own queries.
+-- Only active in buffers that have a parser (see autocmds.lua).
 ---@module "lazy"
 ---@type LazySpec
 return {
 	"nvim-treesitter/nvim-treesitter-context",
+	-- Commit-pinned: newest tag (v1.0.0) is from 2025-05.
+	commit = "f3061339b8eaf9fda873600bc425b8d2d8502533", -- 2026-08-02
 	event = "BufReadPost",
 	opts = {
 		max_lines = 4,

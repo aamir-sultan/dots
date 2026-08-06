@@ -1,7 +1,6 @@
 vim.cmd([[colorscheme solarized-osaka]])
 
--- Leader keys are set early in core/lazy.lua (they must be set before
--- lazy.nvim loads); repeated here only so this file stands alone.
+-- Also set in core/lazy.lua, which must run before lazy.nvim loads.
 vim.g.mapleader = " "
 vim.g.maplocalleader = "\\"
 
@@ -9,10 +8,6 @@ vim.g.maplocalleader = "\\"
 -- Set to `false` to globally disable all snacks animations
 -- vim.g.snacks_animate = true
 
--- NOTE: this file used to set vim.g.autoformat, vim.g.ai_cmp, vim.g.root_spec,
--- vim.g.root_lsp_ignore, vim.g.deprecation_warnings and vim.g.trouble_lualine.
--- Those are all LazyVim-only variables -- nothing in this Kickstart-style
--- config ever reads them, so they were dead weight. Removed.
 
 local opt = vim.opt
 

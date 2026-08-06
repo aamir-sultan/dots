@@ -73,12 +73,8 @@ ask() {
 }
 
 # Ask for confirmation before proceeding.
-#
-# NOTE: this was named `continue()`, which shadowed the shell's `continue`
-# builtin for every script that sources utils.sh. Any `continue` inside a loop
-# silently became "print a warning and block on read from stdin" instead of
-# advancing the loop -- so the loop ended and, non-interactively, the read ate
-# whatever was on stdin. Renamed; no caller used the confirmation behaviour.
+# NOT named `continue`: that shadowed the shell builtin for every script
+# sourcing this file, silently breaking loops.
 confirm_continue() {
     printf "\n"
     e_warning "$@"

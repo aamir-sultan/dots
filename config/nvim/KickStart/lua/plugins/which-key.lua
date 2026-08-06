@@ -73,6 +73,7 @@ return {
   -- with the active keybindings of the command you started typing.
   {
     'folke/which-key.nvim',
+    version = 'v3.17.0', -- 2025-02-22, latest release
     event = 'VeryLazy',
     opts_extend = { 'spec' },
     opts = {
@@ -129,9 +130,6 @@ return {
         desc = 'Window Hydra Mode (which-key)',
       },
     },
-    -- NOTE: the old `config` branched on the removed `opts.defaults` and called
-    -- `LazyLite.warn` (an undefined global left over from a previous config)
-    -- plus the deprecated `wk.register`. Dropped; `opts` alone is enough.
   },
 }
 -- vim: ts=2 sts=2 sw=2 et

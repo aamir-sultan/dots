@@ -5,6 +5,8 @@ return {
   -- You can restore sessions when returning through the dashboard.
   {
     "folke/persistence.nvim",
+    -- Commit-pinned: newest tag (v3.1.0) is from 2024-07.
+    commit = "b20b2a7887bd39c1a356980b45e03250f3dce49c", -- 2025-10-28
     event = "BufReadPre",
     opts = {},
     -- stylua: ignore
@@ -16,6 +18,4 @@ return {
     },
   },
 
-  -- library used by other plugins
-  { "nvim-lua/plenary.nvim", lazy = true },
 }

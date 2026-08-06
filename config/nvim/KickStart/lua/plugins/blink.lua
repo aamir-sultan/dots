@@ -3,14 +3,17 @@ return {
   lazy = true,
   -- use a release tag to download pre-built binaries
   -- version = '1.*',
-  version = "v1.8.0",
+  version = "v1.10.2", -- 2026-04-04 (was v1.8.0)
   -- AND/OR build from source, requires nightly: https://rust-lang.github.io/rustup/concepts/channels.html#working-with-nightly-rust
   -- build = 'cargo build --release',
   -- If you use nix, you can build from source using latest nightly rust with:
   -- build = 'nix run .#build-plugin',
 
   -- optional: provides snippets for the snippet source
-  dependencies = { "rafamadriz/friendly-snippets" },
+  -- friendly-snippets has no tags upstream.
+  dependencies = {
+    { "rafamadriz/friendly-snippets", commit = "6cd7280adead7f586db6fccbd15d2cac7e2188b9" }, -- 2026-01-23
+  },
 
   ---@module 'blink.cmp'
   ---@type blink.cmp.Config

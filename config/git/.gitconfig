@@ -1,19 +1,8 @@
-# Remember global gitignore cant use relatively the other files. It needs to be used with an absolute path or
-# path extended from home.
-#
-# NOTE: `core.excludesfile` used to be set here to the bare relative path
-# `.gitignore.global`. Unlike `include.path`, git does NOT resolve
-# `core.excludesfile` relative to the config file it appears in -- it resolves
-# it against the current working directory. So the global ignore rules only
-# ever applied while you happened to be sitting in this directory, and were
-# silently inert everywhere else.
-#
-# It cannot be hardcoded here either, because $DOTS is relocatable. Instead
-# init/configure-gitconfig.sh writes the resolved absolute path into
-# ~/.gitconfig at install time. This file deliberately does not set it, so
-# there is exactly one definition and nothing to conflict with.
-#
-# There used to be two separate [core] sections in this file; merged into one.
+# core.excludesfile is NOT set here. Unlike include.path, git resolves it
+# against the current working directory rather than this file, so a relative
+# value is silently inert; and it cannot be hardcoded because $DOTS is
+# relocatable. init/configure-gitconfig.sh writes the absolute path into
+# ~/.gitconfig at install time instead.
 [core]
   # editor = /usr/bin/vim
   editor = $EDITOR
@@ -27,7 +16,6 @@
 # if you want to store the credentials for ever (considered unsafe)
 	helper = store
 
-# Relative include paths ARE resolved against this file's directory, so this
-# one is fine as-is (unlike core.excludesfile above).
+# Relative include paths ARE resolved against this file's directory.
 [include]
   path = .gitaliases

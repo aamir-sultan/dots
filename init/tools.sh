@@ -78,16 +78,9 @@ install_tool_binary() {
   local file_path="$dload_path/$filename"
 
   # With --sync, replace an existing install so version bumps in tools.conf
-  # actually take effect.
-  #
-  # NOTE: --sync was previously parsed and then ignored (and init/sync.sh is an
-  # empty file), so once a tool had been installed once there was no way to
-  # upgrade it short of deleting $TOOLS by hand: the `-d "$setup_path"` check
-  # below short-circuited every subsequent run.
-  # Backups go in a dedicated directory rather than alongside the install as
-  # "<name>.bak". A sibling backup sits inside the "<name>*" glob used after
-  # extraction, which makes that `mv` see two sources and a non-directory
-  # target ("mv: target 'nvim' is not a directory").
+  # take effect -- the `-d "$setup_path"` check below otherwise skips the tool.
+  # Backups go in their own directory: a sibling "<name>.bak" would fall inside
+  # the "<name>*" glob used after extraction and break the rename.
   local backup_dir="$dload_path/.backup"
 
   if [ "$sync" = "true" ] && [ -d "$setup_path" ]; then
@@ -124,18 +117,11 @@ install_tool_binary() {
       log "Running post-processing for $name"
       eval "$post_proc_cmd"
       # Remove the archive first so the search below only sees directories.
-      # Quoted: $filename contains no glob chars, but an unquoted `rm -rf` on
-      # an unvalidated variable is not worth the risk.
       rm -rf "$filename"
 
-      # Rename the freshly extracted directory to the plain tool name.
-      #
-      # NOTE: this used to be a bare `mv "$name"* "$name"`. That silently
-      # assumed the glob matched exactly one entry, and broke the moment
-      # anything else in $TOOLS started with the tool name (a backup, a
-      # leftover from an interrupted run, a second extracted version) -- `mv`
-      # then got 3+ arguments and failed with a confusing "target is not a
-      # directory". Now the match is explicit and ambiguity is reported.
+      # Rename the extracted directory to the plain tool name. Explicit rather
+      # than `mv "$name"* "$name"`, which broke whenever anything else in
+      # $TOOLS started with the tool name.
       local extracted="" candidate
       for candidate in "$name"*; do
         [ -d "$candidate" ] || continue
@@ -192,23 +178,17 @@ install_all_tools() {
 
   mkdir -p "$TOOLS"
   for tool_name in "${tools[@]}"; do
-    # NOTE: `declare -A tool` does not reset the array on later iterations
-    # (declare inside a function makes it local once), so keys set by an earlier
-    # tool -- e.g. tmux's `version_or_branch` -- leaked into the next one.
+    # `declare -A tool` does not reset on later iterations, so keys from an
+    # earlier tool would leak into the next one.
     unset tool
     # Declare an empty associative array
     declare -A tool
     # Populate tool array by copying from the original
     eval "$(declare -p "$tool_name" | sed "s/declare -A $tool_name/declare -A tool/")"
 
-    # Honour the --[no-]<tool> flags.
-    #
-    # NOTE: these flags never did anything before. The option parser set plain
-    # variables named after each tool (`nvim=true`, `fd=false`, ...) -- but
-    # those are the exact names of the associative arrays declared in
-    # tools.conf, so the assignments either failed or silently corrupted the
-    # tool definition, and this loop never consulted them anyway. The flags now
-    # live in a separate `enable_<tool>` namespace that cannot collide.
+    # Honour the --[no-]<tool> flags. They live in an `enable_<tool>`
+    # namespace so they cannot collide with the associative arrays in
+    # tools.conf, which are named after the tools themselves.
     local enable_var="enable_${tool_name}"
     local tool_enabled="${!enable_var-}"
     if [ -z "$tool_enabled" ]; then
@@ -267,9 +247,8 @@ default_enable=false
 
 # Test for known flags.
 #
-# NOTE: these used to assign to bare `fzf=true` / `nvim=false` etc, which are
-# the same names as the associative arrays defined in tools.conf. The
-# `enable_` prefix keeps the two namespaces apart -- see install_all_tools().
+# The `enable_` prefix keeps these apart from the associative arrays in
+# tools.conf, which are named after the tools themselves.
 for opt in "$@"
 do
     case $opt in

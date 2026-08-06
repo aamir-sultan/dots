@@ -23,9 +23,23 @@ vim.g.maplocalleader = "\\"
 -- Setup lazy.nvim
 require("lazy").setup({
 	spec = {
+		-- Not a pin: "*" floats to the newest release tag. Needed anyway --
+		-- left alone lazy manages itself on `main` (unreleased commits) while
+		-- the bootstrap above clones `stable`, so the two would diverge.
+		{ "folke/lazy.nvim", version = "*" },
 		-- import your plugins
 		{ import = "plugins" },
 	},
+	-- Records the exact commit of every plugin. Committed with the config
+	-- (stdpath("config") is a symlink into this repo). Note lazy's *install*
+	-- path ignores it -- only `:Lazy restore` applies it -- so the pins in
+	-- lua/plugins/* are what make a fresh install reproducible; this is the
+	-- exact record and the rollback mechanism.
+	--   :Lazy restore  force every plugin to the locked commit
+	--   :Lazy sync     match the specs, then rewrite this file (commit it)
+	--   :Lazy check    show upstream changes without touching anything
+	lockfile = vim.fn.stdpath("config") .. "/lazy-lock.json",
+
 	-- Configure any other settings here. See the documentation for more details.
 	-- colorscheme that will be used when installing plugins.
 	install = { colorscheme = { "habamax" } },

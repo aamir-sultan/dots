@@ -1,6 +1,6 @@
 return {
 	"stevearc/conform.nvim",
-	tag = "v9.1.0",
+	tag = "v9.1.0", -- 2025-08-21, latest release
 	event = { "BufReadPost" },
 
 	opts = {
@@ -14,9 +14,8 @@ return {
 		},
 	},
 
-	-- NOTE: this must be a `keys` entry, not a bare `vim.keymap.set(...)` in the
-	-- spec table. As a bare call it ran at spec-load time and captured a global
-	-- `conform` that never existed, so the mapping always errored.
+	-- Must be a `keys` entry: as a bare vim.keymap.set() in the spec it ran at
+	-- load time and captured a global `conform` that never existed.
 	keys = {
 		{
 			"<leader>mp",

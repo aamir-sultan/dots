@@ -1,6 +1,6 @@
 return {
 	"folke/snacks.nvim",
-	version = "v2.30.0",
+	version = "v2.31.0", -- 2026-03-20 (was v2.30.0)
 	priority = 1000,
 	lazy = false,
 	---@type snacks.Config
@@ -72,10 +72,7 @@ return {
 			end,
 			desc = "Command History",
 		},
-		-- NOTE: <leader>n (Snacks.picker.notifications) was defined here and
-		-- again further down as Snacks.notifier.show_history(). Only the latter
-		-- is kept. <leader>e (Snacks.explorer) was also defined here, but
-		-- `explorer` is disabled above and neo-tree owns <leader>e.
+		-- <leader>n is defined further down; <leader>e belongs to neo-tree.
 		-- find
 		{
 			"<leader>fb",
@@ -199,8 +196,6 @@ return {
 			desc = "GitHub Pull Requests (all)",
 		},
 		-- Grep
-		-- NOTE: <leader>sb (Snacks.picker.lines) was listed here and again in
-		-- the "search" group below; the duplicate was removed.
 		{
 			"<leader>sB",
 			function()

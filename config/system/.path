@@ -2,14 +2,8 @@
 
 # Add a directory to the front of PATH, but only once.
 #
-# NOTE: this replaces three hand-rolled `[ "${PATH#*:$dir}" != "$PATH" ] || ...`
-# checks. Those had two problems:
-#   1. The pattern required a leading ':', so a directory that was already
-#      *first* in PATH was never detected and got appended a second time.
-#   2. They *appended*. That meant the curated tools in $DOTS/tools/bin lost to
-#      whatever the distro shipped -- which matters a lot on old systems: CentOS
-#      7's stock tmux is 1.8, and .tmux.conf needs 3.2+ for `terminal-features`.
-#      Prepending makes the versions these dotfiles install actually win.
+# Prepend, not append: the curated tools in $DOTS/tools/bin must beat whatever
+# the distro ships. CentOS 7's stock tmux is 1.8, and .tmux.conf needs 3.2+.
 __dots_path_prepend() {
   case ":${PATH}:" in
   *":$1:"*) ;; # already present, leave PATH alone
@@ -17,7 +11,7 @@ __dots_path_prepend() {
   esac
 }
 
-# Lowest priority last: the final call ends up leftmost in PATH.
+# Last call ends up leftmost in PATH.
 __dots_path_prepend "$HOME/bin"
 __dots_path_prepend "$DOTS/bin"
 __dots_path_prepend "$DOTS/tools/bin"

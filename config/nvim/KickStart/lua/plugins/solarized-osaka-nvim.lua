@@ -35,6 +35,8 @@ local options = {
 return {
   {
     "craftzdog/solarized-osaka.nvim",
+    -- No tags upstream.
+    commit = "f675d9a5c58f3b0d6158d665a623f81a62e7bdaf", -- 2026-05-08
     lazy = false,
     priority = 1000,
     opts = options,
