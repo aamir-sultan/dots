@@ -4,15 +4,7 @@
 # Screenshot: http://i.imgur.com/EkEtphC.png
 # Heavily inspired by @necolas’s prompt: https://github.com/necolas/dotfiles
 
-if [[ $COLORTERM = gnome-* && $TERM = xterm ]] && infocmp gnome-256color >/dev/null 2>&1; then
-  export TERM='gnome-256color'
-elif infocmp xterm-256color >/dev/null 2>&1; then
-  if [[ $TERM == xterm ]]; then
-    export TERM='xterm-256color'
-  elif [[ $TERM == screen ]]; then
-    export TERM=screen-256color
-  fi
-fi
+# TERM's 256-colour upgrade lives in .exports, which is sourced before .colors.
 
 # ----------------------------------------------------------------------------------------
 # Color setting of the different parts of the prompt based on the available terminal
@@ -66,6 +58,9 @@ if tput setaf 1 &>/dev/null; then
   # wordColor="${sWhite}"
   wordColor="${lGrey}"
 
+  # Last command duration color variable. Muted, so it reads as a trailing note.
+  durationColor="${lGrey}"
+
   # PWD color variable.
   pwdColor="${sBlue}"
 
@@ -100,6 +95,9 @@ else
   # Word like at,in etc. color variable.
   wordColor="${bWhite}"
 
+  # Last command duration color variable.
+  durationColor="${rWhite}"
+
   # User color variables
   userRootColor="${bYellow}"
   userNonRootColor="${bGreen}"
@@ -133,6 +131,7 @@ dateStyle='\D{Y%yM%mD%d %H:%M:%S}'
 
 textStyle="${textColor}"
 wordStyle="${wordColor}"
+durationStyle="${durationColor}"
 branchStyle="${branchColor}"
 repoStatusStyle="${repoStatusColor}"
 pwdStyle="${pwdColor}"
@@ -147,9 +146,9 @@ errorSymbolStyle="${bold}${errorColor}"
 
 # Colour the prompt symbol red when the previous command failed. Must be a
 # function called from PS1 via `\$(...)`: a plain variable would be expanded
-# once at assignment and freeze. $? is captured by __dots_prompt() in .exports.
+# once at assignment and freeze. $? is captured by timer_prompt() below.
 prompt_symbol_style() {
-  if [ "${__dots_status:-0}" -ne 0 ] 2>/dev/null; then
+  if [ "${status:-0}" -ne 0 ] 2>/dev/null; then
     printf '%s' "${errorSymbolStyle}"
   else
     printf '%s' "${defaultSymbolStyle}"
@@ -162,6 +161,59 @@ prompt_symbol_style() {
 promptSymbol=">"
 # promptSymbol="~>"
 # promptSymbol="]>"
+
+# Stamp the start of each command line. The trap fires per simple command, so the
+# guard keeps the first of a pipeline; timer_prompt stops the clock and clears
+# this. A bare Enter fires no trap, which is what clears the reading.
+#
+# Builtins only, no `date` fork: this runs before every command. EPOCHREALTIME is
+# bash 5.0+ and comma-decimal in some locales; older bash gets whole seconds.
+timer_start() {
+  [[ -n ${timer+x} ]] && return
+  local t=${EPOCHREALTIME:-$SECONDS.000000}
+  timer=$((${t/[.,]/} / 1000))
+}
+trap 'timer_start' DEBUG
+
+# Capturing $? must come first, before `history -a` clobbers it. Also stops the
+# timer that trap started; an unset timer (a bare Enter) reads 0.
+timer_prompt() {
+  status=$?
+  local t=${EPOCHREALTIME:-$SECONDS.000000}
+  local now=$((${t/[.,]/} / 1000))
+  elapsed_ms=$((now - ${timer:-$now}))
+  unset timer
+  history -a
+  return $status
+}
+
+# Prepended so $? and the timer are read before anything else clobbers them, and
+# guarded so re-sourcing (the `sb` alias) does not stack copies. Kept a string,
+# not a bash 5.1+ array, for CentOS 7's bash 4.2.
+case ";${PROMPT_COMMAND};" in
+*";timer_prompt;"*) ;; # already installed
+*) export PROMPT_COMMAND="timer_prompt;${PROMPT_COMMAND}" ;;
+esac
+
+# Report durations only at or above this, so `ls` and `cd` do not litter the
+# prompt. Override in ~/.bash_prompt.local.
+: "${PROMPT_MIN_MS:=1000}"
+
+# How long the last command took. $1 is the colour prefix. Under the threshold
+# prints nothing, which also swallows a negative from a manual `SECONDS=0`.
+prompt_duration() {
+  local ms=${elapsed_ms:-0}
+
+  ((ms >= PROMPT_MIN_MS)) || return
+
+  if ((ms < 60000)); then
+    printf '%s%d.%ds' "$1" $((ms / 1000)) $((ms % 1000 / 100))
+  elif ((ms < 3600000)); then
+    printf '%s%dm%02ds' "$1" $((ms / 60000)) $((ms % 60000 / 1000))
+  else
+    printf '%s%dh%02dm' "$1" $((ms / 3600000)) $((ms % 3600000 / 60000))
+  fi
+}
 
 prompt_git() {
   local s=''
@@ -216,6 +268,7 @@ PS1+="\[${hostStyle}\]\h (${dateStyle})"                                        
 PS1+="\[${wordStyle}\] in "
 PS1+="\[${pwdStyle}\]\w"                                                                    # working directory full path
 PS1+="\$(prompt_git \"\[${wordStyle}\] on \[${branchStyle}\]\" \"\[${repoStatusStyle}\]\")" # Git repository details
+PS1+="\$(prompt_duration \"\[${wordStyle}\] took \[${durationStyle}\]\")"                   # last command run time
 PS1+="\n"                                                                                   # newline after prompt and before symbol
 PS1+="\[\$(prompt_symbol_style)\]${promptSymbol} \[${reset}\]"                              # prompt symbol, red on failure
 PS1+="\[${textColor}\]"                                                                     # Terminal stdout color

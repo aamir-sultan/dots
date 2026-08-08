@@ -1,5 +1,19 @@
 #!/usr/bin/env bash
 
+# Upgrade TERM to its 256-colour variant, probing each entry before setting it.
+# Must precede .colors, which bakes in the palette via `tput`: under TERM=xterm,
+# `tput setaf 33` gives the invalid `\e[333m`, not `\e[38;5;33m`.
+# Old GNOME Terminal announced its depth via COLORTERM instead of TERM.
+if [[ $TERM == xterm && $COLORTERM == gnome-* ]] && infocmp gnome-256color >/dev/null 2>&1; then
+  export TERM='gnome-256color'
+elif [[ $TERM == xterm ]] && infocmp xterm-256color >/dev/null 2>&1; then
+  export TERM='xterm-256color'
+elif [[ $TERM == screen ]] && infocmp screen-256color >/dev/null 2>&1; then
+  export TERM='screen-256color'
+elif [[ $TERM == tmux ]] && infocmp tmux-256color >/dev/null 2>&1; then
+  export TERM='tmux-256color'
+fi
+
 # Ignore duplicate commands in the history
 export HISTCONTROL=ignoredups
 
@@ -17,20 +31,4 @@ export HISTTIMEFORMAT='%F %T '
 
 # Ignore common commands
 export HISTIGNORE='ls:ll:cd:pwd:clear:history'
-
-# Make new shells get the history lines from all previous shells instead of the
-# default "last window closed" history. Guarded so re-sourcing (e.g. the `sb`
-# alias) does not append another copy each time. Kept a string, not a bash 5.1+
-# array, for CentOS 7's bash 4.2.
-case ";${PROMPT_COMMAND};" in
-*";__dots_prompt;"*) ;; # already installed
-*) export PROMPT_COMMAND="__dots_prompt;${PROMPT_COMMAND}" ;;
-esac
-
-# Capturing $? must come first, before `history -a` clobbers it.
-__dots_prompt() {
-  __dots_status=$?
-  history -a
-  return $__dots_status
-}
 
