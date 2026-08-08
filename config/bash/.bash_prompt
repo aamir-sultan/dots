@@ -86,6 +86,7 @@ case ";${PROMPT_COMMAND};" in
 *";prompt_status;"*) ;; # already installed
 *) PROMPT_COMMAND="prompt_status;${PROMPT_COMMAND}" ;;
 esac
+# PROMPT_DIRTRIM=3
 
 # Colour the prompt symbol red when the previous command failed. Must be a function called
 # from PS1 via `\$(...)`: a plain variable would be expanded once at assignment and freeze.
