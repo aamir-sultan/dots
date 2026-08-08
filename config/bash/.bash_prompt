@@ -73,7 +73,7 @@ symbol_style_error="${bold}${error_color}"
 
 # Colour the prompt symbol red when the previous command failed. Must be a function
 # called from PS1 via `\$(...)`: a plain variable would be expanded once at assignment
-# and freeze. $? is captured by timer_prompt() below.
+# and freeze. $? is captured by cmd_timer() below.
 prompt_symbol_style() {
   if [ "${status:-0}" -ne 0 ] 2>/dev/null; then
     printf '%s' "${symbol_style_error}"
@@ -85,37 +85,39 @@ prompt_symbol_style() {
 # Alternatives: ❯, >, , », ⨔, ⌇, 󰘧, λ, λ:, ⁂, ➲, \$, \>
 prompt_symbol=">"
 
-# Stamp the start of each command line. The trap fires per simple command, so the
-# guard keeps the first of a pipeline; timer_prompt stops the clock and clears this.
-# A bare Enter fires no trap, which is what clears the reading.
+# Timing the last command needs bash 5.0, for PS0 (4.4+) and EPOCHREALTIME (5.0+). Below
+# that the stamp is never taken and the prompt reports no duration; nothing else changes.
 #
-# Builtins only, no `date` fork: this runs before every command. EPOCHREALTIME is
-# bash 5.0+ and comma-decimal in some locales; older bash gets whole seconds.
-timer_start() {
-  [[ -n ${timer+x} ]] && return
-  local t=${EPOCHREALTIME:-$SECONDS.000000}
-  timer=$((${t/[.,]/} / 1000))
-}
-trap 'timer_start' DEBUG
+# PS0 is expanded once per command line, after the line is read and before it runs, which
+# is exactly where the clock should start. The assignment rides inside an array subscript
+# because a subscript is evaluated as arithmetic, while `_ps0` itself stays unset so the
+# expansion prints nothing. EPOCHREALTIME is microseconds with a locale-dependent decimal
+# mark; dropping the mark and dividing gives milliseconds with no `date` fork.
+if ((BASH_VERSINFO[0] >= 5)); then
+  PS0='${_ps0[$((cmd_start_ms = ${EPOCHREALTIME/[.,]/} / 1000))]}'
+fi
 
-# Capturing $? must come first, before `history -a` clobbers it. Also stops the timer
-# that trap started; an unset timer (a bare Enter) reads 0.
-timer_prompt() {
+# Runs at every prompt. $? has to be read before `history -a` clobbers it. No stamp means
+# no duration to report, which covers both a bare Enter, where PS0 never fired, and a bash
+# too old to have set PS0 at all — so EPOCHREALTIME is only ever read where it exists.
+cmd_timer() {
   status=$?
-  local t=${EPOCHREALTIME:-$SECONDS.000000}
-  local now=$((${t/[.,]/} / 1000))
-  elapsed_ms=$((now - ${timer:-$now}))
-  unset timer
+  if [[ -n ${cmd_start_ms+x} ]]; then
+    cmd_elapsed_ms=$((${EPOCHREALTIME/[.,]/} / 1000 - cmd_start_ms))
+    unset cmd_start_ms
+  else
+    cmd_elapsed_ms=0
+  fi
   history -a
   return $status
 }
 
-# Prepended so $? and the timer are read before anything else clobbers them, and
-# guarded so re-sourcing (the `sb` alias) does not stack copies. Kept a string, not a
-# bash 5.1+ array, for CentOS 7's bash 4.2.
+# Prepended so $? is read before anything else clobbers it, and guarded so re-sourcing
+# (the `sb` alias) does not stack copies. Kept a string, not a bash 5.1+ array. Not
+# exported: a child shell would inherit the name without the function behind it.
 case ";${PROMPT_COMMAND};" in
-*";timer_prompt;"*) ;; # already installed
-*) export PROMPT_COMMAND="timer_prompt;${PROMPT_COMMAND}" ;;
+*";cmd_timer;"*) ;; # already installed
+*) PROMPT_COMMAND="cmd_timer;${PROMPT_COMMAND}" ;;
 esac
 
 # Report durations only at or above this, so `ls` and `cd` do not litter the prompt.
@@ -123,9 +125,9 @@ esac
 : "${PROMPT_MIN_MS:=1000}"
 
 # How long the last command took. $1 is the colour prefix. Under the threshold prints
-# nothing, which also swallows a negative from a manual `SECONDS=0`.
+# nothing.
 prompt_duration() {
-  local ms=${elapsed_ms:-0}
+  local ms=${cmd_elapsed_ms:-0}
 
   ((ms >= PROMPT_MIN_MS)) || return
 
