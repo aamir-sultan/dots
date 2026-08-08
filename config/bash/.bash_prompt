@@ -8,33 +8,33 @@
 
 # Abstraction layer for the colors between 8 bit terminals and tput supported 256 bit.
 if tput setaf 1 &>/dev/null; then
-  textColor="${dYellow}"
-  symbolColor="${sBlue}"
-  errorColor="${rRed}"
-  branchColor="${lOrange}"
-  repoStatusColor="${sCyan}"
-  wordColor="${lGrey}"
-  durationColor="${lGrey}"
-  pwdColor="${sBlue}"
-  userRootColor="${lRed}"
-  userNonRootColor="${dGreen}"
-  hostSSHColor="${dYellow}"
-  hostNonSSHColor="${dOrange}"
+  text_color="${yellow_dark}"
+  symbol_color="${blue_solarized}"
+  error_color="${red_regular}"
+  branch_color="${orange_light}"
+  repo_status_color="${cyan_solarized}"
+  word_color="${grey_light}"
+  duration_color="${grey_light}"
+  pwd_color="${blue_solarized}"
+  user_color_root="${red_light}"
+  user_color_nonroot="${green_dark}"
+  host_color_remote="${yellow_dark}"
+  host_color_local="${orange_dark}"
 else
   # Fallback to 8 colors, where orange is always mapped to yellow as 8-colors do not
   # have orange as such.
-  textColor="${rYellow}"
-  symbolColor="${bWhite}"
-  errorColor="${bRed}"
-  branchColor="${bYellow}"
-  repoStatusColor="${bCyan}"
-  pwdColor="${bBlue}"
-  wordColor="${bWhite}"
-  durationColor="${rWhite}"
-  userRootColor="${bYellow}"
-  userNonRootColor="${bGreen}"
-  hostSSHColor="${bRed}"
-  hostNonSSHColor="${rYellow}"
+  text_color="${yellow_regular}"
+  symbol_color="${white_bold}"
+  error_color="${red_bold}"
+  branch_color="${yellow_bold}"
+  repo_status_color="${cyan_bold}"
+  pwd_color="${blue_bold}"
+  word_color="${white_bold}"
+  duration_color="${white_regular}"
+  user_color_root="${yellow_bold}"
+  user_color_nonroot="${green_bold}"
+  host_color_remote="${red_bold}"
+  host_color_local="${yellow_regular}"
 fi
 
 # ----------------------------------------------------------------------------------------
@@ -42,30 +42,30 @@ fi
 # ----------------------------------------------------------------------------------------
 
 if [[ "${USER}" == "root" ]]; then
-  userStyle="${bold}${userRootColor}"
+  user_style="${bold}${user_color_root}"
 else
-  userStyle="${bold}${userNonRootColor}"
+  user_style="${bold}${user_color_nonroot}"
 fi
 
 if [[ "${SSH_TTY}" ]]; then
-  hostStyle="${bold}${hostSSHColor}"
+  host_style="${bold}${host_color_remote}"
 else
-  hostStyle="${bold}${hostNonSSHColor}"
+  host_style="${bold}${host_color_local}"
 fi
 
 # `\D{...}` is re-expanded on every prompt so the clock ticks; a `$(date)`
 # here would be evaluated once and frozen at login.
-dateStyle='\D{Y%yM%mD%d %H:%M:%S}'
+date_style='\D{Y%yM%mD%d %H:%M:%S}'
 
-textStyle="${textColor}"
-wordStyle="${wordColor}"
-durationStyle="${durationColor}"
-branchStyle="${branchColor}"
-repoStatusStyle="${repoStatusColor}"
-pwdStyle="${pwdColor}"
+text_style="${text_color}"
+word_style="${word_color}"
+duration_style="${duration_color}"
+branch_style="${branch_color}"
+repo_status_style="${repo_status_color}"
+pwd_style="${pwd_color}"
 
-defaultSymbolStyle="${bold}${symbolColor}"
-errorSymbolStyle="${bold}${errorColor}"
+symbol_style_default="${bold}${symbol_color}"
+symbol_style_error="${bold}${error_color}"
 
 # ----------------------------------------------------------------------------------------
 # Prompt functions for the handling last command status and git status
@@ -76,14 +76,14 @@ errorSymbolStyle="${bold}${errorColor}"
 # and freeze. $? is captured by timer_prompt() below.
 prompt_symbol_style() {
   if [ "${status:-0}" -ne 0 ] 2>/dev/null; then
-    printf '%s' "${errorSymbolStyle}"
+    printf '%s' "${symbol_style_error}"
   else
-    printf '%s' "${defaultSymbolStyle}"
+    printf '%s' "${symbol_style_default}"
   fi
 }
 
 # Alternatives: ❯, >, , », ⨔, ⌇, 󰘧, λ, λ:, ⁂, ➲, \$, \>
-promptSymbol=">"
+prompt_symbol=">"
 
 # Stamp the start of each command line. The trap fires per simple command, so the
 # guard keeps the first of a pipeline; timer_prompt stops the clock and clears this.
@@ -185,18 +185,18 @@ prompt_git() {
 # Prompt assembly
 # ----------------------------------------------------------------------------------------
 
-PS1="\n"                  # newline
-PS1+="\[${userStyle}\]\u" # username
-PS1+="\[${wordStyle}\] at "
-PS1+="\[${hostStyle}\]\h (${dateStyle})"                                                    # host + live clock (\D{...})
-PS1+="\[${wordStyle}\] in "
-PS1+="\[${pwdStyle}\]\w"                                                                    # working directory full path
-PS1+="\$(prompt_git \"\[${wordStyle}\] on \[${branchStyle}\]\" \"\[${repoStatusStyle}\]\")" # Git repository details
-PS1+="\$(prompt_duration \"\[${wordStyle}\] took \[${durationStyle}\]\")"                   # last command run time
-PS1+="\n"                                                                                   # newline after prompt and before symbol
-PS1+="\[\$(prompt_symbol_style)\]${promptSymbol} \[${reset}\]"                              # prompt symbol, red on failure
-PS1+="\[${textColor}\]"                                                                     # Terminal stdout color
+PS1="\n"                   # newline
+PS1+="\[${user_style}\]\u" # username
+PS1+="\[${word_style}\] at "
+PS1+="\[${host_style}\]\h (${date_style})"                                                       # host + live clock (\D{...})
+PS1+="\[${word_style}\] in "
+PS1+="\[${pwd_style}\]\w"                                                                        # working directory full path
+PS1+="\$(prompt_git \"\[${word_style}\] on \[${branch_style}\]\" \"\[${repo_status_style}\]\")"  # Git repository details
+PS1+="\$(prompt_duration \"\[${word_style}\] took \[${duration_style}\]\")"                      # last command run time
+PS1+="\n"                                                                                        # newline after prompt and before symbol
+PS1+="\[\$(prompt_symbol_style)\]${prompt_symbol} \[${reset}\]"                                  # prompt symbol, red on failure
+PS1+="\[${text_color}\]"                                                                         # Terminal stdout color
 export PS1
 
-PS2="\[${rYellow}\]→ \[${reset}\]"
+PS2="\[${yellow_regular}\]→ \[${reset}\]"
 export PS2

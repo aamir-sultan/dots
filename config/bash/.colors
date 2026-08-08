@@ -3,15 +3,20 @@
 # Most of the teminals support tput and it is the recommended way of doing it. There is a function which shows the alternative
 # escape sequences for the colors. It is not recommended but for referance, it can be ran and get the result.
 
-# Naming Conventions followed:
-# - l<color name> -> light <Color>
-# - b<color name> -> bold <Color>
-# - B<color name> -> Background <Color>
-# - F<color name> -> Foreground <Color>
-# - d<color name> -> dark <Color>
-# - s<color name> -> solarized <Color>
-# - u<color name> -> underline <Color>
-# - r<color name> -> regular <Color>
+# Naming convention: <hue>_<variant>, so every shade of one hue sorts and tab-completes
+# together — `orange_<TAB>` offers orange_light and orange_dark.
+#
+# In the 256-colour branch the variant picks a different colour index:
+#   _solarized     -> the Solarized palette entry
+#   _light/_dark   -> a lighter or darker take on the hue
+#   _regular       -> the basic 8-colour entry
+#
+# In the 8-colour fallback the variant picks an SGR attribute instead:
+#   _regular/_bold/_underline -> foreground carrying that attribute
+#   _background               -> the hue as a background
+#
+# bold, italic and reset carry no hue, so they keep their plain names and compose with
+# any colour: "${bold}${red_light}".
 
 if tput setaf 1 &>/dev/null; then
   tput sgr0 # reset colors
@@ -21,57 +26,51 @@ if tput setaf 1 &>/dev/null; then
   reset=$(tput sgr0)
 
   # Solarized colors, taken from http://git.io/solarized-colors.
-  sBlack=$(tput setaf 0)
-  sBlue=$(tput setaf 33)
-  sCyan=$(tput setaf 37)
-  sGreen=$(tput setaf 64)
-  sOrange=$(tput setaf 166)
-  sPurple=$(tput setaf 125)
-  sRed=$(tput setaf 124)
-  sViolet=$(tput setaf 61)
-  sWhite=$(tput setaf 15)
-  sYellow=$(tput setaf 136)
+  black_solarized=$(tput setaf 0)
+  blue_solarized=$(tput setaf 33)
+  cyan_solarized=$(tput setaf 37)
+  green_solarized=$(tput setaf 64)
+  orange_solarized=$(tput setaf 166)
+  purple_solarized=$(tput setaf 125)
+  red_solarized=$(tput setaf 124)
+  violet_solarized=$(tput setaf 61)
+  white_solarized=$(tput setaf 15)
+  yellow_solarized=$(tput setaf 136)
 
-  rBlack=$(tput setaf 0)
-  rBlue=$(tput setaf 6)
-  rCyan=$(tput setaf 4)
-  rGreen=$(tput setaf 2)
-  rPurple=$(tput setaf 5)
-  rRed=$(tput setaf 1)
-  rWhite=$(tput setaf 7)
-  rYellow=$(tput setaf 3)
+  black_regular=$(tput setaf 0)
+  blue_regular=$(tput setaf 6)
+  cyan_regular=$(tput setaf 4)
+  green_regular=$(tput setaf 2)
+  purple_regular=$(tput setaf 5)
+  red_regular=$(tput setaf 1)
+  white_regular=$(tput setaf 7)
+  yellow_regular=$(tput setaf 3)
 
-  lGreen=$(tput setaf 118)
-  lRed=$(tput setaf 196)
-  lYellow=$(tput setaf 227)
-  lOrange=$(tput setaf 208)
-  lBlue=$(tput setaf 69)
-  lGrey=$(tput setaf 243)
+  green_light=$(tput setaf 118)
+  red_light=$(tput setaf 196)
+  yellow_light=$(tput setaf 227)
+  orange_light=$(tput setaf 208)
+  blue_light=$(tput setaf 69)
+  grey_light=$(tput setaf 243)
 
-  dOrange=$(tput setaf 202)
-  dYellow=$(tput setaf 214)
-  dGreen=$(tput setaf 40)
-  dBlue=$(tput setaf 20)
+  orange_dark=$(tput setaf 202)
+  yellow_dark=$(tput setaf 214)
+  green_dark=$(tput setaf 40)
+  blue_dark=$(tput setaf 20)
 
-  # Others
-  mustard1=$(tput setaf 220)
-  mustard2=$(tput setaf 178)
-  mustard3=$(tput setaf 214)
-  green1=$(tput setaf 118)
-  green2=$(tput setaf 119)
-  green3=$(tput setaf 36)
-  sepia1=$(tput setaf 94)
-  sepia2=$(tput setaf 100)
-  blue1=$(tput setaf 57)
-  orange1=$(tput setaf 203)
-  orange2=$(tput setaf 210)
-  yellow1=$(tput setaf 214)
-  blue1=$(tput setaf 39)
-  dullGreen=$(tput setaf 100)
-  dullGreen2=$(tput setaf 94)
-  dullGreen3=$(tput setaf 106)
-  blue=$(tput setaf 21)
-
+  # Extra shades outside the Solarized set, named after their xterm-256 entry.
+  yellow_gold=$(tput setaf 220)    # Gold1
+  yellow_mustard=$(tput setaf 178) # LightGoldenrod3
+  yellow_olive=$(tput setaf 100)   # Yellow4
+  green_pale=$(tput setaf 119)     # LightGreen
+  green_olive=$(tput setaf 106)    # DarkOliveGreen3
+  cyan_dark=$(tput setaf 36)       # DarkCyan
+  blue_sky=$(tput setaf 39)        # DeepSkyBlue1
+  blue_deep=$(tput setaf 21)       # Blue1
+  violet_bright=$(tput setaf 57)   # BlueViolet
+  red_salmon=$(tput setaf 203)     # IndianRed1
+  red_coral=$(tput setaf 210)      # LightCoral
+  brown_dark=$(tput setaf 94)      # Orange4
 
 else
   bold="\e[1m"
@@ -79,44 +78,44 @@ else
 
   reset="\e[0m"
 
-  bBlack="\e[1;30m"
-  bBlue="\e[1;34m"
-  bCyan="\e[1;36m"
-  bGreen="\e[1;32m"
-  bPurple="\e[1;35m"
-  bRed="\e[1;31m"
-  bWhite="\e[1;37m"
-  bYellow="\e[1;33m"
+  black_bold="\e[1;30m"
+  blue_bold="\e[1;34m"
+  cyan_bold="\e[1;36m"
+  green_bold="\e[1;32m"
+  purple_bold="\e[1;35m"
+  red_bold="\e[1;31m"
+  white_bold="\e[1;37m"
+  yellow_bold="\e[1;33m"
 
   # Other Variants, taken from https://unix.stackexchange.com/a/124409
 
   # Regular Colors
-  rBlack="\e[0;30m"
-  rBlue="\e[0;34m"
-  rCyan="\e[0;36m"
-  rGreen="\e[0;32m"
-  rPurple="\e[0;35m"
-  rRed="\e[0;31m"
-  rWhite="\e[0;37m"
-  rYellow="\e[0;33m"
+  black_regular="\e[0;30m"
+  blue_regular="\e[0;34m"
+  cyan_regular="\e[0;36m"
+  green_regular="\e[0;32m"
+  purple_regular="\e[0;35m"
+  red_regular="\e[0;31m"
+  white_regular="\e[0;37m"
+  yellow_regular="\e[0;33m"
 
   # Underlined Style colors
-  uBlack="\e[4;30m"
-  uBlue="\e[4;34m"
-  uCyan="\e[4;36m"
-  uGreen="\e[4;32m"
-  uPurple="\e[4;35m"
-  uRed="\e[4;31m"
-  uWhite="\e[4;37m"
-  uYellow="\e[4;33m"
+  black_underline="\e[4;30m"
+  blue_underline="\e[4;34m"
+  cyan_underline="\e[4;36m"
+  green_underline="\e[4;32m"
+  purple_underline="\e[4;35m"
+  red_underline="\e[4;31m"
+  white_underline="\e[4;37m"
+  yellow_underline="\e[4;33m"
 
   # Background Style colors
-  BBlack="\e[40m"
-  BBlue="\e[44m"
-  BCyan="\e[46m"
-  BGreen="\e[42m"
-  BPurple="\e[45m"
-  BRed="\e[41m"
-  BWhite="\e[47m"
-  BYellow="\e[43m"
+  black_background="\e[40m"
+  blue_background="\e[44m"
+  cyan_background="\e[46m"
+  green_background="\e[42m"
+  purple_background="\e[45m"
+  red_background="\e[41m"
+  white_background="\e[47m"
+  yellow_background="\e[43m"
 fi
