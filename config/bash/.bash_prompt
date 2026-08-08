@@ -68,14 +68,29 @@ symbol_style_default="${bold}${symbol_color}"
 symbol_style_error="${bold}${error_color}"
 
 # ----------------------------------------------------------------------------------------
-# Prompt functions for the handling last command status and git status
+# Last command status, on every bash
 # ----------------------------------------------------------------------------------------
 
-# Colour the prompt symbol red when the previous command failed. Must be a function
-# called from PS1 via `\$(...)`: a plain variable would be expanded once at assignment
-# and freeze. $? is captured by cmd_timer() below.
+# $? has to be read before anything else clobbers it, `history -a` right below included,
+# and is handed back so a later hook still sees it.
+prompt_status() {
+  last_status=$?
+  history -a
+  return $last_status
+}
+
+# Prepended so nothing runs ahead of it, and guarded so re-sourcing (the `sb` alias) does
+# not stack copies. Kept a string, not a bash 5.1+ array. Not exported: a child shell would
+# inherit the name without the function behind it.
+case ";${PROMPT_COMMAND};" in
+*";prompt_status;"*) ;; # already installed
+*) PROMPT_COMMAND="prompt_status;${PROMPT_COMMAND}" ;;
+esac
+
+# Colour the prompt symbol red when the previous command failed. Must be a function called
+# from PS1 via `\$(...)`: a plain variable would be expanded once at assignment and freeze.
 prompt_symbol_style() {
-  if [ "${status:-0}" -ne 0 ] 2>/dev/null; then
+  if [ "${last_status:-0}" -ne 0 ] 2>/dev/null; then
     printf '%s' "${symbol_style_error}"
   else
     printf '%s' "${symbol_style_default}"
@@ -85,48 +100,48 @@ prompt_symbol_style() {
 # Alternatives: ❯, >, , », ⨔, ⌇, 󰘧, λ, λ:, ⁂, ➲, \$, \>
 prompt_symbol=">"
 
-# Timing the last command needs bash 5.0, for PS0 (4.4+) and EPOCHREALTIME (5.0+). Older
-# bash gets none of it: no PS0, no hook, and PROMPT_COMMAND is left exactly as it was.
-if ((BASH_VERSINFO[0] >= 5)); then
-  # PS0 is expanded once per command line, after the line is read and before it runs,
-  # which is exactly where the clock should start. The assignment rides inside an array
-  # subscript because a subscript is evaluated as arithmetic, while `_ps0` itself stays
-  # unset so the expansion prints nothing. EPOCHREALTIME is microseconds with a
-  # locale-dependent decimal mark; dropping the mark and dividing gives milliseconds
-  # with no `date` fork.
-  PS0='${_ps0[$((cmd_start_ms = ${EPOCHREALTIME/[.,]/} / 1000))]}'
+# ----------------------------------------------------------------------------------------
+# Timing the last command, bash 5.0+ only
+# ----------------------------------------------------------------------------------------
+# PS0 arrived in bash 4.4 and EPOCHREALTIME in 5.0, so anything older gets no stamp, no
+# hook, no threshold and no prompt_duration. The status above is unaffected either way.
 
-  # Runs at every prompt. $? has to be read before `history -a` clobbers it. No stamp
-  # means no duration to report, which is what a bare Enter leaves behind: PS0 fires
-  # only when a command line is actually read.
-  cmd_timer() {
-    status=$?
-    if [[ -n ${cmd_start_ms+x} ]]; then
-      cmd_elapsed_ms=$((${EPOCHREALTIME/[.,]/} / 1000 - cmd_start_ms))
-      unset cmd_start_ms
+if ((BASH_VERSINFO[0] >= 5)); then
+  # PS0 is expanded once per command line, after the line is read and before it runs, which
+  # is exactly where the clock should start. The assignment rides inside an array subscript
+  # because a subscript is evaluated as arithmetic, while `_discard` itself stays unset so
+  # the expansion prints nothing. EPOCHREALTIME is microseconds with a locale-dependent
+  # decimal mark; dropping the mark and dividing gives milliseconds with no `date` fork.
+  PS0='${_discard[$((timer_start_ms = ${EPOCHREALTIME/[.,]/} / 1000))]}'
+
+  # Stops the clock PS0 started. No stamp means nothing to report, which is what a bare
+  # Enter leaves behind, PS0 having never fired. $? is passed straight through, so this
+  # hook cannot hide a failure from prompt_status.
+  prompt_timer() {
+    local rc=$?
+    if [[ -n ${timer_start_ms+x} ]]; then
+      timer_elapsed_ms=$((${EPOCHREALTIME/[.,]/} / 1000 - timer_start_ms))
+      unset timer_start_ms
     else
-      cmd_elapsed_ms=0
+      unset timer_elapsed_ms
     fi
-    history -a
-    return $status
+    return $rc
   }
 
-  # Prepended so $? is read before anything else clobbers it, and guarded so re-sourcing
-  # (the `sb` alias) does not stack copies. Kept a string, not a bash 5.1+ array. Not
-  # exported: a child shell would inherit the name without the function behind it.
+  # Ahead of prompt_status, so the clock is read before `history -a` charges its own write
+  # to the command just finished.
   case ";${PROMPT_COMMAND};" in
-  *";cmd_timer;"*) ;; # already installed
-  *) PROMPT_COMMAND="cmd_timer;${PROMPT_COMMAND}" ;;
+  *";prompt_timer;"*) ;; # already installed
+  *) PROMPT_COMMAND="prompt_timer;${PROMPT_COMMAND}" ;;
   esac
 
   # Report durations only at or above this, so `ls` and `cd` do not litter the prompt.
   # Override in ~/.bash_prompt.local, which is sourced after this file.
   : "${PROMPT_MIN_MS:=1000}"
 
-  # How long the last command took. $1 is the colour prefix. Under the threshold prints
-  # nothing.
+  # How long the last command took, as 2.0s, 2m05s or 1h30m. $1 is the colour prefix.
   prompt_duration() {
-    local ms=${cmd_elapsed_ms:-0}
+    local ms=${timer_elapsed_ms:-0}
 
     ((ms >= PROMPT_MIN_MS)) || return
 
@@ -139,6 +154,10 @@ if ((BASH_VERSINFO[0] >= 5)); then
     fi
   }
 fi
+
+# ----------------------------------------------------------------------------------------
+# Git status
+# ----------------------------------------------------------------------------------------
 
 prompt_git() {
   local s=''
