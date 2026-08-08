@@ -135,15 +135,16 @@ if ((BASH_VERSINFO[0] >= 5)); then
   *) PROMPT_COMMAND="prompt_timer;${PROMPT_COMMAND}" ;;
   esac
 
-  # Report durations only at or above this, so `ls` and `cd` do not litter the prompt.
-  # Override in ~/.bash_prompt.local, which is sourced after this file.
-  : "${PROMPT_MIN_MS:=1000}"
-
   # How long the last command took, as 2.0s, 2m05s or 1h30m. $1 is the colour prefix.
+  # Anything under the threshold prints nothing, so `ls` and `cd` do not litter the prompt.
+  # The threshold is read into a local with a fallback rather than assigned to a global, so
+  # it exists only while this runs unless you set PROMPT_MIN_MS yourself in
+  # ~/.bash_prompt.local, which is sourced after this file.
   prompt_duration() {
     local ms=${timer_elapsed_ms:-0}
+    local min_ms=${PROMPT_MIN_MS:-1000}
 
-    ((ms >= PROMPT_MIN_MS)) || return
+    ((ms >= min_ms)) || return
 
     if ((ms < 60000)); then
       printf '%s%d.%ds' "$1" $((ms / 1000)) $((ms % 1000 / 100))
