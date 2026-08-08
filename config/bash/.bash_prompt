@@ -14,7 +14,7 @@ if tput setaf 1 &>/dev/null; then
   branch_color="${orange_light}"
   repo_status_color="${cyan_solarized}"
   word_color="${grey_light}"
-  duration_color="${grey_light}"
+  duration_color="${green_olive}"
   pwd_color="${blue_solarized}"
   user_color_root="${red_light}"
   user_color_nonroot="${green_dark}"
