@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-for file in $DOTS/config/*/.{path,env,ls_color,exports,aliases,functions,keybindings,colors,bash_prompt}; do
+for file in $DOTS/config/*/.{path,env,ls_color,exports,aliases,functions,keybindings,colors,bash_prompt,greeting}; do
   # [ -r "$file" ] && [ -f "$file" ] && source "$file"
   [ -r "$file" ] && [ -f "$file" ] && source "$file" || echo "Error sourcing: $file" # Check source success/failure;
 done

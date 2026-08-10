@@ -1,0 +1,259 @@
+#!/usr/bin/env bash
+
+# ----------------------------------------------------------------------------------------
+# Login greeting: a few context lines and a quote.
+# ----------------------------------------------------------------------------------------
+# Bash builtins only. No fortune, and no tput, uname, date, uptime or fold either: nothing
+# in this file forks. The greeting therefore looks the same on a fresh remote box where
+# this repo is the only thing that arrived. The facts are read out of /proc and /etc with
+# `read`, and the escapes are written literally.
+#
+# One colour, spelled out here rather than taken from .colors, because that file stores its
+# escapes as literal `\e[0m` text on 8-colour terminals, which survives PS1 expansion but
+# would print as characters through `printf '%s'`. \e[36m is plain cyan and exists on every
+# terminal back to the 8-colour ones.
+#
+# Knobs, all set from ~/.bash_profile.local, which is sourced after this file:
+#   DOTS_GREETING=0   nothing at all
+#   DOTS_QUOTE=0      context lines only
+#   DOTS_COLOR        the one colour, default bold cyan
+#   DOTS_QUOTES_FILE  defaults to $DOTS/config/bash/quotes.txt
+#
+# `dots_greeting` is a normal function, so it can be re-run by hand at any time.
+# ----------------------------------------------------------------------------------------
+
+# `mapfile` is bash 4, so bash 3 gets no greeting rather than a broken one. `return 0`, not
+# a bare `return`: .bash_profile reports a non-zero source as an error.
+((BASH_VERSINFO[0] >= 4)) || return 0
+
+_dots_reset=$'\e[0m'
+_dots_dim=$'\e[2m'
+_dots_italic=$'\e[3m'
+_dots_bold=$'\e[1m'
+
+# ----------------------------------------------------------------------------------------
+# Context lines
+# ----------------------------------------------------------------------------------------
+# Who and where, what the box is, what it is made of, and how long it has been up. All of
+# it read straight out of /proc, /sys and /etc, so none of `uname`, `nproc`, `uptime`,
+# `free` or `date` is involved. Fills _dots_ctx, one string per line.
+
+_dots_context() {
+  local k v rest part line tenths
+  local distro='' kernel='' cpu='' cores=0 mem='' secs d h m boot='' tz=''
+
+  # -- who and where ----------------------------------------------------------------
+  _dots_ctx=("${USER}@${HOSTNAME%%.*}")
+
+  # -- distro and shell -------------------------------------------------------------
+  if [[ -r /etc/os-release ]]; then
+    while IFS='=' read -r k v; do
+      if [[ $k == PRETTY_NAME ]]; then
+        v=${v#\"}
+        distro=${v%\"}
+        break
+      fi
+    done </etc/os-release
+  fi
+  [[ -r /proc/sys/kernel/osrelease ]] && read -r kernel </proc/sys/kernel/osrelease
+  [[ $kernel == *[Mm]icrosoft* ]] && distro+=" (WSL)"
+  [[ -n $distro ]] || distro=$OSTYPE
+  _dots_ctx+=("${distro} · bash ${BASH_VERSINFO[0]}.${BASH_VERSINFO[1]}")
+
+  # -- cpu, cores, memory -----------------------------------------------------------
+  # `model name` sits a few lines into /proc/cpuinfo and the loop breaks there, so the
+  # per-core repeats below it are never read. The marketing noise comes off with plain
+  # substitutions: "Intel(R) Core(TM) i5-10210U CPU @ 1.60GHz" reads as "Intel Core
+  # i5-10210U", which is the part that identifies the machine.
+  if [[ -r /proc/cpuinfo ]]; then
+    while IFS=':' read -r k v; do
+      if [[ $k == 'model name'* ]]; then
+        v=${v# }
+        v=${v//(R)/}
+        v=${v//(TM)/}
+        v=${v%% @ *}
+        v=${v% CPU}
+        cpu=${v//  / }
+        break
+      fi
+    done </proc/cpuinfo
+  fi
+
+  # /sys/.../cpu/online is a range list such as "0-7" or "0-3,5,7". Split on the comma by
+  # hand rather than through IFS, which would have to be put back before the reads below.
+  if [[ -r /sys/devices/system/cpu/online ]]; then
+    read -r rest </sys/devices/system/cpu/online
+    rest+=,
+    while [[ -n $rest ]]; do
+      part=${rest%%,*}
+      rest=${rest#*,}
+      [[ -z $part ]] && continue
+      if [[ $part == *-* ]]; then
+        cores=$((cores + ${part#*-} - ${part%-*} + 1))
+      else
+        ((cores++))
+      fi
+    done
+  fi
+
+  # MemTotal is the first line of /proc/meminfo, so this breaks immediately. The value is
+  # in kB and the total is what the box has, not what is free, so it does not move: reading
+  # it once at login is the whole of it. Bash has no floats, so the tenth is carried by
+  # scaling by ten before the divide, and the divisor is 1024*1024 because the kernel means
+  # kibibytes here, which is why this reads GiB and not GB.
+  if [[ -r /proc/meminfo ]]; then
+    while IFS=':' read -r k v; do
+      if [[ $k == MemTotal ]]; then
+        v=${v//[[:space:]]/}
+        v=${v%kB}
+        if [[ $v =~ ^[0-9]+$ ]]; then
+          tenths=$((v * 10 / 1048576))
+          mem="$((tenths / 10)).$((tenths % 10)) GiB RAM"
+        fi
+        break
+      fi
+    done </proc/meminfo
+  fi
+
+  line=$cpu
+  ((cores)) && line+="${line:+ · }${cores} cores"
+  [[ -n $mem ]] && line+="${line:+ · }${mem}"
+  [[ -n $line ]] && _dots_ctx+=("$line")
+
+  # -- uptime, boot time, timezone --------------------------------------------------
+  # /proc/uptime is "seconds idle", and the fractional part is not worth the arithmetic.
+  line=''
+  if [[ -r /proc/uptime ]]; then
+    read -r secs _ </proc/uptime
+    secs=${secs%.*}
+    d=$((secs / 86400))
+    h=$((secs % 86400 / 3600))
+    m=$((secs % 3600 / 60))
+    if ((d)); then
+      line="up ${d}d ${h}h"
+    elif ((h)); then
+      line="up ${h}h ${m}m"
+    else
+      line="up ${m}m"
+    fi
+  fi
+
+  # btime in /proc/stat is a plain epoch. Formatting it needs `printf %()T` with an
+  # explicit timestamp, which arrived in bash 4.2, so older bash simply goes without
+  # rather than growing a `date` fork. The one long line in that file is `intr`, which
+  # this loop reads and discards on its way to btime.
+  if [[ -r /proc/stat ]] && ((BASH_VERSINFO[0] > 4 || BASH_VERSINFO[1] >= 2)); then
+    while read -r k rest; do
+      if [[ $k == btime ]]; then
+        printf -v boot '%(%d %b %H:%M)T' "$rest"
+        break
+      fi
+    done </proc/stat
+    [[ -n $boot ]] && line+="${line:+ · }booted ${boot}"
+  fi
+
+  # Named rather than an offset, and worth a few characters the moment the box is in
+  # another zone: it is also the zone the boot time above is printed in. /etc/localtime
+  # is a symlink, and reading it would mean forking `readlink`, so only the plain file
+  # and $TZ are consulted.
+  if [[ -r /etc/timezone ]]; then
+    read -r tz </etc/timezone
+  elif [[ -n $TZ ]]; then
+    tz=$TZ
+  fi
+  [[ -n $tz ]] && line+="${line:+ · }${tz}"
+
+  [[ -n $line ]] && _dots_ctx+=("$line")
+}
+
+# ----------------------------------------------------------------------------------------
+# Quote
+# ----------------------------------------------------------------------------------------
+# One `text|author` per line, blank lines and # comments ignored. A fresh quote every
+# shell: bash seeds $RANDOM per process, so every new terminal draws its own.
+
+_dots_quote() {
+  local color=$1
+  local file=${DOTS_QUOTES_FILE:-$DOTS/assets/quotes.txt}
+  local line text author width cur word noglob=0
+  local -a raw=() pool=() wrapped=()
+
+  [[ -r $file ]] || return 0
+  mapfile -t raw <"$file"
+
+  for line in "${raw[@]}"; do
+    [[ -z $line || $line == '#'* ]] && continue
+    pool+=("$line")
+  done
+  ((${#pool[@]})) || return 0
+
+  line=${pool[RANDOM % ${#pool[@]}]}
+  text=${line%%|*}
+  author=${line#*|}
+  [[ $author == "$line" ]] && author=''
+
+  # Wrapped by hand rather than with `fold`, which would be a fork. Globbing is turned off
+  # around the split so a quote containing * or ? is not expanded against the cwd.
+  width=$((${COLUMNS:-80} - 4))
+  ((width > 24)) || width=76
+  [[ $- == *f* ]] || {
+    set -f
+    noglob=1
+  }
+  cur=''
+  for word in $text; do
+    if [[ -z $cur ]]; then
+      cur=$word
+    elif ((${#cur} + 1 + ${#word} <= width)); then
+      cur+=" $word"
+    else
+      wrapped+=("$cur")
+      cur=$word
+    fi
+  done
+  ((noglob)) && set +f
+  [[ -n $cur ]] && wrapped+=("$cur")
+
+  printf '\n'
+  for line in "${wrapped[@]}"; do
+    printf ' %s%s%s\n' "${_dots_italic}${_dots_dim}" "$line" "$_dots_reset"
+  done
+  # [[ -n $author ]] && printf ' %s— %s%s\n' "$color" "$author" "$_dots_reset"
+  [[ -n $author ]] && printf ' %s— %s%s\n' "${_dots_italic}${_dots_dim}" "$author" "$_dots_reset"
+
+  return 0
+}
+
+# ----------------------------------------------------------------------------------------
+# Assembly
+# ----------------------------------------------------------------------------------------
+
+dots_greeting() {
+  local color=${DOTS_COLOR:-$'\e[1;36m'}
+  local r i
+
+  # An interactive shell on a real terminal only: not scp, not `bash -c`, not a pipe.
+  [[ $- == *i* ]] || return 0
+  [[ -t 1 && -n $TERM && $TERM != dumb ]] || return 0
+  [[ ${DOTS_GREETING:-1} == 1 ]] || return 0
+
+  _dots_context
+
+  # The first line carries the colour, since who and where is the one fact worth catching
+  # from across the room. The rest is dim so it stays background.
+  printf '\n'
+  for i in "${!_dots_ctx[@]}"; do
+    r=${_dots_ctx[i]}
+    # if ((i == 0)); then
+      # printf ' %s%s%s\n' "$color" "$r" "$_dots_reset"
+    # else
+      printf ' %s%s%s\n' "$_dots_dim" "$r" "$_dots_reset"
+    # fi
+  done
+
+  [[ ${DOTS_QUOTE:-1} == 1 ]] && _dots_quote "$color"
+
+  return 0
+}
+
+true

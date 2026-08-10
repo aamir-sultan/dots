@@ -20,3 +20,8 @@ fi
 [ -f ~/.exports.local ] && source ~/.exports.local
 [ -f ~/.functions.local ] && source ~/.functions.local
 [[ -f ~/.aliases.local ]] && source ~/.aliases.local
+
+# Last, so a knob set in the *.local files above (DOTS_GREETING, DOTS_COLOR, ...) is
+# already in effect by the time the greeting draws. Guarded on the function existing:
+# bash 3 never defines it.
+declare -F dots_greeting >/dev/null && dots_greeting

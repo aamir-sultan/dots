@@ -1,0 +1,561 @@
+# One quote per line, as `text|author`. The greeting will print a line with no `|` on its
+# own, but every line here carries an author. Blank lines and lines starting with `#` are
+# ignored, so this file can be grouped and annotated freely.
+#
+# The greeting draws one at random per terminal. Set DOTS_QUOTES_FILE in
+# ~/.bash_profile.local to read a different file entirely.
+#
+# Only one `|` per line: the parser splits on the first one, so a second would land in the
+# author.
+#
+# On attribution. Where a saying is genuinely collective the source names the tradition
+# rather than a person: `Japanese proverb`, `Zen proverb`, `Latin maxim`. Several popular
+# quotations are credited here to whoever actually wrote them rather than to the famous
+# name they are usually hung on: `We are what we repeatedly do` is Will Durant summarising
+# Aristotle, `It is not the strongest of the species` is Leon C. Megginson and not Darwin,
+# `I disapprove of what you say` is Evelyn Beatrice Hall and not Voltaire, `We shape our
+# tools` is John Culkin and not McLuhan, and `Be kind, for everyone you meet` is Ian
+# Maclaren and not Plato. A few are paraphrases in wide circulation rather than exact
+# transcriptions.
+
+# -- Simplicity and design ---------------------------------------------------------------
+Simplicity is prerequisite for reliability.|Edsger W. Dijkstra
+Perfection is achieved, not when there is nothing more to add, but when there is nothing left to take away.|Antoine de Saint-Exupery
+There are two ways of constructing a software design: one way is to make it so simple that there are obviously no deficiencies, and the other way is to make it so complicated that there are no obvious deficiencies.|C. A. R. Hoare
+Inside every large program is a small program struggling to get out.|C. A. R. Hoare
+Controlling complexity is the essence of computer programming.|Brian Kernighan
+The function of good software is to make the complex appear to be simple.|Grady Booch
+Simple things should be simple, complex things should be possible.|Alan Kay
+Simplicity is the ultimate sophistication.|Leonardo da Vinci
+Everything should be made as simple as possible, but not simpler.|Albert Einstein
+Do the simplest thing that could possibly work.|Ward Cunningham
+The cheapest, fastest, and most reliable components are those that aren't there.|Gordon Bell
+Complexity kills.|Ray Ozzie
+Duplication is far cheaper than the wrong abstraction.|Sandi Metz
+Simplicity does not precede complexity, but follows it.|Alan Perlis
+Fools ignore complexity. Pragmatists suffer it. Some can avoid it. Geniuses remove it.|Alan Perlis
+Write shy code: modules that do not reveal anything unnecessary to other modules.|Andrew Hunt and David Thomas
+Software is a gas; it expands to fill its container.|Nathan Myhrvold
+The best code is no code at all.|Jeff Atwood
+Deleted code is debugged code.|Jeff Sickel
+One of my most productive days was throwing away 1000 lines of code.|Ken Thompson
+
+# -- Reading and writing code ------------------------------------------------------------
+Programs must be written for people to read, and only incidentally for machines to execute.|Abelson and Sussman
+Any fool can write code that a computer can understand. Good programmers write code that humans can understand.|Martin Fowler
+Programming is the art of telling another human being what one wants the computer to do.|Donald Knuth
+The best programs are written so that computing machines can perform them quickly and so that human beings can understand them clearly.|Donald Knuth
+It is harder to read code than to write it.|Joel Spolsky
+Code never lies, comments sometimes do.|Ron Jeffries
+The proper use of comments is to compensate for our failure to express ourselves in code.|Robert C. Martin
+Truth can only be found in one place: the code.|Robert C. Martin
+Clean code always looks like it was written by someone who cares.|Michael Feathers
+Good code is its own best documentation.|Steve McConnell
+Do not comment bad code, rewrite it.|Brian Kernighan and P. J. Plauger
+Documentation is a love letter that you write to your future self.|Damian Conway
+Always code as if the person who ends up maintaining your code is a violent psychopath who knows where you live.|John Woods
+Any code of your own that you have not looked at for six or more months might as well have been written by someone else.|Eagleson's Law
+If you are afraid to change something it is clearly poorly designed.|Martin Fowler
+Bad programmers worry about the code. Good programmers worry about data structures and their relationships.|Linus Torvalds
+Smart data structures and dumb code works a lot better than the other way around.|Eric S. Raymond
+Show me your flowcharts and conceal your tables, and I shall continue to be mystified. Show me your tables, and I will not usually need your flowcharts.|Fred Brooks
+Data dominates. If you have chosen the right data structures and organised things well, the algorithms will almost always be self-evident.|Rob Pike
+Programming is not about typing, it is about thinking.|Rich Hickey
+First, solve the problem. Then, write the code.|John Johnson
+
+# -- Debugging and testing ---------------------------------------------------------------
+Debugging is twice as hard as writing the code in the first place. Therefore, if you write the code as cleverly as possible, you are, by definition, not smart enough to debug it.|Brian Kernighan
+The most effective debugging tool is still careful thought, coupled with judiciously placed print statements.|Brian Kernighan
+Testing shows the presence, not the absence of bugs.|Edsger W. Dijkstra
+If debugging is the process of removing software bugs, then programming must be the process of putting them in.|Edsger W. Dijkstra
+The competent programmer is fully aware of the limited size of his own skull.|Edsger W. Dijkstra
+Beware of bugs in the above code; I have only proved it correct, not tried it.|Donald Knuth
+Given enough eyeballs, all bugs are shallow.|Eric S. Raymond
+Legacy code is code without tests.|Michael Feathers
+There are two ways to write error-free programs; only the third one works.|Alan Perlis
+When you have eliminated the impossible, whatever remains, however improbable, must be the truth.|Arthur Conan Doyle
+Errors using inadequate data are much less than those using no data at all.|Charles Babbage
+
+# -- Optimization ------------------------------------------------------------------------
+Premature optimization is the root of all evil.|Donald Knuth
+Rules of optimization. Rule one: do not do it. Rule two, for experts only: do not do it yet.|Michael A. Jackson
+Measure. Do not tune for speed until you have measured.|Rob Pike
+You cannot tell where a program is going to spend its time. Bottlenecks occur in surprising places.|Rob Pike
+Fancy algorithms are slow when n is small, and n is usually small.|Rob Pike
+A program that produces incorrect results twice as fast is infinitely slower.|John Ousterhout
+The best performance improvement is the transition from the nonworking state to the working state.|John Ousterhout
+Optimization hinders evolution.|Alan Perlis
+Make it work, make it right, make it fast.|Kent Beck
+When in doubt, use brute force.|Ken Thompson
+
+# -- Projects, teams and schedules -------------------------------------------------------
+Adding manpower to a late software project makes it later.|Fred Brooks
+The bearing of a child takes nine months, no matter how many women are assigned.|Fred Brooks
+Plan to throw one away; you will, anyhow.|Fred Brooks
+All programmers are optimists.|Fred Brooks
+Walking on water and developing software from a specification are easy if both are frozen.|Edward V. Berard
+It is easier to change the specification to fit the program than vice versa.|Alan Perlis
+If you think good architecture is expensive, try bad architecture.|Brian Foote and Joseph Yoder
+In theory, there is no difference between theory and practice. In practice, there is.|Jan L. A. van de Snepscheut
+Shipping is a feature. A really important feature. Your product must have it.|Joel Spolsky
+Real artists ship.|Steve Jobs
+First do it, then do it right, then do it better.|Addy Osmani
+I am not a great programmer; I am just a good programmer with great habits.|Kent Beck
+The most damaging phrase in the language is: we have always done it this way.|Grace Hopper
+It is easier to ask forgiveness than it is to get permission.|Grace Hopper
+A ship in port is safe, but that is not what ships are built for.|Grace Hopper
+The best way to predict the future is to invent it.|Alan Kay
+Talk is cheap. Show me the code.|Linus Torvalds
+It always takes longer than you expect, even when you take into account Hofstadter's Law.|Douglas Hofstadter
+
+# -- Unix, languages and machines --------------------------------------------------------
+Write programs that do one thing and do it well. Write programs to work together.|Doug McIlroy
+Unix is simple. It just takes a genius to understand its simplicity.|Dennis Ritchie
+Those who do not understand Unix are condemned to reinvent it, poorly.|Henry Spencer
+C is quirky, flawed, and an enormous success.|Dennis Ritchie
+The only way to learn a new programming language is by writing programs in it.|Kernighan and Ritchie
+A language that does not affect the way you think about programming is not worth knowing.|Alan Perlis
+Let the machine do the dirty work.|Brian Kernighan and P. J. Plauger
+A distributed system is one in which the failure of a computer you did not even know existed can render your own computer unusable.|Leslie Lamport
+People who are really serious about software should make their own hardware.|Alan Kay
+The computer is a bicycle for the mind.|Steve Jobs
+The question of whether a computer can think is no more interesting than the question of whether a submarine can swim.|Edsger W. Dijkstra
+Elegance is not a dispensable luxury but a factor that decides between success and failure.|Edsger W. Dijkstra
+There is no programming language, no matter how structured, that will prevent programmers from making bad programs.|Larry Flon
+If you have a procedure with ten parameters, you probably missed some.|Alan Perlis
+Everything should be built top-down, except the first time.|Alan Perlis
+There are only two hard things in computer science: cache invalidation and naming things.|Phil Karlton
+A good programmer looks both ways before crossing a one-way street.|Doug Linder
+The most important single aspect of software development is to be clear about what you are trying to build.|Bjarne Stroustrup
+There are only two kinds of languages: the ones people complain about and the ones nobody uses.|Bjarne Stroustrup
+Machines take me by surprise with great frequency.|Alan Turing
+
+# ========================================================================================
+# LIFE AND PHILOSOPHY
+# ========================================================================================
+
+# -- Stoicism ----------------------------------------------------------------------------
+You have power over your mind, not outside events. Realize this, and you will find strength.|Marcus Aurelius
+The happiness of your life depends upon the quality of your thoughts.|Marcus Aurelius
+Waste no more time arguing about what a good man should be. Be one.|Marcus Aurelius
+The impediment to action advances action. What stands in the way becomes the way.|Marcus Aurelius
+If it is not right, do not do it. If it is not true, do not say it.|Marcus Aurelius
+Never let the future disturb you. You will meet it, if you have to, with the same weapons of reason which today arm you against the present.|Marcus Aurelius
+Confine yourself to the present.|Marcus Aurelius
+The best revenge is to be unlike him who performed the injury.|Marcus Aurelius
+Loss is nothing else but change, and change is Nature's delight.|Marcus Aurelius
+Everything we hear is an opinion, not a fact. Everything we see is a perspective, not the truth.|Marcus Aurelius
+Do every act of your life as though it were the last act of your life.|Marcus Aurelius
+Very little is needed to make a happy life; it is all within yourself, in your way of thinking.|Marcus Aurelius
+Accept the things to which fate binds you, and love the people with whom fate brings you together.|Marcus Aurelius
+It is not death that a man should fear, but he should fear never beginning to live.|Marcus Aurelius
+Dwell on the beauty of life. Watch the stars, and see yourself running with them.|Marcus Aurelius
+The soul becomes dyed with the color of its thoughts.|Marcus Aurelius
+Reject your sense of injury and the injury itself disappears.|Marcus Aurelius
+How much more grievous are the consequences of anger than the causes of it.|Marcus Aurelius
+Look well into thyself; there is a source of strength which will always spring up if thou wilt always look.|Marcus Aurelius
+The object of life is not to be on the side of the majority, but to escape finding oneself in the ranks of the insane.|Marcus Aurelius
+We suffer more often in imagination than in reality.|Seneca
+It is not that we have a short time to live, but that we waste a lot of it.|Seneca
+Every new beginning comes from some other beginning's end.|Seneca
+Difficulties strengthen the mind, as labor does the body.|Seneca
+He who is brave is free.|Seneca
+As long as you live, keep learning how to live.|Seneca
+Begin at once to live, and count each separate day as a separate life.|Seneca
+No man is free who is a slave to his body.|Seneca
+The greatest obstacle to living is expectancy, which hangs upon tomorrow and loses today.|Seneca
+Wealth is the slave of a wise man and the master of a fool.|Seneca
+If a man knows not to which port he sails, no wind is favorable.|Seneca
+While we are postponing, life speeds by.|Seneca
+Sometimes even to live is an act of courage.|Seneca
+It is a rough road that leads to the heights of greatness.|Seneca
+The whole future lies in uncertainty: live immediately.|Seneca
+Associate with people who are likely to improve you.|Seneca
+There is no easy way from the earth to the stars.|Seneca
+Nothing is ours except time.|Seneca
+He who fears death will never do anything worthy of a living man.|Seneca
+Luck is what happens when preparation meets opportunity.|Seneca
+It is not what happens to you, but how you react to it that matters.|Epictetus
+Wealth consists not in having great possessions, but in having few wants.|Epictetus
+First say to yourself what you would be; and then do what you have to do.|Epictetus
+No man is free who is not master of himself.|Epictetus
+We have two ears and one mouth so that we can listen twice as much as we speak.|Epictetus
+Men are disturbed not by things, but by the views which they take of things.|Epictetus
+Do not explain your philosophy. Embody it.|Epictetus
+If you want to improve, be content to be thought foolish and stupid.|Epictetus
+Circumstances do not make the man, they only reveal him to himself.|Epictetus
+Only the educated are free.|Epictetus
+It is impossible for a man to learn what he thinks he already knows.|Epictetus
+Make the best use of what is in your power, and take the rest as it happens.|Epictetus
+Freedom is won by disregarding things that lie beyond our control.|Epictetus
+Any person capable of angering you becomes your master.|Epictetus
+First learn the meaning of what you say, and then speak.|Epictetus
+Seek not that the things which happen should happen as you wish; but wish the things which happen to be as they are.|Epictetus
+He who laughs at himself never runs out of things to laugh at.|Epictetus
+You could leave life right now. Let that determine what you do and say and think.|Marcus Aurelius
+My formula for greatness in a human being is amor fati: that one wants nothing to be different.|Friedrich Nietzsche
+Memento mori: remember that you will die.|Latin maxim
+No man is more unhappy than he who never faces adversity, for he is not permitted to prove himself.|Seneca
+
+# -- Eastern philosophy ------------------------------------------------------------------
+A journey of a thousand miles begins with a single step.|Lao Tzu
+Knowing others is intelligence; knowing yourself is true wisdom.|Lao Tzu
+Mastering others is strength; mastering yourself is true power.|Lao Tzu
+When I let go of what I am, I become what I might be.|Lao Tzu
+Nature does not hurry, yet everything is accomplished.|Lao Tzu
+He who knows does not speak. He who speaks does not know.|Lao Tzu
+To the mind that is still, the whole universe surrenders.|Lao Tzu
+Water is fluid, soft, and yielding. But water will wear away rock, which is rigid and cannot yield.|Lao Tzu
+Simplicity, patience, compassion. These three are your greatest treasures.|Lao Tzu
+Being deeply loved by someone gives you strength, while loving someone deeply gives you courage.|Lao Tzu
+Do the difficult things while they are easy and do the great things while they are small.|Lao Tzu
+Silence is a source of great strength.|Lao Tzu
+The wise man does not lay up his own treasures. The more he gives to others, the more he has for his own.|Lao Tzu
+Respond intelligently even to unintelligent treatment.|Lao Tzu
+Flow with whatever may happen and let your mind be free.|Zhuangzi
+The perfect man uses his mind like a mirror. It grasps nothing, refuses nothing, receives but does not keep.|Zhuangzi
+Happiness is the absence of the striving for happiness.|Zhuangzi
+It does not matter how slowly you go as long as you do not stop.|Confucius
+Real knowledge is to know the extent of one's ignorance.|Confucius
+When it is obvious that the goals cannot be reached, adjust the action steps.|Confucius
+Everything has beauty, but not everyone sees it.|Confucius
+The man who moves a mountain begins by carrying away small stones.|Confucius
+Study the past if you would define the future.|Confucius
+He who learns but does not think is lost. He who thinks but does not learn is in great danger.|Confucius
+Our greatest glory is not in never falling, but in rising every time we fall.|Confucius
+Life is really simple, but we insist on making it complicated.|Confucius
+Before you embark on a journey of revenge, dig two graves.|Confucius
+The superior man is modest in his speech but exceeds in his actions.|Confucius
+To see what is right and not do it is a lack of courage.|Confucius
+Wheresoever you go, go with all your heart.|Confucius
+When anger rises, think of the consequences.|Confucius
+The man who asks a question is a fool for a minute, the man who does not ask is a fool for life.|Confucius
+Peace comes from within. Do not seek it without.|Buddha
+Three things cannot be long hidden: the sun, the moon, and the truth.|Buddha
+Holding on to anger is like grasping a hot coal with the intent of throwing it at someone else; you are the one who gets burned.|Buddha
+Better than a thousand hollow words is one word that brings peace.|Buddha
+Do not dwell in the past, do not dream of the future, concentrate the mind on the present moment.|Buddha
+You yourself, as much as anybody in the entire universe, deserve your love and affection.|Buddha
+There is no path to happiness: happiness is the path.|Buddha
+Work out your own salvation. Do not depend on others.|Buddha
+The mind is everything. What you think you become.|Buddha
+Yesterday I was clever, so I wanted to change the world. Today I am wise, so I am changing myself.|Rumi
+The wound is the place where the light enters you.|Rumi
+What you seek is seeking you.|Rumi
+Raise your words, not your voice. It is rain that grows flowers, not thunder.|Rumi
+Set your life on fire. Seek those who fan your flames.|Rumi
+Do not be satisfied with the stories that come before you. Unfold your own myth.|Rumi
+Silence is the language of God, all else is poor translation.|Rumi
+In the beginner's mind there are many possibilities, in the expert's mind there are few.|Shunryu Suzuki
+Empty your mind, be formless, shapeless, like water.|Bruce Lee
+Absorb what is useful, discard what is useless, and add what is specifically your own.|Bruce Lee
+I fear not the man who has practiced ten thousand kicks once, but I fear the man who has practiced one kick ten thousand times.|Bruce Lee
+When the student is ready, the teacher will appear.|Buddhist proverb
+Fall seven times, stand up eight.|Japanese proverb
+Before enlightenment, chop wood, carry water. After enlightenment, chop wood, carry water.|Zen proverb
+If you are patient in one moment of anger, you will escape a hundred days of sorrow.|Chinese proverb
+To know and not to do is not yet to know.|Wang Yangming
+Vision without action is a daydream. Action without vision is a nightmare.|Japanese proverb
+
+# -- Ancient Greece and Rome -------------------------------------------------------------
+The unexamined life is not worth living.|Socrates
+The only true wisdom is in knowing you know nothing.|Socrates
+Be as you wish to seem.|Socrates
+Beware the barrenness of a busy life.|Socrates
+Employ your time in improving yourself by other men's writings.|Socrates
+He is richest who is content with the least.|Socrates
+Wonder is the beginning of wisdom.|Socrates
+An honest man is always a child.|Socrates
+The beginning is the most important part of the work.|Plato
+Wise men speak because they have something to say; fools because they have to say something.|Plato
+The measure of a man is what he does with power.|Plato
+Courage is knowing what not to fear.|Plato
+Necessity is the mother of invention.|Plato
+Ignorance is the root and stem of all evil.|Plato
+Knowing yourself is the beginning of all wisdom.|Aristotle
+The whole is greater than the sum of its parts.|Aristotle
+Happiness depends upon ourselves.|Aristotle
+It is the mark of an educated mind to be able to entertain a thought without accepting it.|Aristotle
+Patience is bitter, but its fruit is sweet.|Aristotle
+Educating the mind without educating the heart is no education at all.|Aristotle
+No great mind has ever existed without a touch of madness.|Aristotle
+He who cannot be a good follower cannot be a good leader.|Aristotle
+What is a friend? A single soul dwelling in two bodies.|Aristotle
+Hope is the dream of a waking man.|Aristotle
+Well begun is half done.|Aristotle
+We are what we repeatedly do. Excellence, then, is not an act, but a habit.|Will Durant
+No man ever steps in the same river twice.|Heraclitus
+Character is destiny.|Heraclitus
+Change is the only constant.|Heraclitus
+Big results require big ambitions.|Heraclitus
+Not what we have but what we enjoy constitutes our abundance.|Epicurus
+Do not spoil what you have by desiring what you have not.|Epicurus
+He who is not satisfied with a little is satisfied with nothing.|Epicurus
+Nothing is enough for the man to whom enough is too little.|Epicurus
+I am not an Athenian or a Greek, but a citizen of the world.|Diogenes
+Man is the measure of all things.|Protagoras
+The fox knows many things, but the hedgehog knows one big thing.|Archilochus
+Give me a place to stand and I will move the earth.|Archimedes
+Time is the wisest counsellor of all.|Pericles
+A room without books is like a body without a soul.|Cicero
+While there is life, there is hope.|Cicero
+Fortune favors the bold.|Virgil
+Seize the day, trusting as little as possible in tomorrow.|Horace
+Dripping water hollows out stone, not through force but through persistence.|Ovid
+Anyone can hold the helm when the sea is calm.|Publilius Syrus
+Know thyself.|Inscribed at Delphi
+Nothing in excess.|Inscribed at Delphi
+
+# -- Modern philosophy -------------------------------------------------------------------
+He who has a why to live can bear almost any how.|Friedrich Nietzsche
+That which does not kill us makes us stronger.|Friedrich Nietzsche
+One must still have chaos in oneself to be able to give birth to a dancing star.|Friedrich Nietzsche
+And those who were seen dancing were thought to be insane by those who could not hear the music.|Friedrich Nietzsche
+Become who you are.|Friedrich Nietzsche
+Without music, life would be a mistake.|Friedrich Nietzsche
+He who fights with monsters should look to it that he himself does not become a monster.|Friedrich Nietzsche
+There are no facts, only interpretations.|Friedrich Nietzsche
+The individual has always had to struggle to keep from being overwhelmed by the tribe.|Friedrich Nietzsche
+Invisible threads are the strongest ties.|Friedrich Nietzsche
+Life can only be understood backwards; but it must be lived forwards.|Soren Kierkegaard
+Anxiety is the dizziness of freedom.|Soren Kierkegaard
+To dare is to lose one's footing momentarily. Not to dare is to lose oneself.|Soren Kierkegaard
+The most common form of despair is not being who you are.|Soren Kierkegaard
+In the depth of winter, I finally learned that within me there lay an invincible summer.|Albert Camus
+The struggle itself toward the heights is enough to fill a man's heart. One must imagine Sisyphus happy.|Albert Camus
+Real generosity toward the future lies in giving all to the present.|Albert Camus
+You will never be happy if you continue to search for what happiness consists of.|Albert Camus
+Freedom is nothing but a chance to be better.|Albert Camus
+We are our choices.|Jean-Paul Sartre
+Man is condemned to be free.|Jean-Paul Sartre
+Freedom is what you do with what has been done to you.|Jean-Paul Sartre
+Act only according to that maxim whereby you can at the same time will that it should become a universal law.|Immanuel Kant
+Science is organized knowledge. Wisdom is organized life.|Immanuel Kant
+We are not rich by what we possess but by what we can do without.|Immanuel Kant
+Talent hits a target no one else can hit. Genius hits a target no one else can see.|Arthur Schopenhauer
+The task is not so much to see what no one has yet seen, but to think what nobody has yet thought about that which everybody sees.|Arthur Schopenhauer
+Compassion is the basis of morality.|Arthur Schopenhauer
+The limits of my language mean the limits of my world.|Ludwig Wittgenstein
+Whereof one cannot speak, thereof one must be silent.|Ludwig Wittgenstein
+The whole problem with the world is that fools and fanatics are always so certain of themselves, and wiser people so full of doubts.|Bertrand Russell
+The good life is one inspired by love and guided by knowledge.|Bertrand Russell
+Do not fear to be eccentric in opinion, for every opinion now accepted was once eccentric.|Bertrand Russell
+I think, therefore I am.|Rene Descartes
+If you would be a real seeker after truth, it is necessary that at least once in your life you doubt, as far as possible, all things.|Rene Descartes
+Peace is not an absence of war, it is a virtue, a state of mind, a disposition for benevolence.|Baruch Spinoza
+I have striven not to laugh at human actions, not to weep at them, nor to hate them, but to understand them.|Baruch Spinoza
+My life has been filled with terrible misfortune, most of which never happened.|Michel de Montaigne
+The greatest thing in the world is to know how to belong to oneself.|Michel de Montaigne
+Judge a man by his questions rather than his answers.|Voltaire
+Common sense is not so common.|Voltaire
+The perfect is the enemy of the good.|Voltaire
+I disapprove of what you say, but I will defend to the death your right to say it.|Evelyn Beatrice Hall
+Between stimulus and response there is a space. In that space is our power to choose our response.|Viktor Frankl
+When we are no longer able to change a situation, we are challenged to change ourselves.|Viktor Frankl
+Everything can be taken from a man but one thing: to choose one's attitude in any given set of circumstances.|Viktor Frankl
+The sad truth is that most evil is done by people who never make up their minds to be good or evil.|Hannah Arendt
+Attention is the rarest and purest form of generosity.|Simone Weil
+One is not born, but rather becomes, a woman.|Simone de Beauvoir
+The only way to make sense out of change is to plunge into it, move with it, and join the dance.|Alan Watts
+You are an aperture through which the universe is looking at and exploring itself.|Alan Watts
+It is no measure of health to be well adjusted to a profoundly sick society.|Jiddu Krishnamurti
+The main task of man in life is to give birth to himself.|Erich Fromm
+Until you make the unconscious conscious, it will direct your life and you will call it fate.|Carl Jung
+Who looks outside, dreams; who looks inside, awakes.|Carl Jung
+The privilege of a lifetime is to become who you truly are.|Carl Jung
+We shape our tools and thereafter our tools shape us.|John Culkin
+There are no solutions, only trade-offs.|Thomas Sowell
+If you see fraud and do not say fraud, you are a fraud.|Nassim Nicholas Taleb
+The three most harmful addictions are heroin, carbohydrates, and a monthly salary.|Nassim Nicholas Taleb
+Play long-term games with long-term people.|Naval Ravikant
+Learn to sell, learn to build. If you can do both, you will be unstoppable.|Naval Ravikant
+Read what you love until you love to read.|Naval Ravikant
+Take a simple idea and take it seriously.|Charlie Munger
+Invert, always invert.|Charlie Munger
+You never change things by fighting the existing reality. To change something, build a new model that makes the existing model obsolete.|Buckminster Fuller
+Man is born free, and everywhere he is in chains.|Jean-Jacques Rousseau
+Be kind, for everyone you meet is fighting a hard battle.|Ian Maclaren
+
+# -- Science, knowledge and doubt --------------------------------------------------------
+The first principle is that you must not fool yourself, and you are the easiest person to fool.|Richard Feynman
+What I cannot create, I do not understand.|Richard Feynman
+I would rather have questions that cannot be answered than answers that cannot be questioned.|Richard Feynman
+Study hard what interests you the most in the most undisciplined, irreverent and original manner possible.|Richard Feynman
+For a successful technology, reality must take precedence over public relations, for nature cannot be fooled.|Richard Feynman
+If you think you understand quantum mechanics, you do not understand quantum mechanics.|Richard Feynman
+Science is the belief in the ignorance of experts.|Richard Feynman
+Nature uses only the longest threads to weave her patterns.|Richard Feynman
+Nobody ever figures out what life is all about, and it does not matter.|Richard Feynman
+Imagination is more important than knowledge.|Albert Einstein
+The important thing is not to stop questioning.|Albert Einstein
+Try not to become a man of success, but rather try to become a man of value.|Albert Einstein
+A person who never made a mistake never tried anything new.|Albert Einstein
+Life is like riding a bicycle. To keep your balance you must keep moving.|Albert Einstein
+Any fool can know. The point is to understand.|Albert Einstein
+The true sign of intelligence is not knowledge but imagination.|Albert Einstein
+Somewhere, something incredible is waiting to be known.|Carl Sagan
+Extraordinary claims require extraordinary evidence.|Carl Sagan
+Absence of evidence is not evidence of absence.|Carl Sagan
+We are made of star stuff.|Carl Sagan
+Science is a way of thinking much more than it is a body of knowledge.|Carl Sagan
+If you wish to make an apple pie from scratch, you must first invent the universe.|Carl Sagan
+It is far better to grasp the universe as it really is than to persist in delusion.|Carl Sagan
+The universe is not required to be in perfect harmony with human ambition.|Carl Sagan
+Nothing in life is to be feared, it is only to be understood.|Marie Curie
+Be less curious about people and more curious about ideas.|Marie Curie
+One never notices what has been done; one can only see what remains to be done.|Marie Curie
+If I have seen further it is by standing on the shoulders of giants.|Isaac Newton
+I can calculate the motion of heavenly bodies, but not the madness of people.|Isaac Newton
+A man who dares to waste one hour of time has not discovered the value of life.|Charles Darwin
+Ignorance more frequently begets confidence than does knowledge.|Charles Darwin
+It is not the strongest of the species that survives, but the most adaptable to change.|Leon C. Megginson
+An expert is a person who has made all the mistakes that can be made in a very narrow field.|Niels Bohr
+Prediction is very difficult, especially if it is about the future.|Niels Bohr
+Everything we call real is made of things that cannot be regarded as real.|Niels Bohr
+Science advances one funeral at a time.|Max Planck
+Our knowledge can only be finite, while our ignorance must necessarily be infinite.|Karl Popper
+Science must begin with myths, and with the criticism of myths.|Karl Popper
+True ignorance is not the absence of knowledge, but the refusal to acquire it.|Karl Popper
+Intelligence is the ability to adapt to change.|Stephen Hawking
+Look up at the stars and not down at your feet.|Stephen Hawking
+The greatest obstacle to discovery is not ignorance, it is the illusion of knowledge.|Daniel J. Boorstin
+The most exciting phrase to hear in science is not Eureka, but That is funny.|Isaac Asimov
+Your assumptions are your windows on the world. Scrub them off every once in a while, or the light will not come in.|Isaac Asimov
+The saddest aspect of life right now is that science gathers knowledge faster than society gathers wisdom.|Isaac Asimov
+Research is what I am doing when I do not know what I am doing.|Wernher von Braun
+All models are wrong, but some are useful.|George Box
+The map is not the territory.|Alfred Korzybski
+Not everything that counts can be counted, and not everything that can be counted counts.|William Bruce Cameron
+What can be asserted without evidence can be dismissed without evidence.|Christopher Hitchens
+It is difficult to get a man to understand something when his salary depends upon his not understanding it.|Upton Sinclair
+Chance favors the prepared mind.|Louis Pasteur
+In science, credit goes to the man who convinces the world, not to whom the idea first occurs.|Francis Darwin
+To understand is to perceive patterns.|Isaiah Berlin
+Doubt is not a pleasant condition, but certainty is absurd.|Voltaire
+I learned very early the difference between knowing the name of something and knowing something.|Richard Feynman
+Knowledge is knowing that a tomato is a fruit. Wisdom is not putting it in a fruit salad.|Miles Kington
+Correlation is not causation but it sure is a hint.|Edward Tufte
+
+# -- Writers, poets and artists ----------------------------------------------------------
+The secret of getting ahead is getting started.|Mark Twain
+Whenever you find yourself on the side of the majority, it is time to pause and reflect.|Mark Twain
+Continuous improvement is better than delayed perfection.|Mark Twain
+Kindness is the language which the deaf can hear and the blind can see.|Mark Twain
+I have never let my schooling interfere with my education.|Mark Twain
+The man who does not read has no advantage over the man who cannot read.|Mark Twain
+If you tell the truth, you do not have to remember anything.|Mark Twain
+It is not the size of the dog in the fight, it is the size of the fight in the dog.|Mark Twain
+Do not go where the path may lead, go instead where there is no path and leave a trail.|Ralph Waldo Emerson
+To be yourself in a world that is constantly trying to make you something else is the greatest accomplishment.|Ralph Waldo Emerson
+The only person you are destined to become is the person you decide to be.|Ralph Waldo Emerson
+Adopt the pace of nature: her secret is patience.|Ralph Waldo Emerson
+Go confidently in the direction of your dreams. Live the life you have imagined.|Henry David Thoreau
+Our life is frittered away by detail. Simplify, simplify.|Henry David Thoreau
+It is not enough to be busy; so are the ants. The question is: what are we busy about?|Henry David Thoreau
+I went to the woods because I wished to live deliberately.|Henry David Thoreau
+The price of anything is the amount of life you exchange for it.|Henry David Thoreau
+The mass of men lead lives of quiet desperation.|Henry David Thoreau
+Everyone thinks of changing the world, but no one thinks of changing himself.|Leo Tolstoy
+The two most powerful warriors are patience and time.|Leo Tolstoy
+If you want to be happy, be.|Leo Tolstoy
+Pain and suffering are always inevitable for a large intelligence and a deep heart.|Fyodor Dostoevsky
+The mystery of human existence lies not in just staying alive, but in finding something to live for.|Fyodor Dostoevsky
+Above all, do not lie to yourself.|Fyodor Dostoevsky
+The world breaks everyone, and afterward, some are strong at the broken places.|Ernest Hemingway
+If you want a picture of the future, imagine a boot stamping on a human face, forever.|George Orwell
+To see what is in front of one's nose needs a constant struggle.|George Orwell
+Be yourself; everyone else is already taken.|Oscar Wilde
+We are all in the gutter, but some of us are looking at the stars.|Oscar Wilde
+Experience is simply the name we give our mistakes.|Oscar Wilde
+I can resist everything except temptation.|Oscar Wilde
+A book must be the axe for the frozen sea within us.|Franz Kafka
+In the fight between you and the world, back the world.|Franz Kafka
+Time is the substance I am made of.|Jorge Luis Borges
+I have always imagined that Paradise will be a kind of library.|Jorge Luis Borges
+We are what we pretend to be, so we must be careful about what we pretend to be.|Kurt Vonnegut
+Everything was beautiful and nothing hurt.|Kurt Vonnegut
+I have learned that people will forget what you said and what you did, but people will never forget how you made them feel.|Maya Angelou
+You may not control all the events that happen to you, but you can decide not to be reduced by them.|Maya Angelou
+Not everything that is faced can be changed, but nothing can be changed until it is faced.|James Baldwin
+Children have never been very good at listening to their elders, but they have never failed to imitate them.|James Baldwin
+Two roads diverged in a wood, and I took the one less traveled by, and that has made all the difference.|Robert Frost
+The best way out is always through.|Robert Frost
+In three words I can sum up everything I have learned about life: it goes on.|Robert Frost
+Tell me, what is it you plan to do with your one wild and precious life?|Mary Oliver
+Instructions for living a life: pay attention, be astonished, tell about it.|Mary Oliver
+Do I contradict myself? Very well then I contradict myself, I am large, I contain multitudes.|Walt Whitman
+Ring the bells that still can ring, forget your perfect offering. There is a crack in everything, that is how the light gets in.|Leonard Cohen
+Hope is the thing with feathers that perches in the soul.|Emily Dickinson
+Ever tried. Ever failed. No matter. Try again. Fail again. Fail better.|Samuel Beckett
+If you want to build a ship, do not drum up people to collect wood, but rather teach them to long for the endless immensity of the sea.|Antoine de Saint-Exupery
+All we have to decide is what to do with the time that is given us.|J. R. R. Tolkien
+Not all those who wander are lost.|J. R. R. Tolkien
+It is the job that is never started that takes longest to finish.|J. R. R. Tolkien
+The reason I talk to myself is that I am the only one whose answers I accept.|George Carlin
+Art is never finished, only abandoned.|Leonardo da Vinci
+Every child is an artist. The problem is how to remain an artist once we grow up.|Pablo Picasso
+Good artists copy, great artists steal.|Pablo Picasso
+Inspiration exists, but it has to find you working.|Pablo Picasso
+The chief enemy of creativity is good sense.|Pablo Picasso
+I have not failed. I have just found ten thousand ways that will not work.|Thomas Edison
+Genius is one percent inspiration and ninety-nine percent perspiration.|Thomas Edison
+Music is the silence between the notes.|Claude Debussy
+What lies behind us and what lies before us are tiny matters compared to what lies within us.|Henry S. Haskins
+There is no friend as loyal as a book.|Ernest Hemingway
+We write to taste life twice, in the moment and in retrospect.|Anais Nin
+Do not tell me the moon is shining; show me the glint of light on broken glass.|Anton Chekhov
+
+# -- Work, craft and discipline ----------------------------------------------------------
+Amateurs sit and wait for inspiration, the rest of us just get up and go to work.|Stephen King
+Hard choices, easy life. Easy choices, hard life.|Jerzy Gregorek
+Discipline equals freedom.|Jocko Willink
+Do not wish it were easier, wish you were better.|Jim Rohn
+Little strokes fell great oaks.|Benjamin Franklin
+By failing to prepare, you are preparing to fail.|Benjamin Franklin
+Tell me and I forget. Teach me and I remember. Involve me and I learn.|Benjamin Franklin
+Lost time is never found again.|Benjamin Franklin
+An investment in knowledge pays the best interest.|Benjamin Franklin
+Either write something worth reading or do something worth writing.|Benjamin Franklin
+Well done is better than well said.|Benjamin Franklin
+The only place where success comes before work is in the dictionary.|Vidal Sassoon
+Nothing will work unless you do.|Maya Angelou
+Start where you are. Use what you have. Do what you can.|Arthur Ashe
+Whether you think you can or you think you cannot, you are right.|Henry Ford
+Quality means doing it right when no one is looking.|Henry Ford
+Coming together is a beginning, staying together is progress, and working together is success.|Henry Ford
+Perfection is not attainable, but if we chase perfection we can catch excellence.|Vince Lombardi
+It is not the mountain we conquer, but ourselves.|Edmund Hillary
+The expert in anything was once a beginner.|Helen Hayes
+Practice is not the thing you do once you are good. It is the thing you do that makes you good.|Malcolm Gladwell
+A goal without a plan is just a wish.|Antoine de Saint-Exupery
+What gets measured gets managed.|Peter Drucker
+The best way to predict the future is to create it.|Peter Drucker
+Efficiency is doing things right; effectiveness is doing the right things.|Peter Drucker
+There is nothing so useless as doing efficiently that which should not be done at all.|Peter Drucker
+The successful warrior is the average man, with laser-like focus.|Bruce Lee
+If you want to go fast, go alone. If you want to go far, go together.|African proverb
+Slow is smooth, smooth is fast.|Navy SEAL adage
+Measure twice, cut once.|Carpenter's proverb
+Done is better than perfect.|Sheryl Sandberg
+
+# -- Time, change and mortality ----------------------------------------------------------
+Time you enjoy wasting is not wasted time.|Marthe Troly-Curtin
+The trouble is, you think you have time.|Jack Kornfield
+Lost, yesterday, somewhere between sunrise and sunset, two golden hours, each set with sixty diamond minutes. No reward is offered, for they are gone forever.|Horace Mann
+How we spend our days is, of course, how we spend our lives.|Annie Dillard
+Life is what happens to you while you are busy making other plans.|John Lennon
+The purpose of life is a life of purpose.|Robert Byrne
+Do not count the days, make the days count.|Muhammad Ali
+Service to others is the rent you pay for your room here on earth.|Muhammad Ali
+Everything changes and nothing stands still.|Heraclitus
+To exist is to change, to change is to mature, to mature is to go on creating oneself endlessly.|Henri Bergson
+The only way to deal with an unfree world is to become so absolutely free that your very existence is an act of rebellion.|Albert Camus
+Twenty years from now you will be more disappointed by the things you did not do than by the ones you did do.|H. Jackson Brown Jr.
+Life is not a problem to be solved, but a reality to be experienced.|Soren Kierkegaard
+We do not remember days, we remember moments.|Cesare Pavese
+Death is nothing to us, since when we are, death has not come, and when death has come, we are not.|Epicurus
+All that we are is the result of what we have thought.|Buddha
+Growth is the only evidence of life.|John Henry Newman
+Change your thoughts and you change your world.|Norman Vincent Peale
+The best time to plant a tree was twenty years ago. The second best time is now.|Chinese proverb
+Yesterday is history, tomorrow is a mystery, today is a gift.|Bil Keane
