@@ -216,10 +216,11 @@ _dots_quote() {
 
   printf '\n'
   for line in "${wrapped[@]}"; do
-    printf ' %s%s%s\n' "${_dots_italic}${_dots_dim}" "$line" "$_dots_reset"
+    printf ' %s%s%s\n' "${color}" "$line" "$_dots_reset"
+    # printf ' %s%s%s\n' "${_dots_dim}" "$line" "$_dots_reset"
   done
   # [[ -n $author ]] && printf ' %s— %s%s\n' "$color" "$author" "$_dots_reset"
-  [[ -n $author ]] && printf ' %s— %s%s\n' "${_dots_italic}${_dots_dim}" "$author" "$_dots_reset"
+  [[ -n $author ]] && printf ' %s— %s%s\n' "${color}" "$author" "$_dots_reset"
 
   return 0
 }
@@ -229,7 +230,7 @@ _dots_quote() {
 # ----------------------------------------------------------------------------------------
 
 dots_greeting() {
-  local color=${DOTS_COLOR:-$'\e[1;36m'}
+  local color=${DOTS_COLOR:-$cyan_dark}
   local r i
 
   # An interactive shell on a real terminal only: not scp, not `bash -c`, not a pipe.
@@ -245,9 +246,9 @@ dots_greeting() {
   for i in "${!_dots_ctx[@]}"; do
     r=${_dots_ctx[i]}
     # if ((i == 0)); then
-      # printf ' %s%s%s\n' "$color" "$r" "$_dots_reset"
+      printf ' %s%s%s\n' "$color" "$r" "$_dots_reset"
     # else
-      printf ' %s%s%s\n' "$_dots_dim" "$r" "$_dots_reset"
+      # printf ' %s%s%s\n' "$_dots_dim" "$r" "$_dots_reset"
     # fi
   done
 
