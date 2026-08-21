@@ -8,7 +8,9 @@
 
 # Abstraction layer for the colors between 8 bit terminals and tput supported 256 bit.
 if tput setaf 1 &>/dev/null; then
+  # text_color="${cyan_dark}"
   text_color="${yellow_dark}"
+  # text_color="${green_olive}"
   symbol_color="${blue_solarized}"
   error_color="${red_regular}"
   branch_color="${orange_light}"

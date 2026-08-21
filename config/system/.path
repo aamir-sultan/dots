@@ -15,5 +15,6 @@ __dots_path_prepend() {
 __dots_path_prepend "$HOME/bin"
 __dots_path_prepend "$DOTS/bin"
 __dots_path_prepend "$DOTS/tools/bin"
+__dots_path_prepend "$HOME/.local/bin"
 
 export PATH
