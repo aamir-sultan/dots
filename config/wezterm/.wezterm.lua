@@ -266,7 +266,7 @@ local font = wezterm.font_with_fallback({
 --- 5. Background
 ---------------------------------------------------------------
 local hsb_dimmer = { -- FIX: was a global
-  brightness = 0.3,  -- darken the background image to ~1/3
+  brightness = 0.2,  -- darken the background image to ~1/3
   -- brightness = 1.0,
   hue = 1.0,
   saturation = 1.0,
@@ -1233,7 +1233,7 @@ config.colors = {
 config.enable_tab_bar = true
 config.use_fancy_tab_bar = false
 config.hide_tab_bar_if_only_one_tab = false
-config.tab_bar_at_bottom = false
+config.tab_bar_at_bottom = true
 config.tab_max_width = 32
 config.show_new_tab_button_in_tab_bar = true
 config.switch_to_last_active_tab_when_closing_tab = true
