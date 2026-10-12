@@ -108,13 +108,13 @@ else # macOS `ls`
 fi
 
 # List all files colorized in long format
-alias l="ls -lF ${colorflag}"
+alias l="ls -lhF ${colorflag}"
 
 # List all files colorized in long format, excluding . and ..
-alias la="ls -lAF ${colorflag}"
+alias la="ls -lhAF ${colorflag}"
 
 # List only directories
-alias lsd="ls -lF ${colorflag} | grep --color=never '^d'"
+alias lsd="ls -lhF ${colorflag} | grep --color=never '^d'"
 
 # List the directories and files. Displays the size of each item, and then sorts it by size, in a single column, with a notation to indicate the kind of file.
 alias lt='ls --human-readable --size -1 -S --classify'
