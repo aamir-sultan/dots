@@ -5,6 +5,78 @@ function mkd() {
   mkdir -p "$@" && cd "$_"
 }
 
+# Compress a file or directory. Format is inferred from the output name's extension.
+# Usage: compress <source> [output_name]
+#   - If output_name is omitted, it defaults to "<source>.<ext>" based on FORMAT env
+#     OR you can pass the output name with any extension you like.
+#
+# Examples:
+#   compress mydir                    # -> mydir.tar.gz (default)
+#   compress mydir backup.zip         # -> zip
+#   compress mydir archive.tar.xz     # -> xz tarball
+#   compress file.txt file.txt.gz     # -> single-file gzip
+
+compress() {
+    local source="${1%/}"
+    local output="$2"
+    local format
+
+    if [[ -z "$source" ]]; then
+        echo "Usage: compress <source> [output_name]" >&2
+        return 1
+    fi
+    if [[ ! -e "$source" ]]; then
+        echo "Error: '$source' does not exist." >&2
+        return 1
+    fi
+
+    local base; base="$(basename "$source")"
+
+    # Default output if none given
+    [[ -z "$output" ]] && output="${base}.tar.gz"
+
+    # Infer format from output extension
+    case "$output" in
+        *.tar.gz|*.tgz)   format="tar.gz"  ;;
+        *.tar.bz2|*.tbz2) format="tar.bz2" ;;
+        *.tar.xz|*.txz)   format="tar.xz"  ;;
+        *.tar.zst)        format="tar.zst" ;;
+        *.tar)            format="tar"     ;;
+        *.zip)            format="zip"     ;;
+        *.7z)             format="7z"      ;;
+        *.gz)             format="gz"      ;;
+        *.bz2)            format="bz2"     ;;
+        *.xz)             format="xz"      ;;
+        *.zst)            format="zst"     ;;
+        *)
+            echo "Error: Unknown extension in '$output'." >&2
+            return 1
+            ;;
+    esac
+
+    # Single-file compressors: refuse directories
+    if [[ -d "$source" && "$format" =~ ^(gz|bz2|xz|zst)$ ]]; then
+        echo "Error: '$format' can't compress a directory. Use e.g. '${base}.tar.$format'." >&2
+        return 1
+    fi
+
+    echo "Compressing '$source' -> '$output' ..."
+
+    case "$format" in
+        tar)              tar -cf  "$output" "$source" ;;
+        tar.gz)           tar -czf "$output" "$source" ;;
+        tar.bz2)          tar -cjf "$output" "$source" ;;
+        tar.xz)           tar -cJf "$output" "$source" ;;
+        tar.zst)          tar --zstd -cf "$output" "$source" ;;
+        zip)              [[ -d "$source" ]] && zip -r "$output" "$source" || zip "$output" "$source" ;;
+        7z)               7z a "$output" "$source" ;;
+        gz)               gzip  -c "$source" > "$output" ;;
+        bz2)              bzip2 -c "$source" > "$output" ;;
+        xz)               xz    -c "$source" > "$output" ;;
+        zst)              zstd  -c "$source" > "$output" ;;
+    esac && echo "✓ Done: $output" || echo "✗ Failed." >&2
+}
+
 # Create a .tar.gz archive, using `zopfli`, `pigz` or `gzip` for compression
 function targz() {
   local tmpFile="${@%/}.tar"
