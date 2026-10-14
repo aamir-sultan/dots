@@ -33,4 +33,4 @@ export HISTTIMEFORMAT='%F %T '
 export HISTIGNORE='ls:ll:cd:pwd:clear:history'
 
 # Variable for Github link
-export MYGIT="https://www.github.com/aamir-sultan"
+export MY_GIT="https://www.github.com/aamir-sultan"
