@@ -46,9 +46,9 @@ alias tdd='tmux detach'
 alias td='tmux attach || tmux new-session'
 
 # Vim/NeoVim aliases
-alias nv='nvim'
-alias nvb='nvim ~/.bashrc'
-alias nvd='nvim $DOTS'
+alias n='nvim'
+alias nb='nvim ~/.bashrc'
+alias nd='nvim $DOTS'
 
 # save last command from history to a file
 # tip, add a comment to end of command before saving, ex: ls --color=auto # colored ls output

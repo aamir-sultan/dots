@@ -1004,7 +1004,7 @@ function histd {
 fs() { find -type f -iname '*'"$1"'*'; }
 
 # Quick find file with any partial text for files
-function qff {
+function qf {
   if [[ -n "$1" ]]; then
     find . -iname "*$1*" -type f -print
   else
