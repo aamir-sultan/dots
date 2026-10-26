@@ -403,8 +403,8 @@ end
 
 local default_keybinds = {
   { key = "j",        mods = "LEADER",     action = act.ShowLauncher },
-  { key = "a",        mods = "LEADER",     action = act.ShowLauncher },
-  { key = "a",        mods = "LEADER|ALT", action = act.ShowLauncher },
+  { key = "w",        mods = "LEADER",     action = act.ShowLauncher },
+  { key = "w",        mods = "LEADER|ALT", action = act.ShowLauncher },
 
   { key = "c",        mods = "CTRL|SHIFT", action = act({ CopyTo = "Clipboard" }) },
   { key = "v",        mods = "CTRL|SHIFT", action = act({ PasteFrom = "Clipboard" }) },
@@ -667,7 +667,7 @@ local key_tables = {
       }),
     },
     {
-      key = "a",
+      key = "w",
       mods = "ALT|LEADER",
       action = act.Multiple({
         act.ClearSelection,
@@ -784,7 +784,7 @@ local key_tables = {
 
   search_mode = {
     { key = "Escape", mods = "NONE",       action = act.CopyMode("Close") },
-    { key = "a",      mods = "ALT|LEADER", action = act.CopyMode("Close") },
+    { key = "w",      mods = "ALT|LEADER", action = act.CopyMode("Close") },
     {
       key = "Enter",
       mods = "NONE",
@@ -1285,7 +1285,7 @@ config.enable_wayland = enable_wayland()
 apply_renderer(config)
 
 -- Keys
-config.leader = { key = "a", mods = "ALT", timeout_milliseconds = 2000 }
+config.leader = { key = "w", mods = "ALT", timeout_milliseconds = 2000 }
 config.disable_default_key_bindings = true
 config.keys = all_keybinds()
 config.mouse_bindings = mouse_bindings
