@@ -20,7 +20,18 @@ return {
 		},
 		input = { enabled = true },
 		notifier = { enabled = false },
-		picker = { enabled = true },
+		picker = {
+      enabled = true,
+      sources = {
+        files = {
+          hidden = true, -- Lists hidden files (dotfiles) by default
+          ignored = true, -- Optional: Lists gitignored files too
+        },
+      },
+
+          hidden = true, -- Lists hidden files (dotfiles) by default
+          ignored = true, -- Optional: Lists gitignored files too
+    },
 		quickfile = { enabled = true },
 		scope = { enabled = true },
 		scroll = {
