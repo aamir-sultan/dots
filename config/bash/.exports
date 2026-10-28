@@ -34,3 +34,7 @@ export HISTIGNORE='ls:ll:cd:pwd:clear:history'
 
 # Variable for Github link
 export MY_GIT="https://www.github.com/aamir-sultan"
+
+# Fix the time display
+export LC_TIME=en_US.UTF-8
+
