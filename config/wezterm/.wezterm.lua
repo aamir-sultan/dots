@@ -1,15 +1,25 @@
--- ~/.wezterm.lua
+-- ~/.wezterm.lua   (Windows: %USERPROFILE%\.wezterm.lua, Linux: ~/.wezterm.lua)
 --
--- Single-file WezTerm configuration.
+-- Single-file WezTerm configuration that works on:
+--   * Windows (wezterm-gui.exe, opening a WSL domain by default)
+--   * Linux / Ubuntu (native, or WSLg inside WSL)
 --
 -- Layout of this file:
---   1. Helpers
+--   1. Helpers (including platform detection)
 --   2. Palette
---   3. Font / appearance constants
---   4. Renderer selection
---   5. Keybinds, key tables, mouse bindings
---   6. Event handlers (tab bar, status line, custom events)
---   7. Config assembly
+--   3. Colour scheme
+--   4. Font (probes installed fonts on Linux)
+--   5. Background (per-OS wallpaper paths, skipped if the file is missing)
+--   6. Renderer selection
+--   7. Keybinds
+--   8. Key tables
+--   9. Mouse
+--  10. Tab bar
+--  11. Right status
+--  12. Custom events
+--  13. Domains, default program, launch menu
+--  14. Config assembly
+--  15. Hyperlinks
 --
 -- A note on SHIFT: for printable keys WezTerm matches the *shifted* character,
 -- so write `key = "Z"` rather than `key = "z", mods = "SHIFT"`, and `key = "~"`
@@ -28,11 +38,35 @@ local config = wezterm.config_builder and wezterm.config_builder() or {}
 ---------------------------------------------------------------
 --- 1. Helpers
 ---------------------------------------------------------------
--- Dropped from the previous version because nothing ever called them:
--- exists(), convert_home_dir(), convert_useful_path(), split_from_url(),
--- getRandomStringFromTable(), getRandomBackgroundPath(), get_files_in_dir(),
--- is_valid_image_file(), test(), and handle_key_binding() -- the last of which
--- referenced an undefined global `leader` and would have errored on first call.
+
+local function is_windows()
+  return wezterm.target_triple:find("windows") ~= nil
+end
+
+local function is_linux()
+  return wezterm.target_triple:find("linux") ~= nil
+end
+
+local function is_macos()
+  return wezterm.target_triple:find("apple") ~= nil
+end
+
+--- True when this is the Linux build of WezTerm running inside WSL (WSLg).
+local function is_wsl_linux()
+  return is_linux() and os.getenv("WSL_DISTRO_NAME") ~= nil
+end
+
+local function file_exists(path)
+  if not path or path == "" then
+    return false
+  end
+  local f = io.open(path, "r")
+  if f then
+    f:close()
+    return true
+  end
+  return false
+end
 
 --- "/usr/bin/nvim" -> "nvim" ; "C:\\...\\nvim.exe" -> "nvim"
 local function basename(path)
@@ -56,8 +90,6 @@ end
 --- Merge two `key_tables` maps (name -> list of keybinds), concatenating each
 --- named list so our entries override the upstream defaults while any new
 --- upstream bindings we haven't overridden keep working.
---- Note: a recursive map-merge would be wrong here -- it would pair element 1
---- with element 1, element 2 with element 2, and produce nonsense.
 local function merge_key_tables(defaults, ours)
   local result = {}
   for name, binds in pairs(defaults or {}) do
@@ -77,14 +109,17 @@ local function enable_wayland()
   if os.getenv("XDG_SESSION_TYPE") == "wayland" then
     return true
   end
+  -- WSLg exposes a Wayland compartment
+  if is_wsl_linux() and os.getenv("WAYLAND_DISPLAY") then
+    return true
+  end
   return false
 end
 
 --- Pick a random image from a directory.
---- Replaces the old io.popen('ls ...') version, which shelled out on every
---- config reload and didn't work on Windows. wezterm.glob is native. Returns
---- nil rather than erroring when the directory is missing or empty, so it's
---- safe to use directly in a config value.
+--- wezterm.glob is native (no shelling out). Returns nil rather than erroring
+--- when the directory is missing or empty, so it's safe to use directly in a
+--- config value.
 local IMAGE_EXTS = { jpg = true, jpeg = true, png = true, bmp = true, gif = true, webp = true }
 
 local function random_image(dir)
@@ -107,16 +142,10 @@ local function random_image(dir)
   return images[math.random(#images)]
 end
 
-local function is_windows()
-  return wezterm.target_triple:find("windows") ~= nil
-end
-
 ---------------------------------------------------------------
 --- 2. Palette
 ---------------------------------------------------------------
 -- One place for colours, so the tab bar and config.colors can't drift apart.
--- The previous version set colors.tab_bar.active_tab to orange while the
--- format-tab-title handler hardcoded Catppuccin purple.
 
 local palette = {
   -- Tab bar
@@ -151,8 +180,8 @@ local palette = {
 ---------------------------------------------------------------
 --- 3. Colour scheme
 ---------------------------------------------------------------
--- NOTE: every color_scheme line was commented out before, so you have been
--- running on WezTerm's built-in default palette. Uncomment one to pick a theme.
+-- NOTE: every color_scheme line is commented out, so WezTerm's built-in
+-- default palette is used. Uncomment one to pick a theme.
 
 -- local color_scheme = "AdventureTime"
 -- local color_scheme = "Ayu Dark"
@@ -232,96 +261,179 @@ local font_weight = "Regular"
 -- local font_family = "Rec Mono Duotone"
 -- local font_family = "Rec Mono Linear"
 -- local font_family = "Rec Mono Semicasual"
-local font_family = "UbuntuSansMono NF"
+-- local font_family = "UbuntuSansMono NF"
+local font_family = "Ubuntu Sans Mono"
 -- local font_family = "mononoki"
 
-local font = wezterm.font_with_fallback({
-  {
-    family = font_family,
-    weight = font_weight,
-    style = font_style,
-    harfbuzz_features = {
-      "calt=1",
-      "clig=1",
-      "liga=1",
-      -- "dlig",
-      -- "ss01",
-      -- "ss02",
-      -- "ss03",
-      -- "ss04",
-      -- "ss05",
-      -- "ss06",
-      -- "ss07",
-      -- "ss08",
-    },
-  },
-  { family = "Terminus", weight = font_weight },
-  -- FIX: added so the tab-bar Nerd Font icons don't silently render as tofu if
-  -- the primary family is ever swapped for an unpatched one. Harmless if unused.
-  "Symbols Nerd Font Mono",
-  "Noto Color Emoji",
-})
+-- On Linux, WezTerm only sees fonts known to fontconfig. We ask fc-list once at
+-- config load time (never in an event handler) and only request fonts that are
+-- actually installed, so a missing font can't produce an error/tofu popup.
+-- On Windows there is no cheap equivalent, so every font is requested and
+-- WezTerm silently skips the missing ones.
+--
+-- Fonts bundled inside WezTerm itself ("JetBrains Mono", "Symbols Nerd Font
+-- Mono", "Noto Color Emoji", "Roboto") are always available, so they are
+-- never probed. WezTerm also appends them automatically as last-resort
+-- fallbacks, which means a missing primary font degrades to JetBrains Mono
+-- rather than failing.
+local fc_list_cache = nil
+
+local function font_installed(name)
+  if type(name) ~= "string" or name == "" then
+    return false
+  end
+  if not is_linux() then
+    return true
+  end
+  if fc_list_cache == nil then
+    fc_list_cache = ""
+    local ok, success, stdout = pcall(wezterm.run_child_process, { "fc-list", ":", "family" })
+    if ok and success and type(stdout) == "string" then
+      fc_list_cache = stdout:lower()
+    else
+      -- fc-list unavailable: assume installed rather than hiding every font.
+      fc_list_cache = nil
+      return true
+    end
+  end
+  return fc_list_cache:find(name:lower(), 1, true) ~= nil
+end
+
+local function build_font()
+  local features = {
+    "calt=1",
+    "clig=1",
+    "liga=1",
+    -- "dlig",
+    -- "ss01",
+    -- "ss02",
+    -- "ss03",
+    -- "ss04",
+    -- "ss05",
+    -- "ss06",
+    -- "ss07",
+    -- "ss08",
+  }
+
+  local list = {}
+
+  -- If font_family is nil (every font line commented out), skip the primary
+  -- entries entirely and let WezTerm use its bundled default font.
+  if font_family and font_installed(font_family) then
+    table.insert(list, {
+      family = font_family,
+      weight = font_weight,
+      style = font_style,
+      harfbuzz_features = features,
+    })
+    -- Some variable fonts fail to match an explicit weight/style. This second
+    -- entry asks for the bare family so those still resolve.
+    table.insert(list, { family = font_family, harfbuzz_features = features })
+  end
+
+  if font_installed("Terminus") then
+    table.insert(list, { family = "Terminus", weight = font_weight })
+  end
+
+  -- Bundled with WezTerm; keeps tab-bar Nerd Font icons and emoji working even
+  -- if the primary family is swapped for an unpatched one.
+  table.insert(list, "Symbols Nerd Font Mono")
+  table.insert(list, "Noto Color Emoji")
+
+  return wezterm.font_with_fallback(list)
+end
+
+local font = build_font()
 
 ---------------------------------------------------------------
 --- 5. Background
 ---------------------------------------------------------------
-local hsb_dimmer = { -- FIX: was a global
-  brightness = 0.2,  -- darken the background image to ~1/3
+local hsb_dimmer = {
+  brightness = 0.2, -- darken the background image to ~1/5
   -- brightness = 1.0,
   hue = 1.0,
   saturation = 1.0,
 }
 
-local wallpaper = "D://Resources//System//Wallpapers//YellowLeaf.jpg"
--- local wallpaper = "D://Resources//System//Wallpapers//simple//Santa_Monica.png"
--- local wallpaper = "D://Resources//System//Wallpapers//lineart//samurai.png"
--- local wallpaper = "D://Resources//System//Wallpapers//lineart//handreach.png"
--- local wallpaper = "D://Resources//System//Wallpapers//lineart//toothless.png"
--- local wallpaper = "D://Resources//System//Wallpapers//lineart//peek.png"
--- local wallpaper = "D://Resources//System//Wallpapers//lineart//gaze.png"
--- local wallpaper = "D://Resources//System//Wallpapers//lineart//fullface.png"
--- local wallpaper = "D://Resources//System//Wallpapers//lineart//halfface.png"
--- local wallpaper = "D://Resources//System//Wallpapers//road.jpg"
--- local wallpaper = "D://Resources//System//Wallpapers//leather.jpg"
--- local wallpaper = "D://Resources//System//Wallpapers//celestial//blackhole.png"
+-- Wallpaper root per platform:
+--   Windows       -> D:/Resources/System/Wallpapers
+--   Linux in WSL  -> /mnt/d/Resources/System/Wallpapers  (the same files, via the mount)
+--   Native Linux  -> ~/Pictures/Wallpapers
+-- Override on any machine with the WEZTERM_WALLPAPER_DIR environment variable.
+local function wallpaper_root()
+  local override = os.getenv("WEZTERM_WALLPAPER_DIR")
+  if override and override ~= "" then
+    return override
+  end
+  if is_windows() then
+    return "D:/Resources/System/Wallpapers"
+  end
+  if is_wsl_linux() then
+    return "/mnt/d/Resources/System/Wallpapers"
+  end
+  return (os.getenv("HOME") or wezterm.home_dir or "") .. "/Pictures/Wallpapers"
+end
+
+local WP = wallpaper_root()
+
+local wallpaper = WP .. "/YellowLeaf.jpg"
+-- local wallpaper = WP .. "/simple/Santa_Monica.png"
+-- local wallpaper = WP .. "/lineart/samurai.png"
+-- local wallpaper = WP .. "/lineart/handreach.png"
+-- local wallpaper = WP .. "/lineart/toothless.png"
+-- local wallpaper = WP .. "/lineart/peek.png"
+-- local wallpaper = WP .. "/lineart/gaze.png"
+-- local wallpaper = WP .. "/lineart/fullface.png"
+-- local wallpaper = WP .. "/lineart/halfface.png"
+-- local wallpaper = WP .. "/road.jpg"
+-- local wallpaper = WP .. "/leather.jpg"
+-- local wallpaper = WP .. "/celestial/blackhole.png"
 
 -- Random wallpaper per launch. Safe if the directory is missing or empty.
--- wallpaper = random_image("D:/Mega/backgrounds") or wallpaper
--- wallpaper = random_image("D:/Mega/backgrounds/simple") or wallpaper
+-- local MEGA = is_windows() and "D:/Mega/backgrounds" or "/mnt/d/Mega/backgrounds"
+-- wallpaper = random_image(MEGA) or wallpaper
+-- wallpaper = random_image(MEGA .. "/simple") or wallpaper
 
-local background = {
-  -- Deepest / back-most layer, rendered first.
-  {
-    source = { File = wallpaper },
+-- The background is only applied when the image file really exists, so a
+-- machine without the wallpaper folder gets a plain background instead of an
+-- error.
+local background = nil
 
-    -- "Contain" scales to fit without cropping; "Cover" fills and may crop.
-    -- width = "Contain",
-    height = "Contain",
+if file_exists(wallpaper) then
+  background = {
+    -- Deepest / back-most layer, rendered first.
+    {
+      source = { File = wallpaper },
 
-    -- Other repeat options: Mirror, Repeat, NoRepeat.
-    repeat_x = "NoRepeat",
-    repeat_y = "NoRepeat",
-    -- repeat_x = "Mirror",
-    -- repeat_y = "Mirror",
+      -- "Contain" scales to fit without cropping; "Cover" fills and may crop.
+      -- width = "Contain",
+      height = "Contain",
 
-    -- horizontal_align: "Left" (default), "Center", "Right"
-    horizontal_align = "Right",
-    -- vertical_align: "Top" (default), "Middle", "Bottom"
-    vertical_align = "Top",
+      -- Other repeat options: Mirror, Repeat, NoRepeat.
+      repeat_x = "NoRepeat",
+      repeat_y = "NoRepeat",
+      -- repeat_x = "Mirror",
+      -- repeat_y = "Mirror",
 
-    -- Offsets accept '123px', '%', 'pt' or 'cell'
-    -- horizontal_offset = "0px",
-    -- vertical_offset = "0px",
+      -- horizontal_align: "Left" (default), "Center", "Right"
+      horizontal_align = "Right",
+      -- vertical_align: "Top" (default), "Middle", "Bottom"
+      vertical_align = "Top",
 
-    hsb = hsb_dimmer,
-    -- opacity = 0.98,
+      -- Offsets accept '123px', '%', 'pt' or 'cell'
+      -- horizontal_offset = "0px",
+      -- vertical_offset = "0px",
 
-    -- Parallax makes the layer look further behind the text when scrolling.
-    -- attachment = { Parallax = 0.1 },
-    attachment = "Fixed",
-    -- attachment = "Scroll",
-  },
-}
+      hsb = hsb_dimmer,
+      -- opacity = 0.98,
+
+      -- Parallax makes the layer look further behind the text when scrolling.
+      -- attachment = { Parallax = 0.1 },
+      attachment = "Fixed",
+      -- attachment = "Scroll",
+    },
+  }
+end
 
 -- Gradient background instead of an image. `background` above and
 -- window_background_gradient are alternatives, so comment out config.background
@@ -359,16 +471,22 @@ local background = {
 ---------------------------------------------------------------
 --- 6. Renderer
 ---------------------------------------------------------------
--- FIX: the previous version called wezterm.gui.enumerate_gpus() at the top
--- level, unguarded. `wezterm.gui` is nil when the config is loaded by the mux
--- server or by `wezterm cli`, so that line raised an error in those contexts.
--- It also set webgpu_preferred_adapter while front_end was "OpenGL", where it
--- is ignored. Both are now guarded and consistent.
+-- `wezterm.gui` is nil when the config is loaded by the mux server or by
+-- `wezterm cli`, so GPU enumeration is guarded. webgpu_preferred_adapter is
+-- only set together with front_end = "WebGpu".
 local function apply_renderer(cfg)
   cfg.front_end = "OpenGL" -- "WebGpu" | "OpenGL" | "Software"
   cfg.max_fps = 60
 
   if not wezterm.gui then
+    return
+  end
+
+  -- WebGpu (Vulkan) on a Wayland session can crash with
+  --   "wp_linux_drm_syncobj_surface_v1 ... Protocol error (os error 71)"
+  -- on some Mesa/compositor combinations (explicit-sync bug). Stay on OpenGL
+  -- there. Set WEZTERM_FORCE_WEBGPU=1 to opt back in.
+  if is_linux() and enable_wayland() and os.getenv("WEZTERM_FORCE_WEBGPU") ~= "1" then
     return
   end
 
@@ -398,7 +516,7 @@ end
 ---------------------------------------------------------------
 --- 7. Keybinds
 ---------------------------------------------------------------
--- Scheme: LEADER (ALT+a) for tmux-like actions, ALT+SHIFT for direct tab
+-- Scheme: LEADER (ALT+w) for tmux-like actions, ALT+SHIFT for direct tab
 -- movement, CTRL+SHIFT for direct pane movement.
 
 local default_keybinds = {
@@ -429,18 +547,13 @@ local default_keybinds = {
   { key = "b",        mods = "LEADER",     action = act({ ScrollByPage = -1 }) },
   { key = "f",        mods = "LEADER",     action = act({ ScrollByPage = 1 }) },
 
-  -- FIX: copy mode was unreachable. disable_default_key_bindings is true and
-  -- the only ActivateCopyMode binding was commented out, so the ~130-line
-  -- copy_mode key table below could only be reached via LEADER+/ then Enter.
+  -- Copy mode (disable_default_key_bindings is true, so it needs a binding).
   { key = "k",        mods = "LEADER",     action = act.ActivateCopyMode },
 
-  -- CHANGED: ReloadConfiguration moved from LEADER+z to LEADER+R so that
-  -- LEADER+z can be pane zoom (the tmux default, and the one binding this
-  -- config was missing entirely). Manual reload is close to redundant anyway
-  -- since automatically_reload_config is true. Swap the two back if you'd
-  -- rather keep the muscle memory.
+  -- ReloadConfiguration is on LEADER+R so LEADER+z can be pane zoom (the tmux
+  -- default). automatically_reload_config is true, so manual reload is rarely
+  -- needed anyway.
   { key = "R",        mods = "LEADER",     action = act.ReloadConfiguration },
-  -- FIX: was `key = "z", mods = "LEADER|SHIFT"`, which never matched.
   { key = "Z",        mods = "LEADER",     action = act({ EmitEvent = "toggle-tmux-keybinds" }) },
   { key = "e",        mods = "LEADER",     action = act({ EmitEvent = "trigger-nvim-with-scrollback" }) },
 
@@ -448,7 +561,6 @@ local default_keybinds = {
   -- Swap the selected pane with the active one instead of just focusing it:
   -- { key = "P", mods = "LEADER", action = act.PaneSelect({ mode = "SwapWithActive" }) },
   { key = "`",        mods = "LEADER",     action = act.RotatePanes("Clockwise") },
-  -- FIX: was `key = "`", mods = "LEADER|SHIFT"`, which never matched.
   { key = "~",        mods = "LEADER",     action = act.RotatePanes("CounterClockwise") },
 
   {
@@ -464,9 +576,6 @@ local default_keybinds = {
     }),
   },
 
-  -- FIX: the `leader` key table used to be defined but unreachable (its
-  -- activator was commented out). Renamed to `nav` -- calling a key table
-  -- "leader" is confusing next to config.leader -- and bound here.
   {
     key = "n",
     mods = "LEADER",
@@ -494,7 +603,7 @@ local default_keybinds = {
     }),
   },
 
-  -- Workspaces (new). These are WezTerm's equivalent of tmux sessions.
+  -- Workspaces. These are WezTerm's equivalent of tmux sessions.
   -- LEADER+w is already the tab navigator here, so the fuzzy switcher is on g.
   { key = "g", mods = "LEADER", action = act.ShowLauncherArgs({ flags = "FUZZY|WORKSPACES" }) },
   {
@@ -575,15 +684,15 @@ local tmux_keybinds = {
   { key = "k",          mods = "CTRL|SHIFT",     action = act({ ActivatePaneDirection = "Up" }) },
   { key = "j",          mods = "CTRL|SHIFT",     action = act({ ActivatePaneDirection = "Down" }) },
 
-  -- Pane resize. NOTE: these only work because treat_left_ctrlalt_as_altgr is
-  -- now false (see the assembly section); with it true, left-Ctrl+Alt is
-  -- reported as AltGr and these never fire.
+  -- Pane resize. NOTE: on Windows these only work because
+  -- treat_left_ctrlalt_as_altgr is false (see the assembly section); with it
+  -- true, left-Ctrl+Alt is reported as AltGr and these never fire.
   { key = "h",          mods = "ALT|CTRL|SHIFT", action = act({ AdjustPaneSize = { "Left", 1 } }) },
   { key = "l",          mods = "ALT|CTRL|SHIFT", action = act({ AdjustPaneSize = { "Right", 1 } }) },
   { key = "k",          mods = "ALT|CTRL|SHIFT", action = act({ AdjustPaneSize = { "Up", 1 } }) },
   { key = "j",          mods = "ALT|CTRL|SHIFT", action = act({ AdjustPaneSize = { "Down", 1 } }) },
 
-  -- NEW: pane zoom. The previous config had no zoom binding at all.
+  -- Pane zoom
   { key = "z",          mods = "LEADER",         action = act.TogglePaneZoomState },
   { key = "Enter",      mods = "LEADER",         action = act.QuickSelect },
   { key = "/",          mods = "LEADER",         action = act.Search("CurrentSelectionOrEmptyString") },
@@ -801,10 +910,6 @@ local key_tables = {
   },
 }
 
--- NOTE: the duplicated `mods = "SHIFT"` variants for $, ^, G, V, Y and N were
--- dropped -- those characters already imply shift, so the SHIFT-qualified
--- entries never matched anything.
-
 ---------------------------------------------------------------
 --- 9. Mouse
 ---------------------------------------------------------------
@@ -857,8 +962,6 @@ local PROC_ICONS = {
 }
 
 --- Any pane in the tab produced output we haven't looked at.
---- FIX: the old version only checked the active pane, so output in a
---- background split never raised the marker.
 local function any_unseen_output(tab)
   for _, pane in ipairs(tab.panes or {}) do
     if pane.has_unseen_output then
@@ -890,9 +993,7 @@ wezterm.on("format-tab-title", function(tab, tabs, panes, conf, hover, max_width
     bg, fg = palette.tab_inactive_bg, palette.tab_inactive_fg
   end
 
-  -- FIX: icons are keyed on the *process basename*, not on the display title.
-  -- The old version looked up PROC_ICONS[title], which missed whenever the tab
-  -- had been renamed or fell back to the pane title.
+  -- Icons are keyed on the *process basename*, not on the display title.
   local proc = basename(tab.active_pane.foreground_process_name)
   local icon = PROC_ICONS[proc:lower()]
 
@@ -902,9 +1003,6 @@ wezterm.on("format-tab-title", function(tab, tabs, panes, conf, hover, max_width
   local zoomed = tab.active_pane.is_zoomed
   local unseen = (not tab.is_active) and any_unseen_output(tab)
 
-  -- FIX: budget the real overhead (the old code hardcoded max_width - 6 and so
-  -- overflowed, clipping the right cap) and clamp so a small max_width can't
-  -- produce a negative width.
   local reserved = 2        -- both caps
       + (#index + 2)        -- " N "
       + (icon and 2 or 0)   -- "icon "
@@ -913,8 +1011,7 @@ wezterm.on("format-tab-title", function(tab, tabs, panes, conf, hover, max_width
       + 1                   -- trailing space
   local room = math.max(max_width - reserved, 4)
 
-  -- FIX: markers are appended *after* truncation. The old code appended the
-  -- unseen-output dot first, so it was the first thing truncate_right cut.
+  -- Markers are appended *after* truncation so they are never cut off.
   title = wezterm.truncate_right(title, room)
 
   local cells = {
@@ -927,8 +1024,6 @@ wezterm.on("format-tab-title", function(tab, tabs, panes, conf, hover, max_width
     { Text = " " .. index .. " " },
   }
 
-  -- FIX: only emit the icon when there is one, otherwise the old
-  -- string.format(" %d %s %s ", ...) left a double space.
   if icon then
     table.insert(cells, { Text = icon .. " " })
   end
@@ -1020,16 +1115,26 @@ end)
 ---------------------------------------------------------------
 --- 12. Custom events
 ---------------------------------------------------------------
--- FIX: the old config bound keys to EmitEvent "trigger-nvim-with-scrollback"
--- and EmitEvent "toggle-tmux-keybinds" but never registered a handler for
--- either, so both keys were silent no-ops.
 
---- LEADER+e -- dump this pane's scrollback into nvim
+--- LEADER+e -- dump this pane's scrollback into nvim.
+---
+--- Cross-platform notes:
+---   * Linux: a normal /tmp file, opened directly by nvim.
+---   * Windows + WSL pane: the file is written to %TEMP% (Windows side) and nvim,
+---     running inside WSL, is handed the path translated with `wslpath -u`.
+---   * Windows + local pane (PowerShell etc.): nvim.exe gets the Windows path.
 wezterm.on("trigger-nvim-with-scrollback", function(window, pane)
   local dims = pane:get_dimensions()
   local text = pane:get_lines_as_text(dims.scrollback_rows)
 
-  local path = os.tmpname()
+  local path
+  if is_windows() then
+    local tmp = os.getenv("TEMP") or os.getenv("TMP") or "."
+    path = string.format("%s\\wezterm-scrollback-%d.txt", tmp, os.time())
+  else
+    path = os.tmpname()
+  end
+
   local f = io.open(path, "w+")
   if not f then
     window:toast_notification("wezterm", "could not create a temp file", nil, 4000)
@@ -1039,8 +1144,17 @@ wezterm.on("trigger-nvim-with-scrollback", function(window, pane)
   f:flush()
   f:close()
 
-  -- `+` opens at the last line, which is usually what you want from a dump.
-  window:perform_action(act.SpawnCommandInNewTab({ args = { "nvim", "+", path } }), pane)
+  local args
+  local domain = pane:get_domain_name() or ""
+  if is_windows() and domain:find("^WSL:") then
+    -- `+` opens at the last line, which is usually what you want from a dump.
+    local fwd = path:gsub("\\", "/")
+    args = { "bash", "-lc", string.format("nvim + \"$(wslpath -u '%s')\"", fwd) }
+  else
+    args = { "nvim", "+", path }
+  end
+
+  window:perform_action(act.SpawnCommandInNewTab({ args = args }), pane)
 
   -- Give nvim time to read the file before removing it.
   wezterm.sleep_ms(1000)
@@ -1109,36 +1223,31 @@ end)
 ---------------------------------------------------------------
 local launch_menu = {}
 
--- Enumerates the installed distros (equivalent to `wsl -l -v`).
-local WSL_DEFAULT = "WSL:Ubuntu"
-local wsl_domains = wezterm.default_wsl_domains()
-local have_wsl_default = false
-
-for _, dom in ipairs(wsl_domains) do
-  if dom.name == WSL_DEFAULT then
-    dom.default_prog = { "bash" }
-    -- Start in $HOME rather than /mnt/c/... . Replaces the broken `--cd ~`
-    -- argument in the old default_prog.
-    dom.default_cwd = "~"
-    have_wsl_default = true
-  end
-end
-
-config.wsl_domains = wsl_domains
-
--- FIX: the old config did
---
---   config.default_prog = { "powershell.exe", "-NoLogo", "wsl.exe", "--cd ~" }
---
--- which had two problems. "--cd ~" was a single argv token, so wsl.exe never
--- parsed it. More importantly, launching WSL *through* PowerShell means the
--- foreground process of every pane is powershell.exe/wsl.exe forever, so
--- format-tab-title can never report nvim/git/etc., and new splits don't
--- inherit the shell's working directory.
---
--- Using a domain instead gives WezTerm a native WSL session: correct process
--- reporting, correct CWD inheritance, and it shows up in the launcher.
 if is_windows() then
+  -- WSL domains only exist on the Windows build. Enumerates the installed
+  -- distros (equivalent to `wsl -l -v`).
+  local WSL_DEFAULT = "WSL:Ubuntu"
+  local wsl_domains = {}
+  local ok, doms = pcall(wezterm.default_wsl_domains)
+  if ok and type(doms) == "table" then
+    wsl_domains = doms
+  end
+  local have_wsl_default = false
+
+  for _, dom in ipairs(wsl_domains) do
+    if dom.name == WSL_DEFAULT then
+      dom.default_prog = { "bash" }
+      -- Start in $HOME rather than /mnt/c/... .
+      dom.default_cwd = "~"
+      have_wsl_default = true
+    end
+  end
+
+  config.wsl_domains = wsl_domains
+
+  -- Using a domain instead of `powershell.exe ... wsl.exe` gives WezTerm a
+  -- native WSL session: correct process reporting (so format-tab-title can show
+  -- nvim/git/etc.), correct CWD inheritance for splits, and a launcher entry.
   if have_wsl_default then
     config.default_domain = WSL_DEFAULT
   end
@@ -1150,6 +1259,17 @@ if is_windows() then
   -- Force PowerShell as the shell instead of WSL:
   -- config.default_domain = "local"
   -- config.default_prog = { "powershell.exe", "-NoLogo" }
+else
+  -- Linux / macOS: WezTerm launches $SHELL by default. Add a few extra menu
+  -- entries for shells that are actually installed.
+  for _, sh in ipairs({ "bash", "zsh", "fish" }) do
+    for _, dir in ipairs({ "/usr/bin/", "/bin/", "/usr/local/bin/", "/opt/homebrew/bin/" }) do
+      if file_exists(dir .. sh) then
+        table.insert(launch_menu, { label = "Shell: " .. sh, args = { dir .. sh, "-l" } })
+        break
+      end
+    end
+  end
 end
 
 config.launch_menu = launch_menu
@@ -1176,7 +1296,7 @@ config.launch_menu = launch_menu
 if color_scheme then
   config.color_scheme = color_scheme
 end
--- config.color_scheme_dirs = { os.getenv("HOME") .. "/.config/wezterm/colors/" }
+-- config.color_scheme_dirs = { (os.getenv("HOME") or wezterm.home_dir) .. "/.config/wezterm/colors/" }
 
 -- Character metrics.
 -- NOTE: cell_width above 1.0 inserts space inside each cell, which shows as a
@@ -1193,10 +1313,12 @@ config.font_size = font_size
 -- Set to true temporarily when debugging missing Nerd Font icons.
 config.warn_about_missing_glyphs = false
 
-config.background = background
+if background then
+  config.background = background
+end
 -- config.window_background_gradient = window_background_gradient
 -- config.window_background_opacity = 0.98
--- config.win32_system_backdrop = "Tabbed" -- "Acrylic" | "Mica" | "Tabbed"
+-- config.win32_system_backdrop = "Tabbed" -- "Acrylic" | "Mica" | "Tabbed" (Windows only)
 -- config.text_background_opacity = 0.3
 
 -- Cursor. Valid styles: SteadyBlock, BlinkingBlock, SteadyUnderline,
@@ -1214,8 +1336,6 @@ config.colors = {
   cursor_bg = palette.cursor_bg,
   cursor_fg = palette.cursor_fg,
   tab_bar = {
-    -- FIX: `background` was unset, so the strip past the last tab did not match
-    -- the tab edges drawn by the format-tab-title handler.
     background = palette.bar_bg,
     -- active_tab / inactive_tab are ignored while a custom format-tab-title
     -- handler is installed (it sets colours per-cell), but they still apply if
@@ -1245,7 +1365,6 @@ config.window_close_confirmation = "AlwaysPrompt" -- "NeverPrompt"
 config.adjust_window_size_when_changing_font_size = false
 config.native_macos_fullscreen_mode = true
 config.enable_scroll_bar = false
--- FIX: default is 3500, which is thin given the LEADER+e scrollback dump.
 config.scrollback_lines = 10000
 config.exit_behavior = "CloseOnCleanExit" -- "Close" | "Hold" | "CloseOnCleanExit"
 
@@ -1264,11 +1383,10 @@ config.selection_word_boundary = " \t\n{}[]()\"'`,;:│=&!%"
 config.use_ime = true
 config.ime_preedit_rendering = "Builtin"
 config.use_dead_keys = false
--- FIX: was true, which makes left-Ctrl+Alt act as AltGr and therefore swallows
--- the ALT|CTRL|SHIFT pane-resize bindings above. Set back to true only if you
--- need to type diacritics.
+-- Windows only: when true, left-Ctrl+Alt acts as AltGr and swallows the
+-- ALT|CTRL|SHIFT pane-resize bindings. Ignored on Linux/macOS.
 config.treat_left_ctrlalt_as_altgr = false
--- Default is already true on Windows; harmless elsewhere.
+-- Default is already true on Windows; ignored elsewhere.
 config.allow_win32_input_mode = true
 -- Not recommended: changes the behaviour of some keys in backwards
 -- incompatible ways.
@@ -1277,8 +1395,8 @@ config.allow_win32_input_mode = true
 -- Misc
 config.automatically_reload_config = true
 config.check_for_updates = false
--- FIX: was true, which logged every keystroke permanently. Flip on only while
--- diagnosing a key that won't fire, then flip back.
+-- Flip on only while diagnosing a key that won't fire, then flip back
+-- (it logs every keystroke).
 config.debug_key_events = false
 config.enable_wayland = enable_wayland()
 
@@ -1309,10 +1427,8 @@ config.key_tables = merge_key_tables(default_key_tables, key_tables)
 -- rather than hand-rolling them, then add our own on top.
 config.hyperlink_rules = wezterm.default_hyperlink_rules()
 
--- FIX: the old org/repo rule made quotes optional, so any `foo/bar` in the
--- output -- including ordinary paths like src/main.rs -- became a clickable
--- GitHub link. Quotes are now required. (WezTerm's regex engine has no
--- lookahead, so excluding file extensions isn't an option.)
+-- org/repo links require quotes, otherwise ordinary paths like src/main.rs
+-- would become clickable GitHub links.
 table.insert(config.hyperlink_rules, {
   regex = [["([\w\d][-\w\d]*)/([-\w\d.]+)"]],
   format = "https://github.com/$1/$2",
