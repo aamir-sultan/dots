@@ -5,16 +5,16 @@ function mkd() {
   mkdir -p "$@" && cd "$_"
 }
 
-# Compress a file or directory. Format is inferred from the output name's extension.
-# Usage: compress <source> [output_name]
+# Compress/pack a file or directory. Format is inferred from the output name's extension.
+# Usage: pack <source> [output_name]
 #   - If output_name is omitted, it defaults to "<source>.<ext>" based on FORMAT env
 #     OR you can pass the output name with any extension you like.
 #
 # Examples:
-#   compress mydir                    # -> mydir.tar.gz (default)
-#   compress mydir backup.zip         # -> zip
-#   compress mydir archive.tar.xz     # -> xz tarball
-#   compress file.txt file.txt.gz     # -> single-file gzip
+#   pack mydir                    # -> mydir.tar.gz (default)
+#   pack mydir backup.zip         # -> zip
+#   pack mydir archive.tar.xz     # -> xz tarball
+#   pack file.txt file.txt.gz     # -> single-file gzip
 
 pack() {
     local source="${1%/}"
@@ -22,7 +22,7 @@ pack() {
     local format
 
     if [[ -z "$source" ]]; then
-        echo "Usage: compress <source> [output_name]" >&2
+        echo "Usage: pack <source> [output_name]" >&2
         return 1
     fi
     if [[ ! -e "$source" ]]; then
@@ -56,11 +56,11 @@ pack() {
 
     # Single-file compressors: refuse directories
     if [[ -d "$source" && "$format" =~ ^(gz|bz2|xz|zst)$ ]]; then
-        echo "Error: '$format' can't compress a directory. Use e.g. '${base}.tar.$format'." >&2
+        echo "Error: '$format' can't pack a directory. Use e.g. '${base}.tar.$format'." >&2
         return 1
     fi
 
-    echo "Compressing '$source' -> '$output' ..."
+    echo "Packing/Compressing '$source' -> '$output' ..."
 
     case "$format" in
         tar)              tar -cf  "$output" "$source" ;;
