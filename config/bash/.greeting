@@ -216,11 +216,13 @@ _dots_quote() {
 
   printf '\n'
   for line in "${wrapped[@]}"; do
-    printf ' %s%s%s\n' "${color}" "$line" "$_dots_reset"
+    # printf ' %s%s%s\n' "${color}" "$line" "$_dots_reset"
     # printf ' %s%s%s\n' "${_dots_dim}" "$line" "$_dots_reset"
+    printf ' %s%s%s\n' "${_dots_italic}" "$line" "$_dots_reset"
   done
   # [[ -n $author ]] && printf ' %s— %s%s\n' "$color" "$author" "$_dots_reset"
-  [[ -n $author ]] && printf ' %s— %s%s\n' "${color}" "$author" "$_dots_reset"
+  # [[ -n $author ]] && printf ' %s— %s%s\n' "${color}" "$author" "$_dots_reset"
+  [[ -n $author ]] && printf ' %s— %s%s\n' "${_dots_italic}" "$author" "$_dots_reset"
 
   return 0
 }
@@ -258,3 +260,4 @@ dots_greeting() {
 }
 
 true
+
