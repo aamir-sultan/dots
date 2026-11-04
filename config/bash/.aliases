@@ -23,7 +23,7 @@ alias cpf='cp -rvf'
 alias mkdir="mkdir -pv"
 # alias vi="vim"
 # alias e="$EDITOR"
-alias vi="$VISUAL"
+# alias vi="$VISUAL"
 
 # Likewise this, plus I'm always mistyping it...
 alias findy='find . -name'
