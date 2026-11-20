@@ -231,8 +231,8 @@ local color_scheme = nil -- No color theme
 -- local font_size = 8.0
 -- local font_size = 9.0
 -- local font_size = 10.0
-local font_size = 11.0
--- local font_size = 12.0
+-- local font_size = 11.0
+local font_size = 12.0
 
 -- local font_style = "Italic"
 local font_style = "Normal"
@@ -261,8 +261,8 @@ local font_weight = "Regular"
 -- local font_family = "Rec Mono Duotone"
 -- local font_family = "Rec Mono Linear"
 -- local font_family = "Rec Mono Semicasual"
--- local font_family = "UbuntuSansMono NF"
-local font_family = "Ubuntu Sans Mono"
+local font_family = "UbuntuSansMono NF"
+-- local font_family = "Ubuntu Sans Mono"
 -- local font_family = "mononoki"
 
 -- On Linux, WezTerm only sees fonts known to fontconfig. We ask fc-list once at
@@ -354,119 +354,122 @@ local hsb_dimmer = {
   hue = 1.0,
   saturation = 1.0,
 }
-
--- Wallpaper root per platform:
---   Windows       -> D:/Resources/System/Wallpapers
---   Linux in WSL  -> /mnt/d/Resources/System/Wallpapers  (the same files, via the mount)
---   Native Linux  -> ~/Pictures/Wallpapers
--- Override on any machine with the WEZTERM_WALLPAPER_DIR environment variable.
-local function wallpaper_root()
-  local override = os.getenv("WEZTERM_WALLPAPER_DIR")
-  if override and override ~= "" then
-    return override
-  end
-  if is_windows() then
-    return "D:/Resources/System/Wallpapers"
-  end
-  if is_wsl_linux() then
-    return "/mnt/d/Resources/System/Wallpapers"
-  end
-  return (os.getenv("HOME") or wezterm.home_dir or "") .. "/Pictures/Wallpapers"
-end
-
-local WP = wallpaper_root()
-
-local wallpaper = WP .. "/YellowLeaf.jpg"
--- local wallpaper = WP .. "/simple/Santa_Monica.png"
--- local wallpaper = WP .. "/lineart/samurai.png"
--- local wallpaper = WP .. "/lineart/handreach.png"
--- local wallpaper = WP .. "/lineart/toothless.png"
--- local wallpaper = WP .. "/lineart/peek.png"
--- local wallpaper = WP .. "/lineart/gaze.png"
--- local wallpaper = WP .. "/lineart/fullface.png"
--- local wallpaper = WP .. "/lineart/halfface.png"
--- local wallpaper = WP .. "/road.jpg"
--- local wallpaper = WP .. "/leather.jpg"
--- local wallpaper = WP .. "/celestial/blackhole.png"
-
--- Random wallpaper per launch. Safe if the directory is missing or empty.
--- local MEGA = is_windows() and "D:/Mega/backgrounds" or "/mnt/d/Mega/backgrounds"
--- wallpaper = random_image(MEGA) or wallpaper
--- wallpaper = random_image(MEGA .. "/simple") or wallpaper
-
--- The background is only applied when the image file really exists, so a
--- machine without the wallpaper folder gets a plain background instead of an
--- error.
-local background = nil
-
-if file_exists(wallpaper) then
-  background = {
-    -- Deepest / back-most layer, rendered first.
-    {
-      source = { File = wallpaper },
-
-      -- "Contain" scales to fit without cropping; "Cover" fills and may crop.
-      -- width = "Contain",
-      height = "Contain",
-
-      -- Other repeat options: Mirror, Repeat, NoRepeat.
-      repeat_x = "NoRepeat",
-      repeat_y = "NoRepeat",
-      -- repeat_x = "Mirror",
-      -- repeat_y = "Mirror",
-
-      -- horizontal_align: "Left" (default), "Center", "Right"
-      horizontal_align = "Right",
-      -- vertical_align: "Top" (default), "Middle", "Bottom"
-      vertical_align = "Top",
-
-      -- Offsets accept '123px', '%', 'pt' or 'cell'
-      -- horizontal_offset = "0px",
-      -- vertical_offset = "0px",
-
-      hsb = hsb_dimmer,
-      -- opacity = 0.98,
-
-      -- Parallax makes the layer look further behind the text when scrolling.
-      -- attachment = { Parallax = 0.1 },
-      attachment = "Fixed",
-      -- attachment = "Scroll",
-    },
-  }
-end
+--
+-- -- Wallpaper root per platform:
+-- --   Windows       -> D:/Resources/System/Wallpapers
+-- --   Linux in WSL  -> /mnt/d/Resources/System/Wallpapers  (the same files, via the mount)
+-- --   Native Linux  -> ~/Pictures/Wallpapers
+-- -- Override on any machine with the WEZTERM_WALLPAPER_DIR environment variable.
+-- local function wallpaper_root()
+--   local override = os.getenv("WEZTERM_WALLPAPER_DIR")
+--   if override and override ~= "" then
+--     return override
+--   end
+--   if is_windows() then
+--     return "D:/Resources/System/Wallpapers"
+--   end
+--   if is_wsl_linux() then
+--     return "/mnt/d/Resources/System/Wallpapers"
+--   end
+--   return (os.getenv("HOME") or wezterm.home_dir or "") .. "/Pictures/Wallpapers"
+-- end
+--
+-- local WP = wallpaper_root()
+--
+-- local wallpaper = WP .. "/YellowLeaf.jpg"
+-- -- local wallpaper = WP .. "/simple/Santa_Monica.png"
+-- -- local wallpaper = WP .. "/lineart/samurai.png"
+-- -- local wallpaper = WP .. "/lineart/handreach.png"
+-- -- local wallpaper = WP .. "/lineart/toothless.png"
+-- -- local wallpaper = WP .. "/lineart/peek.png"
+-- -- local wallpaper = WP .. "/lineart/gaze.png"
+-- -- local wallpaper = WP .. "/lineart/fullface.png"
+-- -- local wallpaper = WP .. "/lineart/halfface.png"
+-- -- local wallpaper = WP .. "/road.jpg"
+-- -- local wallpaper = WP .. "/leather.jpg"
+-- -- local wallpaper = WP .. "/celestial/blackhole.png"
+--
+-- -- Random wallpaper per launch. Safe if the directory is missing or empty.
+-- -- local MEGA = is_windows() and "D:/Mega/backgrounds" or "/mnt/d/Mega/backgrounds"
+-- -- wallpaper = random_image(MEGA) or wallpaper
+-- -- wallpaper = random_image(MEGA .. "/simple") or wallpaper
+--
+-- -- The background is only applied when the image file really exists, so a
+-- -- machine without the wallpaper folder gets a plain background instead of an
+-- -- error.
+-- local background = nil
+--
+-- if file_exists(wallpaper) then
+--   background = {
+--     -- Deepest / back-most layer, rendered first.
+--     {
+--       source = { File = wallpaper },
+--
+--       -- "Contain" scales to fit without cropping; "Cover" fills and may crop.
+--       -- width = "Contain",
+--       height = "Contain",
+--
+--       -- Other repeat options: Mirror, Repeat, NoRepeat.
+--       repeat_x = "NoRepeat",
+--       repeat_y = "NoRepeat",
+--       -- repeat_x = "Mirror",
+--       -- repeat_y = "Mirror",
+--
+--       -- horizontal_align: "Left" (default), "Center", "Right"
+--       horizontal_align = "Right",
+--       -- vertical_align: "Top" (default), "Middle", "Bottom"
+--       vertical_align = "Top",
+--
+--       -- Offsets accept '123px', '%', 'pt' or 'cell'
+--       -- horizontal_offset = "0px",
+--       -- vertical_offset = "0px",
+--
+--       hsb = hsb_dimmer,
+--       -- opacity = 0.98,
+--
+--       -- Parallax makes the layer look further behind the text when scrolling.
+--       -- attachment = { Parallax = 0.1 },
+--       attachment = "Fixed",
+--       -- attachment = "Scroll",
+--     },
+--   }
+-- end
 
 -- Gradient background instead of an image. `background` above and
 -- window_background_gradient are alternatives, so comment out config.background
 -- in the assembly section if you enable this.
--- local window_background_gradient = {
---   -- "Vertical" | "Horizontal" | { Linear = { angle = n } } | Radial
---   -- orientation = "Vertical",
---   orientation = { Linear = { angle = -45.0 } },
---
---   -- colors = { "#0f0c29", "#302b63", "#24243e" },
---   -- colors = { "#DCDAD6" }, -- Smoke
---   -- colors = { "#FFFFFF" }, -- White
---   -- colors = { "#FFFEF0" }, -- OffWhite
---   -- colors = { "#FDF6E3" }, -- OffWhite
---   -- colors = { "#000000" }, -- Black
---   -- colors = { "#00141a" }, -- Solarized Osaka background
---   -- colors = { "#161b1d" }, -- Solarized Osaka background
---   -- colors = { "#300924" }, -- Ubuntu terminal
---   -- colors = { "#EEE8D5" }, -- Solarized background
---   -- colors = { "#073642" }, -- Solarized background
---   -- colors = { "#300924", "#2E3436" },
---   -- colors = { "#fdf6e3" },
---   -- colors = { "#dfca88" },
---   -- colors = { "#3C3836" },
---
---   -- preset = "Warm", -- instead of `colors`
---
---   interpolation = "Linear", -- "Linear" | "Basis" | "CatmullRom"
---   blend = "Rgb",            -- "Rgb" | "LinearRgb" | "Hsv" | "Oklab"
---   -- noise = 64,            -- anti-banding jitter; 0 makes bands obvious
---   -- segment_size = 11,
---   -- segment_smoothness = 0.0,
--- }
+local window_background_gradient = {
+  -- "Vertical" | "Horizontal" | { Linear = { angle = n } } | Radial
+  orientation = "Vertical",
+  -- orientation = { Linear = { angle = -45.0 } },
+
+  -- colors = { "#0f0c29", "#302b63", "#24243e" },
+  -- colors = { "#DCDAD6" }, -- Smoke
+  -- colors = { "#FFFFFF" }, -- White
+  -- colors = { "#FFFEF0" }, -- OffWhite
+  -- colors = { "#FDF6E3" }, -- OffWhite
+  -- colors = { "#000000" }, -- Black
+  -- colors = { "#00141a" }, -- Solarized Osaka background
+  -- colors = { "#161b1d" }, -- Solarized Osaka background
+  -- colors = { "#300A24" }, -- Ubuntu terminal
+  colors = { "#300A24", "#300A24" }, -- Ubuntu terminal (both ends)
+  -- colors = { "#5E2750", "#300A24" }, -- Ubuntu mid aubergine -> Ubuntu terminal
+  -- colors = { "#300A24", "#2C001E" }, -- Ubuntu terminal -> dark aubergine (subtler)
+  -- colors = { "#EEE8D5" }, -- Solarized background
+  -- colors = { "#073642" }, -- Solarized background
+  -- colors = { "#300924", "#2E3436" },
+  -- colors = { "#fdf6e3" },
+  -- colors = { "#dfca88" },
+  -- colors = { "#3C3836" },
+
+  -- preset = "Warm", -- instead of `colors`
+
+  interpolation = "Linear", -- "Linear" | "Basis" | "CatmullRom"
+  blend = "Rgb",            -- "Rgb" | "LinearRgb" | "Hsv" | "Oklab"
+  -- noise = 64,            -- anti-banding jitter; 0 makes bands obvious
+  -- segment_size = 11,
+  -- segment_smoothness = 0.0,
+}
 
 ---------------------------------------------------------------
 --- 6. Renderer
@@ -1316,7 +1319,7 @@ config.warn_about_missing_glyphs = false
 if background then
   config.background = background
 end
--- config.window_background_gradient = window_background_gradient
+config.window_background_gradient = window_background_gradient
 -- config.window_background_opacity = 0.98
 -- config.win32_system_backdrop = "Tabbed" -- "Acrylic" | "Mica" | "Tabbed" (Windows only)
 -- config.text_background_opacity = 0.3
@@ -1333,6 +1336,7 @@ config.cursor_blink_ease_out = "Constant"
 config.animation_fps = 1
 
 config.colors = {
+  background = "#300A24", -- Ubuntu terminal aubergine
   cursor_bg = palette.cursor_bg,
   cursor_fg = palette.cursor_fg,
   tab_bar = {
