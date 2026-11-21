@@ -24,16 +24,12 @@ return {
     on_clear = function() end,
   },
   config = function(_, opts)
-    local autogroup = vim.api.nvim_create_augroup("transparent", { clear = true })
-    vim.api.nvim_create_autocmd("ColorScheme", {
-      group = autogroup,
-      callback = function()
-        require('transparent').clear_prefix('NeoTree')
-        require('transparent').clear_prefix('lualine')
-        require('transparent').clear_prefix('BufferLine')
-        -- require('transparent').clear_prefix('SnacksPicker')
-        -- require('transparent').clear_prefix('SnacksPickerBorder')
-      end,
-    })
+    local transparent = require("transparent")
+    transparent.setup(opts)
+    -- Prefixes are remembered and re-cleared on every ColorScheme change
+    transparent.clear_prefix("NeoTree")
+    transparent.clear_prefix("lualine")
+    transparent.clear_prefix("BufferLine")
+    transparent.clear_prefix("SnacksPicker") -- also matches SnacksPickerBorder, SnacksPickerInput, etc.
   end,
 }
