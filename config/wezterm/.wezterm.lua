@@ -261,8 +261,8 @@ local font_weight = "Regular"
 -- local font_family = "Rec Mono Duotone"
 -- local font_family = "Rec Mono Linear"
 -- local font_family = "Rec Mono Semicasual"
-local font_family = "UbuntuSansMono NF"
--- local font_family = "Ubuntu Sans Mono"
+-- local font_family = "UbuntuSansMono NF"
+local font_family = "Ubuntu Sans Mono"
 -- local font_family = "mononoki"
 
 -- On Linux, WezTerm only sees fonts known to fontconfig. We ask fc-list once at
