@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # Add a directory to the front of PATH, but only once.
-path_prepend() {
+prepend_path() {
   case ":${PATH}:" in
   *":$1:"*) ;; # already present, leave PATH alone
   *) PATH="$1${PATH:+:${PATH}}" ;;
@@ -9,10 +9,10 @@ path_prepend() {
 }
 
 # Last call ends up leftmost in PATH.
-path_prepend "$HOME/bin"
-path_prepend "$DOTS/bin"
-path_prepend "$DOTS/tools/bin"
-path_prepend "$HOME/.local/bin"
+prepend_path "$HOME/bin"
+prepend_path "$DOTS/bin"
+prepend_path "$DOTS/tools/bin"
+prepend_path "$HOME/.local/bin"
 
 export PATH
-unset -f path_prepend
+unset -f prepend_path

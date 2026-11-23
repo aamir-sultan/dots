@@ -1051,3 +1051,25 @@ function sshx {
           $today
   """
 }
+
+# Add a directory to the front of PATH, but only once.
+prepend_path() {
+  case ":${PATH}:" in
+  *":$1:"*) ;; # already present, leave PATH alone
+  *) PATH="$1${PATH:+:${PATH}}" ;;
+  esac
+}
+
+# Remove duplicate entries from PATH, keeping the first occurrence of each.
+dedup_path() {
+  local dir new=""
+  local IFS=:
+  for dir in $PATH; do
+    case ":${new}:" in
+    *":${dir}:"*) ;; # seen already, skip
+    *) new="${new:+${new}:}${dir}" ;;
+    esac
+  done
+  PATH="$new"
+  export PATH
+}
