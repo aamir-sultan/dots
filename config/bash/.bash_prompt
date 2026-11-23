@@ -224,7 +224,5 @@ PS1+="\$(prompt_git \"\[${word_style}\] on \[${branch_style}\]\" \"\[${repo_stat
 PS1+="\n"                                                                                        # newline after prompt and before symbol
 PS1+="\[\$(prompt_symbol_style)\]${prompt_symbol} \[${reset}\]"                                  # prompt symbol, red on failure
 PS1+="\[${text_color}\]"                                                                         # Terminal stdout color
-export PS1
 
 PS2="\[${yellow_regular}\]→ \[${reset}\]"
-export PS2
