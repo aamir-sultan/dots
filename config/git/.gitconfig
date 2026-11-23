@@ -10,6 +10,9 @@
 [init]
 	defaultBranch = main
 
+[pull]
+	rebase = false
+
 [credential]
 # If you want to cache the credentials for some time (default 15 minutes)
 	# helper = cache 

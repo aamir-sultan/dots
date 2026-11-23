@@ -1,42 +1,76 @@
-[pull]
-    rebase = false
+# General-purpose aliases. Included from .gitconfig, so they are available
+# everywhere (local and SSH sessions).
+# Submodule / subtree workflows live in .gitaliases.local.
 
 [alias]
-    alias = ! git config --get-regexp ^alias\\. | sed -e s/^alias\\.// -e s/\\ /\\ =\\ /
-    br = branch
-    l = log
-    ch = checkout
+    # ------------------------------------------------------------
+    # Helpers (also used by other aliases)
+    # ------------------------------------------------------------
+    # List all configured aliases
+    alias = "!git config --get-regexp '^alias\\.' | sed -e 's/^alias\\.//' -e 's/ / = /'"
+    # Current branch name (fails on detached HEAD)
+    thisbr = "!git symbolic-ref --quiet --short HEAD"
+    # Default remote name (prefers 'origin')
+    thisremote = "!git remote | grep -x origin || git remote | head -n 1"
+    # Repository root directory
+    root = rev-parse --show-toplevel
+    # Exit 0 if the current branch exists on the remote
+    upbrexist = "!f() { git ls-remote --exit-code --heads \"$(git thisremote)\" \"$(git thisbr)\"; }; f"
+
+    # ------------------------------------------------------------
+    # Shortcuts
+    # ------------------------------------------------------------
     st = status
-    co = !git checkout $1 && git submodule update --recursive; git br #
+    br = branch
+    ch = checkout
+    l = log
     info = log -1
     message = show -s
-    undo = "!f() { git reset --hard $(git rev-parse --abbrev-ref HEAD)@{${1-1}}; }; f"
-    cleanup = !git remote prune origin && git repack && git prune-packed && git reflog expire --expire=1.month.ago && git gc --aggressive
-    lol = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit
-    last = log -1 HEAD --stat
-    mergetest = "!f(){ git merge --no-commit --no-ff \"$1\"; git merge --abort; echo \"Merge aborted\"; };f "
-    subsyncmain = !git pull --recurse-submodules && git submodule update --init --recursive && git submodule foreach 'git checkout main && git pull origin main'
-# push new branch - push a branch to origin and set upstream
-    pnb = "!git push --set-upstream origin $(git rev-parse --abbrev-ref HEAD)"
-# show all deleted files in the repo
-    deleted = "!git log --diff-filter=D --summary | grep delete"
-# create an empty commit
-    empty = commit --allow-empty
-# Stops you from pushing without having rebased first
-    pls = push — force-with-lease
-# Adds everything to the staging area and brings up the commit info
-    ca = !git add -A && git commit -av
-# Adds everything to the staging area, and amends it the most recent commit
-    aa = !git add -A && git commit --amend -av
-# Make sure you are on the branch you want to rename, then rename it whatever you want.
-    rn = “!f() { git branch -m $1; }; f”
-# Reword the previous commit
-    rwc = commit -v --amend
-# Improved log
-    ilog = "!git log -p --submodule=log"
+    # Checkout and sync submodules, then list branches
+    co = "!f() { git checkout \"$@\" && git submodule update --init --recursive; git branch; }; f"
 
-# Takes 2 arguments and put the first argument as feat, chore and next argument as message
-    committ = "!f(){ \
-        git add .; \
-        git commit -m \"$1: $2\"; \
-      }; f"
+    # ------------------------------------------------------------
+    # Logs and inspection
+    # ------------------------------------------------------------
+    last = log -1 HEAD --stat
+    lol = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit
+    # Log with patches, including submodule changes
+    ilog = log -p --submodule=log
+    # Files touched by commits not yet pushed to upstream
+    local = "!git show --pretty='' --name-only $(git cherry --abbrev=7 -v '@{upstream}' | awk '{print $2}')"
+    # Unmerged (conflicted) paths
+    conflicts = "!git ls-files -u | cut -f 2 | sort -u"
+    # All deleted files in history
+    deleted = "!git log --diff-filter=D --summary | grep delete"
+
+    # ------------------------------------------------------------
+    # Commit helpers
+    # ------------------------------------------------------------
+    empty = commit --allow-empty
+    # Stage everything and commit
+    ca = "!git add -A && git commit -av"
+    # Stage everything and amend the last commit
+    aa = "!git add -A && git commit --amend -av"
+    # Reword the last commit
+    rwc = commit -v --amend
+    # Usage: git committ <type> <message>  ->  "<type>: <message>"
+    committ = "!f() { [ $# -ge 2 ] || { echo 'Usage: git committ <type> <message>' >&2; return 2; }; git add . && git commit -m \"$1: $2\"; }; f"
+
+    # ------------------------------------------------------------
+    # Branches and pushing
+    # ------------------------------------------------------------
+    # Push a new branch to origin and set upstream
+    pnb = "!git push --set-upstream origin \"$(git thisbr)\""
+    # Force push, but only if the remote hasn't moved
+    pls = push --force-with-lease
+    # Rename the current branch: git rn <new-name>
+    rn = "!f() { git branch -m \"$1\"; }; f"
+
+    # ------------------------------------------------------------
+    # Undo, cleanup, merge checks
+    # ------------------------------------------------------------
+    # Hard reset to a previous reflog state: git undo [n]  (DISCARDS CHANGES)
+    undo = "!f() { git reset --hard \"$(git rev-parse --abbrev-ref HEAD)@{${1:-1}}\"; }; f"
+    cleanup = "!git remote prune origin && git repack && git prune-packed && git reflog expire --expire=1.month.ago --all && git gc --aggressive"
+    # Try a merge without committing, then abort: git mergetest <branch>
+    mergetest = "!f() { git merge --no-commit --no-ff \"$1\"; rc=$?; git merge --abort 2>/dev/null; echo 'Merge aborted'; return $rc; }; f"

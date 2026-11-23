@@ -66,7 +66,7 @@
 	// "editor.fontFamily": "'Zenbones Proto', 'JetBrainsMono Nerd Font', monospace",
 	// "editor.fontFamily": "'Ioskeley Mono', 'JetBrainsMono Nerd Font', monospace",
 	// "editor.fontFamily": "'Typestar OCR', 'JetBrainsMono Nerd Font', monospace",
-	"editor.fontFamily": "'Iosvmata', 'JetBrainsMono Nerd Font', monospace",
+	"editor.fontFamily": "'Ubuntu Sans Mono','Iosvmata', 'JetBrainsMono Nerd Font', monospace",
 
 	// Set font size
 	// =========================================================//
