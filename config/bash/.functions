@@ -729,19 +729,15 @@ EOT
 alias j="cdj"
 alias jls="j -l"
 
-# If tmux is running ,command "tmux" will enter it and attach.
-# If tmux is not running ,command "tmux" will start tmux and create a session named "terminal"
-# If run command with other keyword , like {"tmux" ls} will run like what orginal tmux do
-
-tmux() {
+# tm: with no args, attach to an existing tmux session or create one named "Term".
+# With args, it passes them straight to tmux (e.g. `tm ls`).
+tm() {
   if [ $# -gt 0 ]; then
     command tmux "$@"
+  elif command tmux ls &>/dev/null; then
+    command tmux attach
   else
-    if tmux ls &>/dev/null; then
-      tmux attach
-    else
-      tmux new -s Term
-    fi
+    command tmux new -s Term
   fi
 }
 

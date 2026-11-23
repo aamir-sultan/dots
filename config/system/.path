@@ -1,10 +1,7 @@
 #!/usr/bin/env bash
 
 # Add a directory to the front of PATH, but only once.
-#
-# Prepend, not append: the curated tools in $DOTS/tools/bin must beat whatever
-# the distro ships. CentOS 7's stock tmux is 1.8, and .tmux.conf needs 3.2+.
-__dots_path_prepend() {
+path_prepend() {
   case ":${PATH}:" in
   *":$1:"*) ;; # already present, leave PATH alone
   *) PATH="$1${PATH:+:${PATH}}" ;;
@@ -12,9 +9,10 @@ __dots_path_prepend() {
 }
 
 # Last call ends up leftmost in PATH.
-__dots_path_prepend "$HOME/bin"
-__dots_path_prepend "$DOTS/bin"
-__dots_path_prepend "$DOTS/tools/bin"
-__dots_path_prepend "$HOME/.local/bin"
+path_prepend "$HOME/bin"
+path_prepend "$DOTS/bin"
+path_prepend "$DOTS/tools/bin"
+path_prepend "$HOME/.local/bin"
 
 export PATH
+unset -f path_prepend
