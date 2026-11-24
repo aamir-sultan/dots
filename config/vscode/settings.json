@@ -50,7 +50,6 @@
 	// "editor.fontFamily": "'JetBrainsMono Nerd Font', monospace",
 	// "editor.fontFamily": "'Share Tech Mono', 'md io', 'JetBrainsMono Nerd Font', monospace",
 	// "editor.fontFamily": "'md io', 'JetBrainsMono Nerd Font', monospace",
-	// T0
 	// "editor.fontFamily": "'Courier Prime', 'JetBrainsMono Nerd Font', monospace",
 	// "editor.fontFamily": "'Iosevka NFP Light', 'JetBrainsMono Nerd Font', monospace",
 	// "editor.fontFamily": "'Iosevka NF', 'JetBrainsMono Nerd Font', monospace",
@@ -66,7 +65,8 @@
 	// "editor.fontFamily": "'Zenbones Proto', 'JetBrainsMono Nerd Font', monospace",
 	// "editor.fontFamily": "'Ioskeley Mono', 'JetBrainsMono Nerd Font', monospace",
 	// "editor.fontFamily": "'Typestar OCR', 'JetBrainsMono Nerd Font', monospace",
-	"editor.fontFamily": "'Ubuntu Sans Mono','Iosvmata', 'JetBrainsMono Nerd Font', monospace",
+	// "editor.fontFamily": "'Ubuntu Sans Mono','Iosvmata', 'JetBrainsMono Nerd Font', monospace",
+	"editor.fontFamily": "'Iosvmata', 'JetBrainsMono Nerd Font', monospace",
 
 	// Set font size
 	// =========================================================//
@@ -168,8 +168,8 @@
 	"terminal.integrated.scrollback": 100000,
 	// By default the starting font will be set or also try wrapping them in single qoutes to set
 	// "terminal.integrated.fontFamily": "'md io', JetBrainsMono Nerd Font, OverpassMono Nerd Font, JetBrainsMono Nerd Font Mono",
-	// "terminal.integrated.fontFamily": "'UbuntuSansMono NF', 'DM Mono', JuliaMono, JetBrainsMono Nerd Font Mono",
-	"terminal.integrated.fontFamily": "'Rec Mono Linear', 'JetBrainsMono Nerd Font', monospace",
+	// "terminal.integrated.fontFamily": "'Ubuntu Sans Mono'",
+	// "terminal.integrated.fontFamily": "'Rec Mono Linear', 'JetBrainsMono Nerd Font', monospace",
 	"terminal.integrated.fontFamily": "'Iosvmata', 'JetBrainsMono Nerd Font', monospace",
 	"terminal.integrated.letterSpacing": 1, // Number of pixels to be added between charachters.
 	// "terminal.integrated.letterSpacing": 2, // Number of pixels to be added between charachters.
@@ -418,12 +418,6 @@
 	//----------------------------------------------------//
 
 	"remote.SSH.remotePlatform": {
-		"100.69.254.18": "linux",
-		"10.1.1.116": "linux",
-		"100.69.254.15": "linux",
-		"100.69.254.33": "linux",
-		"100.69.254.30": "linux",
-		"ms-hs.duckdns.org": "linux"
 	},
 	"workbench.activityBar.location": "top",
 	"workbench.editorAssociations": {
@@ -455,8 +449,6 @@
 		"--struct_union_members_alignment=align",
 		"--try_wrap_long_lines=true"
 	],
-	"verible-formatter.flagFile": "/proj/fe/work/asultan/verible-v0.0-3869-gb0aaf2c0/bin/.verilog_format",
-	"verible-formatter.path": "/proj/fe/work/asultan/verible-v0.0-3869-gb0aaf2c0/bin/verible-verilog-format",
 	"files.associations": {
 		"*.toml": "json"
 	},
@@ -472,10 +464,6 @@
 	"extensions.ignoreRecommendations": true,
 	"workbench.colorTheme": "Solarized Osaka",
 	"workbench.editorLargeFileConfirmation": 100,
-	"mql_tools.Metaeditor.Metaeditor5Dir": "C:\\Program Files\\MetaTrader 5\\MetaEditor64.exe",
-	"mql_tools.Metaeditor.Include5Dir": "C:\\Users\\AamirSultan\\AppData\\Roaming\\MetaQuotes\\Terminal\\D0E8209F77C8CF37AD8BF550E51FF075\\MQL5",
-	"mql_tools.Color": "enabled",
-	"C_Cpp.default.compilerPath": "c:\\Program Files\\MetaTrader 5\\MetaEditor64.exe",
 	"claudeCode.preferredLocation": "panel",
 	"chat.commandCenter.enabled": false,
 
