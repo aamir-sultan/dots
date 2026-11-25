@@ -12,7 +12,7 @@ local options = {
     functions = {},
     variables = {},
     -- Background styles. Can be "dark", "transparent" or "normal"
-    sidebars = "dark",              -- style for sidebars, see below
+    sidebars = "transparent",       -- style for sidebars (Neo-tree, qf, help...), see below
     floats = "transparent",         -- style for floating windows (Snacks picker, Lazy, Mason, hover...)
   },
   sidebars = { "qf", "help" },      -- Set a darker background on sidebar-like windows. For example: `["qf", "vista_kind", "terminal", "packer"]`
