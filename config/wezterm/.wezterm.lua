@@ -231,8 +231,8 @@ local color_scheme = nil -- No color theme
 -- local font_size = 8.0
 -- local font_size = 9.0
 -- local font_size = 10.0
--- local font_size = 11.0
-local font_size = 12.0
+local font_size = 11.0
+-- local font_size = 12.0
 
 -- local font_style = "Italic"
 local font_style = "Normal"
